@@ -1,0 +1,20 @@
+方法一：差分数组
+思路与算法
+
+为了判断某个区域内所有整数都被覆盖，我们需要对每个整数 xx 计算覆盖该整数的区间数量，记作 \textit{cnt}_xcnt 
+x
+​
+ 。
+
+朴素的做法是，遍历 \textit{ranges}ranges 中的所有区间 [l, r][l,r]，将区间内每个整数的 \textit{cnt}cnt 值加上 11。遍历结束后，检查 [\textit{left},\textit{right}][left,right] 内的每个整数的 \textit{cnt}cnt 值是否均大于 00，是则返回 \texttt{true}true，否则返回 \texttt{false}false。
+
+记 \textit{ranges}ranges 的长度为 nn，需要计算的区间范围为 ll，则上述做法的时间复杂度为 O(n\cdot l)O(n⋅l)。
+
+下面介绍复杂度为 O(n + l)O(n+l) 的做法。我们可以用差分数组 \textit{diff}diff 维护相邻两个整数的被覆盖区间数量变化量，其中 \textit{diff}[i]diff[i] 对应覆盖整数 ii 的区间数量相对于覆盖 i - 1i−1 的区间数量变化量。这样，当遍历到闭区间 [l, r][l,r] 时，ll 相对于 l - 1l−1 被覆盖区间数量多 11，r + 1r+1 相对于 rr 被覆盖区间数量少 11。对应到差分数组上，我们需要将 \textit{diff}[l]diff[l] 加上 11，并将 \textit{diff}[r + 1]diff[r+1] 减去 11。
+
+在维护完差分数组 \textit{diff}diff 后，我们遍历 \textit{diff}diff 求前缀和得出覆盖每个整数的区间数量。下标 ii 对应的被覆盖区间数量即为初始数量 00 加上 [1, i][1,i] 闭区间的变化量之和。在计算被覆盖区间数量的同时，我们可以一并判断 [\textit{left}, \textit{right}][left,right] 闭区间内的所有整数是否都被覆盖。
+
+作者：LeetCode-Solution
+链接：https://leetcode-cn.com/problems/check-if-all-the-integers-in-a-range-are-covered/solution/jian-cha-shi-fou-qu-yu-nei-suo-you-zheng-5hib/
+来源：力扣（LeetCode）
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
