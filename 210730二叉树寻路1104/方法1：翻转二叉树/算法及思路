@@ -7,8 +7,3 @@
 先求节点所在的行，行号满足2^[i-1]<=label<2^[i]，则该节点在第i行，按照i的奇偶性计算：
 *当i为奇数时，第i行为从左到右进行排序，该节点标号为label；
 *当i为偶数时，第i行为从右到做进行排序，需要对该行进行左右翻转操作，翻转后的节点标号为2^[i-1]+2^[i]-1-label；
-
-作者：LeetCode-Solution
-链接：https://leetcode-cn.com/problems/path-in-zigzag-labelled-binary-tree/solution/er-cha-shu-xun-lu-by-leetcode-solution-ryx0/
-来源：力扣（LeetCode）
-著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
