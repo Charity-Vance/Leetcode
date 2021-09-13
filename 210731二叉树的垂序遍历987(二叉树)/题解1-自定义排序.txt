@@ -1,0 +1,13 @@
+方法一：自定义排序
+思路与算法
+
+我们可以从根节点开始，对整棵树进行一次遍历，在遍历的过程中使用数组nodes记录下每个节点的行号row，列号col 以及值value。
+在遍历完成后，我们按照col 为第一关键字升序，row 为第二关键字升序，value 为第三关键字升序，对所有的节点进行排序即可。
+在排序完成后，我们还需要按照题目要求，将同一列的所有节点放入同一个数组中。
+因此，我们可以对nodes 进行一次遍历，并在遍历的过程中记录上一个节点的列号lastcol。
+如果当前遍历到的节点的列号col 与lastcol 相等，则将该节点放入与上一个节点相同的数组中，否则放入不同的数组中。
+
+作者：LeetCode-Solution
+链接：https://leetcode-cn.com/problems/vertical-order-traversal-of-a-binary-tree/solution/er-cha-shu-de-chui-xu-bian-li-by-leetcod-clsh/
+来源：力扣（LeetCode）
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
