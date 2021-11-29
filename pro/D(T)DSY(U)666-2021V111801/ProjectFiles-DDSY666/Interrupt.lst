@@ -1,0 +1,1270 @@
+C51 COMPILER V9.54   INTERRUPT                                                             11/18/2021 18:53:12 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE INTERRUPT
+OBJECT MODULE PLACED IN .\Interrupt.obj
+COMPILER INVOKED BY: C:\Program Files (x86)\Keil_v5 FMSH\C51\BIN\C51.EXE ..\SourceFiles\PUB\Interrupt.c LARGE OBJECTADVA
+                    -NCED OPTIMIZE(8,SPEED) BROWSE DEFINE(DDSY666) DEBUG SYMBOLS PRINT(.\Interrupt.lst) OBJECT(.\Interrupt.obj)
+
+line level    source
+
+   1          /*******************************************************************************************************
+   2          **** Copyright：  (c)Copyright 2019,浙江正泰仪器仪表有限责任公司,电能表应用研发     
+             -                  
+   3          ****                            All rights reserved.                                                 
+   4          **** FileName:    Interrupt.c                                                                          
+   5          **** Brief:       中断函数                                                                      
+   6          **** Author:      peter.he@chint.com                                                                 
+   7          **** Version:     V1.0                                                                               
+   8          **** Date:        2016-7-14                                                                          
+   9          ****                                                                                                 
+  10          **** note:修改历史记录列表，每条修改记录应包括修改日期、修改者                  
+             -                        
+  11          **** 1.  Author:                                                                                     
+  12          ****     Version:                                                                                    
+  13          ****     Date :                                                                                      
+  14          **** 2.  Author:                                                                                     
+  15          ****     Version:                                                                                       
+  16          ****     Date:
+  17          ****                                                                                        
+  18          ****  addtogroup:Library                                                             
+  19          **********************************************************************************************************
+             -/
+  20          
+  21          /*--------------------------------- 文件功能说明 ---------------------------------------------------
+             -----*/
+  22          /*
+  23           *  该文件所有函数的前缀为xxxx_
+  24           *  文件主函数和对外函数需放在文件的首部，并且主函数需要放在第一个位置;
+  25           *  函数注释采用标准模板，函数内部注释采用//;
+  26           *  对于注释较多的部分，可以增加一个注释符，然后详细说明放在文件的尾部;
+  27           *--------------------------------- 文件功能说明 ---------------------------------------------------
+             -----*/
+  28           
+  29          /**有形参的函数格式:*/
+  30          /*------------------------------------------------------------------------------------------------------*/
+  31          /**
+  32           *  @brief    xx任务处理函数
+  33           *
+  34           *  @param    xx :
+  35           *
+  36           *  @return   xx
+  37           *
+  38           *  @note     xx
+  39           *
+  40           */
+  41          /*------------------------------------------------------------------------------------------------------*/
+  42          /**无形参的函数格式:*/
+  43          /*------------------------------------------------------------------------------------------------------*/
+  44          /**
+  45           *  @brief    上电所有口线配置成初始状态，后面可根据需要开启和配置
+  46           *
+  47           *  @return   xx
+  48           *
+  49           *  @note     xx
+C51 COMPILER V9.54   INTERRUPT                                                             11/18/2021 18:53:12 PAGE 2   
+
+  50           *
+  51           */
+  52          /*------------------------------------------------------------------------------------------------------*/
+  53           
+  54           
+  55          /*----------------< 包含文件 >----------------------------------*/
+  56          #include "..\SourceFiles\PUB\Include.h"
+  57          
+  58          /*----------------< 宏定义区 >----------------------------------*/
+  59          
+  60          
+  61          /*----------------< 常量定义 >----------------------------------*/
+  62          
+  63          
+  64          /*----------------< 变量定义 >----------------------------------*/
+  65          
+  66          
+  67          /*----------------< 函数声明 >----------------------------------*/
+  68          
+  69          
+  70          /*----------------< 函数定义 >----------------------------------*/
+  71          /*------------------------------------------------------------------------------------------------------*/
+  72          /**
+  73           *  @brief    外部中断4,暂时不用
+  74           *
+  75           *  @return   xx
+  76           *
+  77           *  @note     xx
+  78           *
+  79           */
+  80          /*------------------------------------------------------------------------------------------------------*/
+  81          void Inter_INT4(void) interrupt 0
+  82          {
+  83   1              unsigned char xdata bak_PPBANK,FLASHCON_bak;
+  84   1              
+  85   1              FLASHCON_bak = FLASHCON;
+  86   1              FLASHCON = 0;
+  87   1              
+  88   1              PBANKLO = 0x55;                         // Set PSBANK LOCK                      *
+  89   1              bak_PPBANK = PBANK;                     // Set PSBANK                           *
+  90   1              PBANKLO = 0x00;
+  91   1              
+  92   1      #if ( METER_TYPE == METER_TYPE_DTSY666) 
+                      if((EXF0&0x10)==0x10)
+                      {
+                              EXF0=0x00;//清IF44外部中断标志
+                              if (GStr_EnergyPulseFw.ucPulseStatu & F_PULSESTATU_BUSY)        ///* 如果是在处理过程中 *///
+                              {
+                                      GStr_EnergyPulseFw.ucPulseAddBusy++;
+                              }
+                              else
+                              {
+                                      GStr_EnergyPulseFw.ucPulseAdd += GStr_EnergyPulseFw.ucPulseAddBusy;
+                                      GStr_EnergyPulseFw.ucPulseAdd++;
+                                      GStr_EnergyPulseFw.ucPulseAddBusy = 0;
+                              }
+                              Pulse_Out_Enable();
+                              GStr_Monitor.ulPulsewidth=0;///脉冲宽度开始计数
+                      }
+              #else
+ 110   1              IENX = 0x00;
+ 111   1              EXF0 = 0x00;
+C51 COMPILER V9.54   INTERRUPT                                                             11/18/2021 18:53:12 PAGE 3   
+
+ 112   1      #endif
+ 113   1              
+ 114   1              PBANKLO = 0x55;                         // Set PSBANK LOCK                      *
+ 115   1              PBANK = bak_PPBANK;                     // Set PSBANK                           *
+ 116   1              PBANKLO = 0x00; 
+ 117   1      
+ 118   1              FLASHCON = FLASHCON_bak;        
+ 119   1      }
+ 120          
+ 121          
+ 122          /*------------------------------------------------------------------------------------------------------*/
+ 123          /**
+ 124           *  @brief    定时器2，暂时没用
+ 125           *
+ 126           *  @return   xx
+ 127           *
+ 128           *  @note     xx
+ 129           *
+ 130           */
+ 131          /*------------------------------------------------------------------------------------------------------*/
+ 132          void Inter_Timer1(void) interrupt 3
+ 133          {
+ 134   1              unsigned char xdata bak_PPBANK,FLASHCON_bak;
+ 135   1      
+ 136   1              
+ 137   1              FLASHCON_bak = FLASHCON;
+ 138   1              FLASHCON = 0;
+ 139   1              
+ 140   1              PBANKLO = 0x55;                         // Set PSBANK LOCK                      *
+ 141   1              bak_PPBANK = PBANK;                     // Set PSBANK                           *
+ 142   1              PBANKLO = 0x00;
+ 143   1      
+ 144   1              
+ 145   1              IEN0 &= ~IEN0_ET1;
+ 146   1              TCON &= ~(TCON_TF1 | TCON_TR1);
+ 147   1              
+ 148   1      
+ 149   1              PBANKLO = 0x55;                         // Set PSBANK LOCK                      *
+ 150   1              PBANK = bak_PPBANK;                     // Set PSBANK                           *
+ 151   1              PBANKLO = 0x00; 
+ 152   1              
+ 153   1              FLASHCON = FLASHCON_bak;
+ 154   1      }
+ 155          /*------------------------------------------------------------------------------------------------------*/
+ 156          /**
+ 157           *  @brief    定时中断函数，基本节拍计数源，暂定2ms中断一次
+ 158           *
+ 159           *  @return   xx
+ 160           *
+ 161           *  @note     xx
+ 162           *
+ 163           */
+ 164          /*------------------------------------------------------------------------------------------------------*/
+ 165          void Inter_Timer0(void) interrupt 1
+ 166          {
+ 167   1              unsigned char xdata bak_PPBANK,FLASHCON_bak;
+ 168   1              
+ 169   1              FLASHCON_bak = FLASHCON;
+ 170   1              FLASHCON = 0;
+ 171   1              
+ 172   1              PBANKLO = 0x55;                         // Set PSBANK LOCK                      *
+ 173   1              bak_PPBANK = PBANK;                     // Set PSBANK                           *
+C51 COMPILER V9.54   INTERRUPT                                                             11/18/2021 18:53:12 PAGE 4   
+
+ 174   1              PBANKLO = 0x00;
+ 175   1      
+ 176   1      
+ 177   1              TCON &= ~TCON_TF0;      // 清除标志
+ 178   1      
+ 179   1              TL0 = T_Xms_TL0;        // 重新配置
+ 180   1          TH0 = T_Xms_TH0;
+ 181   1      
+ 182   1              // 检测一下掉电
+ 183   1              if( LPDCON2 & LPDCON2_LPD2F )
+ 184   1              {  
+ 185   2                      GStr_Flag.ucSystem |= F_PWOFF_NOW ; 
+ 186   2              }
+ 187   1              #if ( METER_TYPE == METER_TYPE_DTSY666) 
+                      if(GStr_Monitor.ulPulsewidth<C_PulseWidth)
+                      {
+                              GStr_Monitor.ulPulsewidth++;
+                              if(GStr_Monitor.ulPulsewidth>=C_PulseWidth)
+                              {
+                                       Pulse_Out_Disable() ;
+                              }
+                      }
+                      #endif
+ 197   1      
+ 198   1              GStr_Monitor.ulTimer_ms_old = GStr_Monitor.ulTimer_ms;
+ 199   1              if ( GStr_Monitor.ulTimer_ms < 0xffffffff )
+ 200   1              {
+ 201   2                      GStr_Monitor.ulTimer_ms++;
+ 202   2              }
+ 203   1              else
+ 204   1              {
+ 205   2                      GStr_Monitor.ulTimer_ms = 0;
+ 206   2              }
+ 207   1      
+ 208   1              PBANKLO = 0x55;                         // Set PSBANK LOCK                      *
+ 209   1              PBANK = bak_PPBANK;                     // Set PSBANK                           *
+ 210   1              PBANKLO = 0x00; 
+ 211   1              
+ 212   1              FLASHCON = FLASHCON_bak;
+ 213   1      }
+ 214          /*------------------------------------------------------------------------------------------------------*/
+ 215          /**
+ 216           *  @brief    串口通信，RS485通信中断
+ 217           *
+ 218           *  @return   xx
+ 219           *
+ 220           *  @note     xx
+ 221           *
+ 222           */
+ 223          /*------------------------------------------------------------------------------------------------------*/
+ 224          void Inter_EUART0(void) interrupt 4
+ 225          {
+ 226   1              uchar8 V_ucTempData;
+ 227   1              unsigned char xdata bak_PPBANK,FLASHCON_bak;
+ 228   1              
+ 229   1              FLASHCON_bak = FLASHCON;
+ 230   1              FLASHCON = 0;
+ 231   1              
+ 232   1              PBANKLO = 0x55;                         // Set PSBANK LOCK                      *
+ 233   1              bak_PPBANK = PBANK;                     // Set PSBANK                           *
+ 234   1              PBANKLO = 0x00;
+ 235   1              
+C51 COMPILER V9.54   INTERRUPT                                                             11/18/2021 18:53:12 PAGE 5   
+
+ 236   1      
+ 237   1              // @brief 接收：往缓存里发送一个字节 
+ 238   1              
+ 239   1              if( TI )
+ 240   1              {
+ 241   2                      TI = 0; 
+ 242   2                      
+ 243   2                      Gstr_UartComm[CH_485].ucCommSndCnt++;
+ 244   2                      if ( Gstr_UartComm[CH_485].ucCommSndCnt < Gstr_UartComm[CH_485].ucCommSndLen )
+ 245   2                      {
+ 246   3                              Gstr_UartComm[CH_485].ulCommSndByteOverTime = LibPub_GetTimerBeatInt0() ;
+ 247   3                              ACC = Gstr_UartComm[CH_485].ucaCommTXBuff[Gstr_UartComm[CH_485].ucCommSndCnt];
+ 248   3                              if( P )
+ 249   3                              {
+ 250   4                                      TB8 = 1;
+ 251   4                              }
+ 252   3                              else
+ 253   3                              {
+ 254   4                                      TB8 = 0;
+ 255   4                              }
+ 256   3                              SBUF = Gstr_UartComm[CH_485].ucaCommTXBuff[Gstr_UartComm[CH_485].ucCommSndCnt] ;
+ 257   3                      }
+ 258   2                      else
+ 259   2                      {
+ 260   3                              Gstr_UartComm[CH_485].ucCommChStatus = API_COMM_STATUS_ERROR; 
+ 261   3                      }
+ 262   2              }
+ 263   1              
+ 264   1                      
+ 265   1              // @brief 接收：从缓存里接收一个字节 
+ 266   1              if( RI )
+ 267   1              {
+ 268   2                      RI = 0; 
+ 269   2                      V_ucTempData = SBUF; 
+ 270   2                      
+ 271   2                      // 判断一下是否偶校验
+ 272   2                      // ACC = V_ucTempData;
+ 273   2                      // if( P == RB81 )
+ 274   2                      {
+ 275   3                              ApiDLT645_UARTReceiveDataJudge0( CH_485 , V_ucTempData);
+ 276   3                      }
+ 277   2              }       
+ 278   1              
+ 279   1              PBANKLO = 0x55;                         // Set PSBANK LOCK                      *
+ 280   1              PBANK = bak_PPBANK;                     // Set PSBANK                           *
+ 281   1              PBANKLO = 0x00; 
+ 282   1      
+ 283   1              FLASHCON = FLASHCON_bak;        
+ 284   1      }
+ 285          
+ 286          /*------------------------------------------------------------------------------------------------------*/
+ 287          /**
+ 288           *  @brief    串口通信，蓝牙通信中断
+ 289           *
+ 290           *  @return   xx
+ 291           *
+ 292           *  @note     xx
+ 293           *
+ 294           */
+ 295          /*------------------------------------------------------------------------------------------------------*/
+ 296          void Inter_EUART1(void) interrupt 9
+ 297          {
+C51 COMPILER V9.54   INTERRUPT                                                             11/18/2021 18:53:12 PAGE 6   
+
+ 298   1              uchar8 V_ucTempData;
+ 299   1              unsigned char xdata bak_PPBANK,FLASHCON_bak;
+ 300   1      
+ 301   1                      
+ 302   1              FLASHCON_bak = FLASHCON;
+ 303   1              FLASHCON = 0;
+ 304   1              
+ 305   1              PBANKLO = 0x55;                         // Set PSBANK LOCK                      *
+ 306   1              bak_PPBANK = PBANK;                     // Set PSBANK                           *
+ 307   1              PBANKLO = 0x00;
+ 308   1              
+ 309   1      
+ 310   1              // @brief 接收：往缓存里发送一个字节 
+ 311   1              
+ 312   1              if( TI1 )
+ 313   1              {
+ 314   2                      TI1 = 0; 
+ 315   2                      
+ 316   2                      Gstr_UartComm[CH_BLE].ucCommSndCnt++;
+ 317   2                      if ( Gstr_UartComm[CH_BLE].ucCommSndCnt < Gstr_UartComm[CH_BLE].ucCommSndLen )
+ 318   2                      {
+ 319   3                              Gstr_UartComm[CH_BLE].ulCommSndByteOverTime = LibPub_GetTimerBeatInt1() ;
+ 320   3                              ACC = Gstr_UartComm[CH_BLE].ucaCommTXBuff[Gstr_UartComm[CH_BLE].ucCommSndCnt];
+ 321   3                              if( P )
+ 322   3                              {
+ 323   4                                      TB81 = 1;
+ 324   4                              }
+ 325   3                              else
+ 326   3                              {
+ 327   4                                      TB81 = 0;
+ 328   4                              }
+ 329   3                              SBUF1 = Gstr_UartComm[CH_BLE].ucaCommTXBuff[Gstr_UartComm[CH_BLE].ucCommSndCnt] ;
+ 330   3                      }
+ 331   2                      else
+ 332   2                      {
+ 333   3                              Gstr_UartComm[CH_BLE].ucCommChStatus = API_COMM_STATUS_ERROR;
+ 334   3                      }
+ 335   2              }
+ 336   1              
+ 337   1                      
+ 338   1              // @brief 接收：从缓存里接收一个字节 
+ 339   1              if( RI1 )
+ 340   1              {
+ 341   2                      RI1 = 0; 
+ 342   2                      V_ucTempData = SBUF1; 
+ 343   2                      
+ 344   2                      // 判断一下是否偶校验
+ 345   2      //              ACC = V_ucTempData;
+ 346   2      //              if( P == RB81 )         
+ 347   2                      {
+ 348   3                              ApiDLT645_UARTReceiveDataJudge1( CH_BLE , V_ucTempData);        /*正常为Judge1，导轨表只有蓝牙一�
+             -�uart0，用485通信时帧解析调用ApiDLT645_UARTReceiveDataJudge0函数*/
+ 349   3                      }
+ 350   2              }
+ 351   1              
+ 352   1              PBANKLO = 0x55;                         // Set PSBANK LOCK                      *
+ 353   1              PBANK = bak_PPBANK;                     // Set PSBANK                           *
+ 354   1              PBANKLO = 0x00;         
+ 355   1      
+ 356   1              FLASHCON = FLASHCON_bak;        
+ 357   1      }
+ 358          
+C51 COMPILER V9.54   INTERRUPT                                                             11/18/2021 18:53:12 PAGE 7   
+
+ 359          /*------------------------------------------------------------------------------------------------------*/
+ 360          /**
+ 361           *  @brief    定时器2中断
+ 362           *
+ 363           *  @return   xx
+ 364           *
+ 365           *  @note     xx
+ 366           *
+ 367           */
+ 368          /*------------------------------------------------------------------------------------------------------*/
+ 369          void Inter_Timer2(void) interrupt 5
+ 370          {
+ 371   1              unsigned char xdata bak_PPBANK,FLASHCON_bak;
+ 372   1      
+ 373   1              FLASHCON_bak = FLASHCON;
+ 374   1              FLASHCON = 0;
+ 375   1              
+ 376   1              PBANKLO = 0x55;                         // Set PSBANK LOCK                      *
+ 377   1              bak_PPBANK = PBANK;                     // Set PSBANK                           *
+ 378   1              PBANKLO = 0x00;
+ 379   1              
+ 380   1              
+ 381   1              IEN0  &= ~IEN0_ET2;
+ 382   1              T2CON &= ~(T2CON_TF2 | T2CON_EXF2 | T2CON_EXEN2 | T2CON_TR2 );
+ 383   1      
+ 384   1              PBANKLO = 0x55;                         // Set PSBANK LOCK                      *
+ 385   1              PBANK = bak_PPBANK;                     // Set PSBANK                           *
+ 386   1              PBANKLO = 0x00;         
+ 387   1      
+ 388   1              FLASHCON = FLASHCON_bak;
+ 389   1      }
+ 390          /*------------------------------------------------------------------------------------------------------*/
+ 391          /**
+ 392           *  @brief    ADC/TPS中断
+ 393           *
+ 394           *  @return   xx
+ 395           *
+ 396           *  @note     xx
+ 397           *
+ 398           */
+ 399          /*------------------------------------------------------------------------------------------------------*/
+ 400          void Inter_ADC_TPS(void) interrupt 6
+ 401          {
+ 402   1              unsigned char xdata bak_PPBANK,FLASHCON_bak;
+ 403   1      
+ 404   1              FLASHCON_bak = FLASHCON;
+ 405   1              FLASHCON = 0;
+ 406   1              
+ 407   1              PBANKLO = 0x55;                         // Set PSBANK LOCK                      *
+ 408   1              bak_PPBANK = PBANK;                     // Set PSBANK                           *
+ 409   1              PBANKLO = 0x00;
+ 410   1              
+ 411   1              
+ 412   1              IEN0  &= ~IEN0_EADTP;
+ 413   1              ADCON &= ~(ADCON_ADON | ADCON_ADCIF | ADCON_TPSCON );
+ 414   1      
+ 415   1              PBANKLO = 0x55;                         // Set PSBANK LOCK                      *
+ 416   1              PBANK = bak_PPBANK;                     // Set PSBANK                           *
+ 417   1              PBANKLO = 0x00;         
+ 418   1              
+ 419   1              FLASHCON = FLASHCON_bak;
+ 420   1      }
+C51 COMPILER V9.54   INTERRUPT                                                             11/18/2021 18:53:12 PAGE 8   
+
+ 421          /*------------------------------------------------------------------------------------------------------*/
+ 422          /**
+ 423           *  @brief    EMU中断
+ 424           *
+ 425           *  @return   xx
+ 426           *
+ 427           *  @note     xx
+ 428           *
+ 429           */
+ 430          /*------------------------------------------------------------------------------------------------------*/
+ 431          void Inter_EMU(void) interrupt 7
+ 432          {               
+ 433   1              #if ( METER_TYPE != METER_TYPE_DTSY666)
+ 434   1              uchar8 V_ucTempEMUIF;
+ 435   1              #endif
+ 436   1              unsigned char xdata bak_PPBANK,FLASHCON_bak;    
+ 437   1              
+ 438   1              FLASHCON_bak = FLASHCON;
+ 439   1              FLASHCON = 0;
+ 440   1      
+ 441   1              
+ 442   1              PBANKLO = 0x55;                         // Set PSBANK LOCK                      *
+ 443   1              bak_PPBANK = PBANK;                     // Set PSBANK                           *
+ 444   1              PBANKLO = 0x00;
+ 445   1              
+ 446   1              #if ( METER_TYPE != METER_TYPE_DTSY666)
+ 447   1              V_ucTempEMUIF = EMUIF;  
+ 448   1              EMUIF = 0x00;
+ 449   1              
+ 450   1              if ( V_ucTempEMUIF & EMUIF_PFIF )       ///* 有产生脉冲中断，因为是SOC，所以可以省去判断沿
+             -的烦恼 *///
+ 451   1              {
+ 452   2                      if (GStr_EnergyPulseFw.ucPulseStatu & F_PULSESTATU_BUSY)        ///* 如果是在处理过程中 *///
+ 453   2                      {
+ 454   3                              GStr_EnergyPulseFw.ucPulseAddBusy++;
+ 455   3                      }
+ 456   2                      else
+ 457   2                      {
+ 458   3                              GStr_EnergyPulseFw.ucPulseAdd += GStr_EnergyPulseFw.ucPulseAddBusy;
+ 459   3                              GStr_EnergyPulseFw.ucPulseAdd++;
+ 460   3                              GStr_EnergyPulseFw.ucPulseAddBusy = 0;
+ 461   3                      }
+ 462   2              }
+ 463   1              #else
+                      IEN1 &= ~IEN1_EEMU;///关闭EMU中断
+                      #endif
+ 466   1              
+ 467   1              PBANKLO = 0x55;                         // Set PSBANK LOCK                      *
+ 468   1              PBANK = bak_PPBANK;                     // Set PSBANK                           *
+ 469   1              PBANKLO = 0x00;
+ 470   1      
+ 471   1              
+ 472   1              FLASHCON = FLASHCON_bak;
+ 473   1      }
+ 474          /*------------------------------------------------------------------------------------------------------*/
+ 475          /**
+ 476           *  @brief    RTC中断
+ 477           *
+ 478           *  @return   xx
+ 479           *
+ 480           *  @note     xx
+ 481           *
+C51 COMPILER V9.54   INTERRUPT                                                             11/18/2021 18:53:12 PAGE 9   
+
+ 482           */
+ 483          /*------------------------------------------------------------------------------------------------------*/
+ 484          void Inter_RTC(void) interrupt 8
+ 485          {
+ 486   1              unsigned char xdata bak_PPBANK,FLASHCON_bak;
+ 487   1      
+ 488   1              FLASHCON_bak = FLASHCON;
+ 489   1              FLASHCON = 0;
+ 490   1              
+ 491   1              PBANKLO = 0x55;                         // Set PSBANK LOCK                      *
+ 492   1              bak_PPBANK = PBANK;                     // Set PSBANK                           *
+ 493   1              PBANKLO = 0x00;
+ 494   1              
+ 495   1              
+ 496   1              RTCIE = 0X00;
+ 497   1              RTCIF = 0X00;
+ 498   1              IEN1  &= ~IEN1_ERTC;
+ 499   1              
+ 500   1              
+ 501   1              PBANKLO = 0x55;                         // Set PSBANK LOCK                      *
+ 502   1              PBANK = bak_PPBANK;                     // Set PSBANK                           *
+ 503   1              PBANKLO = 0x00;
+ 504   1      
+ 505   1      
+ 506   1              FLASHCON = FLASHCON_bak ;
+ 507   1      }
+ 508          
+ 509          /*------------------------------------------------------------------------------------------------------*/
+ 510          /**
+ 511           *  @brief    LPD中断,中断里就置一下位就好，掉电在主循环中检测
+ 512           *
+ 513           *  @return   xx
+ 514           *
+ 515           *  @note     xx
+ 516           *
+ 517           */
+ 518          /*------------------------------------------------------------------------------------------------------*/
+ 519          void Inter_LPD(void) interrupt 12
+ 520          { 
+ 521   1              unsigned char xdata bak_PPBANK,FLASHCON_bak;
+ 522   1              
+ 523   1      
+ 524   1              FLASHCON_bak = FLASHCON;
+ 525   1              FLASHCON = 0;
+ 526   1              
+ 527   1              PBANKLO = 0x55;                         // Set PSBANK LOCK                      *
+ 528   1              bak_PPBANK = PBANK;                     // Set PSBANK                           *
+ 529   1              PBANKLO = 0x00; 
+ 530   1      
+ 531   1              DIS_LPD_INT();
+ 532   1              LPDCON1 = 0x00;
+ 533   1              
+ 534   1      //      if( LPDCON2 & LPDCON2_LPD2F )
+ 535   1      //      { 
+ 536   1      //              LPDCON2 &= ~LPDCON2_LPD2F;
+ 537   1      //              GStr_Flag.ucSystem |= F_PWOFF_NOW ; 
+ 538   1      //      }
+ 539   1      
+ 540   1      
+ 541   1              PBANKLO = 0x55;                         // Set PSBANK LOCK                      *
+ 542   1              PBANK = bak_PPBANK;                     // Set PSBANK                           *
+ 543   1              PBANKLO = 0x00;         
+C51 COMPILER V9.54   INTERRUPT                                                             11/18/2021 18:53:12 PAGE 10  
+
+ 544   1      
+ 545   1      
+ 546   1              FLASHCON = FLASHCON_bak;
+ 547   1      }
+ 548          /*------------------------------------------------------------------------------------------------------*/
+ 549          /**
+ 550           *  @brief    EUART3中断
+ 551           *
+ 552           *  @return   xx
+ 553           *
+ 554           *  @note     xx
+ 555           *
+ 556           */
+ 557          /*------------------------------------------------------------------------------------------------------*/
+ 558          void Inter_EUART3(void) interrupt 14
+ 559          { 
+ 560   1              unsigned char xdata bak_PPBANK,FLASHCON_bak;
+ 561   1      
+ 562   1      
+ 563   1              FLASHCON_bak = FLASHCON;
+ 564   1              FLASHCON = 0;
+ 565   1              
+ 566   1              PBANKLO = 0x55;                         // Set PSBANK LOCK                      *
+ 567   1              bak_PPBANK = PBANK;                     // Set PSBANK                           *
+ 568   1              PBANKLO = 0x00;
+ 569   1              
+ 570   1              
+ 571   1              SCON3 &= ~( SCON3_TI3 | SCON3_RI3) ; 
+ 572   1              IEN1  &= ~IEN1_ERTC;
+ 573   1              
+ 574   1              PBANKLO = 0x55;                         // Set PSBANK LOCK                      *
+ 575   1              PBANK = bak_PPBANK;                     // Set PSBANK                           *
+ 576   1              PBANKLO = 0x00;
+ 577   1              
+ 578   1      
+ 579   1              FLASHCON = FLASHCON_bak;
+ 580   1      }
+C51 COMPILER V9.54   INTERRUPT                                                             11/18/2021 18:53:12 PAGE 11  
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+uint16_t . . . . . . . . . . . . . . .  TYPEDEF  -----  U_INT    -----  2
+IB_CON2. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00F3H  1
+COMM_BLE_STAT. . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+API_COMM_STATUS_OVERTIME . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+TB81 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00DBH  1
+P0 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0080H  1
+IB_CON3. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00F4H  1
+FP64 . . . . . . . . . . . . . . . . .  TYPEDEF  -----  FLOAT    -----  4
+TKCON. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A4H  1
+P1 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0090H  1
+IB_CON4. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00F5H  1
+PASLO. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E7H  1
+GStr_ENERGYDEC_Type. . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  26
+  ucaFw_EnergyDec. . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  13
+  ucaBk_EnergyDec. . . . . . . . . . .  MEMBER   -----  ARRAY    000DH  13
+P2 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A0H  1
+OSCLO. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00FEH  1
+IB_CON5. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00F6H  1
+GStr_EventRecordNum_Type . . . . . . .  TYPEDEF  -----  STRUCT   -----  26
+  ucEventTimes . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  24
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    0018H  2
+GStr_FLAG_Type . . . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  16
+  ucSystem . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0000H  1
+  ucMeterMode. . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0001H  1
+  ucPwOnState. . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0002H  1
+  ucRunState . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0003H  1
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    0004H  2
+  ucRunState2. . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0006H  1
+  ucRunState1. . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0007H  1
+  ucRunState3. . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0008H  1
+  ucDisp . . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0009H  1
+  ucFactoryKey . . . . . . . . . . . .  MEMBER   -----  U_CHAR   000AH  1
+  ucDispKey. . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   000BH  1
+  ucMoney. . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   000CH  1
+  ucPowerOnFlag. . . . . . . . . . . .  MEMBER   -----  U_CHAR   000DH  1
+  ucWrE2promSafeByte . . . . . . . . .  MEMBER   -----  U_CHAR   000EH  1
+  ucBLESTATFlag. . . . . . . . . . . .  MEMBER   -----  U_CHAR   000FH  1
+BOOLEAN. . . . . . . . . . . . . . . .  TYPEDEF  -----  U_CHAR   -----  1
+SM1_RXOV . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      009EH  1
+P3 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B0H  1
+AC . . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00D6H  1
+P4 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C0H  1
+SPCON. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A1H  1
+SBRTH. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   009CH  1
+P5 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E9H  1
+Inter_INT4 . . . . . . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+  bak_PPBANK . . . . . . . . . . . . .  * REG *  DATA   U_CHAR   0006H  1
+  FLASHCON_bak . . . . . . . . . . . .  * REG *  DATA   U_CHAR   0007H  1
+LIB_E2P_Price_BAK. . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+EA . . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00AFH  1
+P6 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00EAH  1
+Inter_ADC_TPS. . . . . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+  bak_PPBANK . . . . . . . . . . . . .  * REG *  DATA   U_CHAR   0006H  1
+  FLASHCON_bak . . . . . . . . . . . .  * REG *  DATA   U_CHAR   0007H  1
+LIB_E2P_Display_Table. . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+GStr_DISPLAY_PARA_Type . . . . . . . .  TYPEDEF  -----  STRUCT   -----  129
+  ucFullDisp_Time. . . . . . . . . . .  MEMBER   -----  U_CHAR   0000H  1
+C51 COMPILER V9.54   INTERRUPT                                                             11/18/2021 18:53:12 PAGE 12  
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+  ucDispDurTime. . . . . . . . . . . .  MEMBER   -----  U_CHAR   0001H  1
+  ucAutoDispNum. . . . . . . . . . . .  MEMBER   -----  U_CHAR   0002H  1
+  ucKeyDispNum . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0003H  1
+  usDisp_ParaCRC16 . . . . . . . . . .  MEMBER   -----  U_INT    0004H  2
+  ucAutoDisptable. . . . . . . . . . .  MEMBER   -----  ARRAY    0006H  30
+  ucKeyDisptable . . . . . . . . . . .  MEMBER   -----  ARRAY    0024H  30
+  usDisp_tableCRC16. . . . . . . . . .  MEMBER   -----  U_INT    0042H  2
+  ucBackLightTime. . . . . . . . . . .  MEMBER   -----  U_CHAR   0044H  1
+  ucRelayLEDTime . . . . . . . . . . .  MEMBER   -----  U_CHAR   0045H  1
+  ulDispUpdataTime . . . . . . . . . .  MEMBER   -----  U_LONG   0046H  4
+  usDispCnt. . . . . . . . . . . . . .  MEMBER   -----  U_INT    004AH  2
+  ulDisptimer. . . . . . . . . . . . .  MEMBER   -----  U_LONG   004CH  4
+  ucKeydelaytimer. . . . . . . . . . .  MEMBER   -----  U_CHAR   0050H  1
+  ucFirstKeyDisp . . . . . . . . . . .  MEMBER   -----  U_CHAR   0051H  1
+  ucDisp_0_flag. . . . . . . . . . . .  MEMBER   -----  U_CHAR   0052H  1
+  ucDisp_tongxin_Flag. . . . . . . . .  MEMBER   -----  U_CHAR   0053H  1
+  ucDisp_tongxin_Time. . . . . . . . .  MEMBER   -----  U_LONG   0054H  4
+  ucDispNum. . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0058H  1
+  ucLCDDrvDispBuf. . . . . . . . . . .  MEMBER   -----  ARRAY    0059H  40
+int32_t. . . . . . . . . . . . . . . .  TYPEDEF  -----  LONG     -----  4
+P7 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00EBH  1
+IB_DATA. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00EFH  1
+P8 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00ECH  1
+int16_t. . . . . . . . . . . . . . . .  TYPEDEF  -----  INT      -----  2
+SBRTL. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   009DH  1
+P9 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00EDH  1
+PBANKLO. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B7H  1
+GStr_COUNTER_Type. . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  9
+  ucFactoryMode_Cnt. . . . . . . . . .  MEMBER   -----  U_INT    0000H  2
+  ucKeyRelayOn_Cnt . . . . . . . . . .  MEMBER   -----  U_INT    0002H  2
+  ucRelayDelay_Cnt . . . . . . . . . .  MEMBER   -----  U_CHAR   0004H  1
+  ucHoldMoney_Cnt. . . . . . . . . . .  MEMBER   -----  U_CHAR   0005H  1
+  ucPasswordErr_Cnt. . . . . . . . . .  MEMBER   -----  ARRAY    0006H  3
+SPSTA. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A2H  1
+IEN0 . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A8H  1
+PWRCON1. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B3H  1
+ulong32. . . . . . . . . . . . . . . .  TYPEDEF  -----  U_LONG   -----  4
+EMUSR. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0095H  1
+IEN1 . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A9H  1
+PWRCON2. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B4H  1
+DPH1 . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0085H  1
+P0_0 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0080H  1
+ushort16 . . . . . . . . . . . . . . .  TYPEDEF  -----  U_INT    -----  2
+P1_0 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0090H  1
+P0_1 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0081H  1
+ADCH . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C3H  1
+BLE_DRV_OPERATION_INDEX. . . . . . . .  TYPEDEF  -----  U_CHAR   -----  1
+LIB_E2P_SOFTI_J. . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+P2_0 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00A0H  1
+P1_1 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0091H  1
+P0_2 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0082H  1
+IPH0 . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00BAH  1
+DPL1 . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0084H  1
+size_t . . . . . . . . . . . . . . . .  TYPEDEF  -----  U_INT    -----  2
+LIB_E2P_FUN_CONFIG_BAK . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+GStr_MONITOR_Tpye. . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  59
+  ulTimer_ms . . . . . . . . . . . . .  MEMBER   -----  U_LONG   0000H  4
+C51 COMPILER V9.54   INTERRUPT                                                             11/18/2021 18:53:12 PAGE 13  
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+  ulTimer_ms_old . . . . . . . . . . .  MEMBER   -----  U_LONG   0004H  4
+  ulTimerClrWDT. . . . . . . . . . . .  MEMBER   -----  U_LONG   0008H  4
+  ulTimerMin . . . . . . . . . . . . .  MEMBER   -----  U_LONG   000CH  4
+  ulTimer5ms . . . . . . . . . . . . .  MEMBER   -----  U_LONG   0010H  4
+  ucPowerOnTimer . . . . . . . . . . .  MEMBER   -----  U_CHAR   0014H  1
+  ulTimers . . . . . . . . . . . . . .  MEMBER   -----  U_LONG   0015H  4
+  ulUpDateUIPTime. . . . . . . . . . .  MEMBER   -----  U_LONG   0019H  4
+  ulSoftI_JTime. . . . . . . . . . . .  MEMBER   -----  U_LONG   001DH  4
+  usSoftI_JTimeCRC16 . . . . . . . . .  MEMBER   -----  U_INT    0021H  2
+  usPasswordErrTime. . . . . . . . . .  MEMBER   -----  ARRAY    0023H  8
+  ucCommSymbolTime . . . . . . . . . .  MEMBER   -----  U_CHAR   002BH  1
+  ucPowerLimitNum. . . . . . . . . . .  MEMBER   -----  U_CHAR   002CH  1
+  ulOverDemandCloseTime. . . . . . . .  MEMBER   -----  U_LONG   002DH  4
+  ulProgEventDelayTime . . . . . . . .  MEMBER   -----  U_LONG   0031H  4
+  ulReadRandom2DelayTime . . . . . . .  MEMBER   -----  U_LONG   0035H  4
+  ucBleAdvCnt. . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0039H  1
+  ucBleConnectCnt. . . . . . . . . . .  MEMBER   -----  U_CHAR   003AH  1
+P3_0 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00B0H  1
+P2_1 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00A1H  1
+P1_2 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0092H  1
+P0_3 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0083H  1
+IPH1 . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00BBH  1
+COMM_BLE_MAC . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+P4_0 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00C0H  1
+P3_1 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00B1H  1
+P2_2 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00A2H  1
+P1_3 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0093H  1
+P0_4 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0084H  1
+EXF0 . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E8H  1
+P4_1 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00C1H  1
+P3_2 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00B2H  1
+P2_3 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00A3H  1
+P1_4 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0094H  1
+P0_5 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0085H  1
+P4_2 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00C2H  1
+P3_3 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00B3H  1
+P2_4 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00A4H  1
+P1_5 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0095H  1
+P0_6 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0086H  1
+EXF2 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00CEH  1
+TKF0 . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A6H  1
+IPL0 . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B8H  1
+LIB_E2P_ENRGY_BAK. . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+P4_3 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00C3H  1
+P3_4 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00B4H  1
+P2_5 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00A5H  1
+P1_6 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0096H  1
+P0_7 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0087H  1
+REN1 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00DCH  1
+IPL1 . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B9H  1
+LIB_E2P_EventNum . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+long32 . . . . . . . . . . . . . . . .  TYPEDEF  -----  LONG     -----  4
+P4_4 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00C4H  1
+P3_5 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00B5H  1
+P2_6 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00A6H  1
+P1_7 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0097H  1
+TK0H . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E2H  1
+C51 COMPILER V9.54   INTERRUPT                                                             11/18/2021 18:53:12 PAGE 14  
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+SUSLO. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   008EH  1
+Inter_EUART0 . . . . . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+  V_ucTempData . . . . . . . . . . . .  * REG *  DATA   U_CHAR   0007H  1
+  bak_PPBANK . . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0000H  1
+  FLASHCON_bak . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0001H  1
+P4_5 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00C5H  1
+P3_6 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00B6H  1
+P2_7 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00A7H  1
+TK1H . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E4H  1
+Inter_EUART1 . . . . . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+  V_ucTempData . . . . . . . . . . . .  * REG *  DATA   U_CHAR   0007H  1
+  bak_PPBANK . . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0000H  1
+  FLASHCON_bak . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0001H  1
+Inter_Timer0 . . . . . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+  bak_PPBANK . . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0000H  1
+  FLASHCON_bak . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0001H  1
+P4_6 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00C6H  1
+P3_7 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00B7H  1
+TK2H . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E6H  1
+Inter_Timer1 . . . . . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+  bak_PPBANK . . . . . . . . . . . . .  * REG *  DATA   U_CHAR   0006H  1
+  FLASHCON_bak . . . . . . . . . . . .  * REG *  DATA   U_CHAR   0007H  1
+LIB_E2P_Money_BAK. . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+short16. . . . . . . . . . . . . . . .  TYPEDEF  -----  INT      -----  2
+P4_7 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00C7H  1
+RI . . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0098H  1
+Inter_EUART3 . . . . . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+  bak_PPBANK . . . . . . . . . . . . .  * REG *  DATA   U_CHAR   0006H  1
+  FLASHCON_bak . . . . . . . . . . . .  * REG *  DATA   U_CHAR   0004H  1
+Inter_Timer2 . . . . . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+  bak_PPBANK . . . . . . . . . . . . .  * REG *  DATA   U_CHAR   0006H  1
+  FLASHCON_bak . . . . . . . . . . . .  * REG *  DATA   U_CHAR   0007H  1
+GStr_EnergyPulseFw . . . . . . . . . .  EXTERN   XDATA  STRUCT   -----  8
+E7816. . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00AAH  1
+CY . . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00D7H  1
+TK0L . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E1H  1
+API_COMM_STATUS_ERROR. . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+TI . . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0099H  1
+EADR . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0091H  1
+TK1L . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E3H  1
+TK2L . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E5H  1
+SADEN1 . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00DBH  1
+SM10_FE1 . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00DFH  1
+SADEN2 . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00FBH  1
+LIB_E2P_EMU_CALPARA. . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+GStr_ENERGY_PULSE_Type . . . . . . . .  TYPEDEF  -----  STRUCT   -----  8
+  ucPulseAdd . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0000H  1
+  ucPulseAddBusy . . . . . . . . . . .  MEMBER   -----  U_CHAR   0001H  1
+  ucPulseStatu . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0002H  1
+  ucPulseDecimal . . . . . . . . . . .  MEMBER   -----  U_CHAR   0003H  1
+  ucPulseDecSavePtr. . . . . . . . . .  MEMBER   -----  U_CHAR   0004H  1
+  ucPulseDecSaveNoFF . . . . . . . . .  MEMBER   -----  U_CHAR   0005H  1
+  ucaPulseRemain . . . . . . . . . . .  MEMBER   -----  ARRAY    0006H  2
+PS0L . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00BCH  1
+PT0L . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00B9H  1
+SADDR1 . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00DAH  1
+LIB_E2P_INDEX_MAX. . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+C51 COMPILER V9.54   INTERRUPT                                                             11/18/2021 18:53:12 PAGE 15  
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+LIB_E2P_Display_Para . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+SM12_TXCOL1. . . . . . . . . . . . . .  ABSBIT   -----  BIT      00DDH  1
+PT1L . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00BBH  1
+SADDR2 . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00FAH  1
+RCAP2H . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00CBH  1
+COMM_BLE_MOD . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+PT2L . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00BDH  1
+SP . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0081H  1
+LibPub_GetTimerBeatInt0. . . . . . . .  EXTERN   CODE   PROC     -----  -----
+INT32S . . . . . . . . . . . . . . . .  TYPEDEF  -----  LONG     -----  4
+OV . . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00D2H  1
+LIB_E2P_EventNumPiont. . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+LibPub_GetTimerBeatInt1. . . . . . . .  EXTERN   CODE   PROC     -----  -----
+GStr_METER_IFO_Type. . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  27
+  ucaCommAddr. . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  6
+  ucaMeterID . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0006H  6
+  ucaUserID. . . . . . . . . . . . . .  MEMBER   -----  ARRAY    000CH  6
+  ucVoltageTrans . . . . . . . . . . .  MEMBER   -----  ARRAY    0012H  3
+  ucCurrentTrans . . . . . . . . . . .  MEMBER   -----  ARRAY    0015H  3
+  ucBpsVal . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0018H  1
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    0019H  2
+RCAP2L . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00CAH  1
+INT32U . . . . . . . . . . . . . . . .  TYPEDEF  -----  U_LONG   -----  4
+INT16S . . . . . . . . . . . . . . . .  TYPEDEF  -----  INT      -----  2
+_ApiDLT645_UARTReceiveDataJudge0 . . .  EXTERN   CODE   PROC     -----  -----
+_ApiDLT645_UARTReceiveDataJudge1 . . .  EXTERN   CODE   PROC     -----  -----
+INT16U . . . . . . . . . . . . . . . .  TYPEDEF  -----  U_INT    -----  2
+PX4L . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00B8H  1
+C_T2 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00C9H  1
+SFINE2 . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00DEH  1
+GStr_BLE_GROUP_Type. . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  26
+  ucBleMAC . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  6
+  ucBleName. . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0006H  12
+  ucBleKey . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0012H  3
+  usAdvTime. . . . . . . . . . . . . .  MEMBER   -----  U_INT    0015H  2
+  ucBleTPL . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0017H  1
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    0018H  2
+COMM_BLE_MFV . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+GStr_EventNumPiont_Type. . . . . . . .  TYPEDEF  -----  STRUCT   -----  8
+  uc_Num . . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  6
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    0006H  2
+IRCON1 . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00ADH  1
+IRCON2 . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00AFH  1
+GStr_Comm_MAP. . . . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  14
+  ucaDataId. . . . . . . . . . . . . .  MEMBER   -----  U_LONG   0000H  4
+  ucaRamAdd. . . . . . . . . . . . . .  MEMBER   -----  PTR      0004H  3
+  IsWrite. . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0007H  1
+  ucaE2pIndex. . . . . . . . . . . . .  MEMBER   -----  U_INT    0008H  2
+  ucaE2offset. . . . . . . . . . . . .  MEMBER   -----  U_CHAR   000AH  1
+  ucaDataLen . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   000BH  1
+  IsBCD. . . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   000CH  1
+  EEIsHEX. . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   000DH  1
+API_COMM_STATUS_IDLE . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+Gstr_UartComm. . . . . . . . . . . . .  EXTERN   XDATA  ARRAY    -----  -----
+EXCON1 . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00ABH  1
+SBUF . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0099H  1
+EXCON2 . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00ACH  1
+C51 COMPILER V9.54   INTERRUPT                                                             11/18/2021 18:53:12 PAGE 16  
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+PCON . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0087H  1
+B32_B08. . . . . . . . . . . . . . . .  * TAG *  -----  UNION    -----  4
+  B08. . . . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  4
+  B16. . . . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  4
+  B32. . . . . . . . . . . . . . . . .  MEMBER   -----  U_LONG   0000H  4
+AUXC . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00F1H  1
+COMM_BLE_TPL . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+GStr_UART_COMM_Type. . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  423
+  ucCommChStatus . . . . . . . . . . .  MEMBER   -----  U_CHAR   0000H  1
+  ucCommRevStep. . . . . . . . . . . .  MEMBER   -----  U_CHAR   0001H  1
+  ucCommRevLen . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0002H  1
+  ucCommSndLen . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0003H  1
+  ucCommSndCnt . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0004H  1
+  ucCommAddrType . . . . . . . . . . .  MEMBER   -----  U_CHAR   0005H  1
+  ucCommError. . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0006H  1
+  ulCommTimeInit . . . . . . . . . . .  MEMBER   -----  U_LONG   0007H  4
+  ulCommRcvByteOverTime. . . . . . . .  MEMBER   -----  U_LONG   000BH  4
+  ulCommSndByteOverTime. . . . . . . .  MEMBER   -----  U_LONG   000FH  4
+  ulCommRspOverTime. . . . . . . . . .  MEMBER   -----  U_LONG   0013H  4
+  ucaCommRXBuff. . . . . . . . . . . .  MEMBER   -----  ARRAY    0017H  200
+  ucaCommTXBuff. . . . . . . . . . . .  MEMBER   -----  ARRAY    00DFH  200
+GStr_ENERGY_Type . . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  10
+  ucaFw_Energy . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  4
+  ucaBk_Energy . . . . . . . . . . . .  MEMBER   -----  ARRAY    0004H  4
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    0008H  2
+GU_B32_B08_Type. . . . . . . . . . . .  TYPEDEF  -----  UNION    -----  4
+  B08. . . . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  4
+  B16. . . . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  4
+  B32. . . . . . . . . . . . . . . . .  MEMBER   -----  U_LONG   0000H  4
+SCON . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0098H  1
+TK0BASEH . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D4H  1
+TMOD . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0089H  1
+TCON . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0088H  1
+IENX . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00AAH  1
+IB_OFFSET. . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00EEH  1
+TK1BASEH . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D6H  1
+SBRT1H . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00DCH  1
+TK2BASEH . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00DFH  1
+SBRT2H . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00FCH  1
+RSTSTAT. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B1H  1
+LIB_E2P_Password . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+TK0BASEL . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D3H  1
+LIB_E2P_BLE_PARA . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+LIB_E2P_RUN_STATE. . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+TK1BASEL . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D5H  1
+SBRT1L . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00DDH  1
+COMM_BLE_TTP . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+EMU_EPADR_Type . . . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  5
+  ucEmuAddr. . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0000H  1
+  ulEmuRegData . . . . . . . . . . . .  MEMBER   -----  U_LONG   0001H  4
+TK2BASEL . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D7H  1
+SBRT2L . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00FDH  1
+API_COMM_STATUS_SEND . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+SM0_FE . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      009FH  1
+CLKCON . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B2H  1
+API_COMM_STATUS_RECV_OK. . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+SM2_TXCOL. . . . . . . . . . . . . . .  ABSBIT   -----  BIT      009DH  1
+C51 COMPILER V9.54   INTERRUPT                                                             11/18/2021 18:53:12 PAGE 17  
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+LDOCON . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B5H  1
+B. . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00F0H  1
+API_COMM_STATUS_RECV . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+EMU_CALPARA_Type . . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  22
+  ulaCalPara . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  20
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    0014H  2
+CP_RL2 . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00C8H  1
+LIB_E2P_EMU_UIPKms . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+Inter_LPD. . . . . . . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+  bak_PPBANK . . . . . . . . . . . . .  * REG *  DATA   U_CHAR   0006H  1
+  FLASHCON_bak . . . . . . . . . . . .  * REG *  DATA   U_CHAR   0007H  1
+GStr_UIP_GROUP_Type. . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  68
+  ulVoltage. . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  16
+  ulCurrent. . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0010H  16
+  ulPower. . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0020H  16
+  ulFactory. . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0030H  16
+  ulFrequency. . . . . . . . . . . . .  MEMBER   -----  U_LONG   0040H  4
+ENUM_API_COMM_STATUS . . . . . . . . .  TYPEDEF  -----  U_CHAR   -----  1
+ACC. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E0H  1
+ES0. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00ACH  1
+ET0. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00A9H  1
+ET1. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00ABH  1
+TF0. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      008DH  1
+ET2. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00ADH  1
+TF1. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      008FH  1
+RI1. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00D8H  1
+RB8. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      009AH  1
+TF2. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00CFH  1
+TH0. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   008CH  1
+INSCON . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0086H  1
+Inter_EMU. . . . . . . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+  V_ucTempEMUIF. . . . . . . . . . . .  * REG *  DATA   U_CHAR   0005H  1
+  bak_PPBANK . . . . . . . . . . . . .  * REG *  DATA   U_CHAR   0006H  1
+  FLASHCON_bak . . . . . . . . . . . .  * REG *  DATA   U_CHAR   0007H  1
+TH1. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   008DH  1
+uchar8 . . . . . . . . . . . . . . . .  TYPEDEF  -----  U_CHAR   -----  1
+TI1. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00D9H  1
+TB8. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      009BH  1
+TH2. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00CDH  1
+Inter_RTC. . . . . . . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+  bak_PPBANK . . . . . . . . . . . . .  * REG *  DATA   U_CHAR   0006H  1
+  FLASHCON_bak . . . . . . . . . . . .  * REG *  DATA   U_CHAR   0007H  1
+LIB_E2P_EMU_CALPARA_BAK. . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+GStr_Monitor . . . . . . . . . . . . .  EXTERN   XDATA  STRUCT   -----  59
+uint8_t. . . . . . . . . . . . . . . .  TYPEDEF  -----  U_CHAR   -----  1
+P. . . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00D0H  1
+GStr_UIP_DISPLAY_Type. . . . . . . . .  TYPEDEF  -----  STRUCT   -----  135
+  ucVoltage. . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  4
+  ucVoltageA . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0004H  4
+  ucVoltageB . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0008H  4
+  ucVoltageC . . . . . . . . . . . . .  MEMBER   -----  ARRAY    000CH  4
+  ucCOMMVoltage. . . . . . . . . . . .  MEMBER   -----  ARRAY    0010H  4
+  ucCOMMVoltageA . . . . . . . . . . .  MEMBER   -----  ARRAY    0014H  4
+  ucCOMMVoltageB . . . . . . . . . . .  MEMBER   -----  ARRAY    0018H  4
+  ucCOMMVoltageC . . . . . . . . . . .  MEMBER   -----  ARRAY    001CH  4
+  ucCurrent. . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0020H  4
+  ucCurrentA . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0024H  4
+C51 COMPILER V9.54   INTERRUPT                                                             11/18/2021 18:53:12 PAGE 18  
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+  ucCurrentB . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0028H  4
+  ucCurrentC . . . . . . . . . . . . .  MEMBER   -----  ARRAY    002CH  4
+  ucCOMMCurrent. . . . . . . . . . . .  MEMBER   -----  ARRAY    0030H  4
+  ucCOMMCurrentA . . . . . . . . . . .  MEMBER   -----  ARRAY    0034H  4
+  ucCOMMCurrentB . . . . . . . . . . .  MEMBER   -----  ARRAY    0038H  4
+  ucCOMMCurrentC . . . . . . . . . . .  MEMBER   -----  ARRAY    003CH  4
+  ucPower. . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0040H  4
+  ucPowerA . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0044H  4
+  ucPowerB . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0048H  4
+  ucPowerC . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    004CH  4
+  ucCOMMPower. . . . . . . . . . . . .  MEMBER   -----  ARRAY    0050H  4
+  ucCOMMPowerA . . . . . . . . . . . .  MEMBER   -----  ARRAY    0054H  4
+  ucCOMMPowerB . . . . . . . . . . . .  MEMBER   -----  ARRAY    0058H  4
+  ucCOMMPowerC . . . . . . . . . . . .  MEMBER   -----  ARRAY    005CH  4
+  ucFactory. . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0060H  4
+  ucFactoryA . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0064H  4
+  ucFactoryB . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0068H  4
+  ucFactoryC . . . . . . . . . . . . .  MEMBER   -----  ARRAY    006CH  4
+  ucCOMMFactory. . . . . . . . . . . .  MEMBER   -----  ARRAY    0070H  4
+  ucCOMMFactoryA . . . . . . . . . . .  MEMBER   -----  ARRAY    0074H  4
+  ucCOMMFactoryB . . . . . . . . . . .  MEMBER   -----  ARRAY    0078H  4
+  ucCOMMFactoryC . . . . . . . . . . .  MEMBER   -----  ARRAY    007CH  4
+  ucFrequency. . . . . . . . . . . . .  MEMBER   -----  ARRAY    0080H  4
+  ucMeterConst . . . . . . . . . . . .  MEMBER   -----  ARRAY    0084H  3
+TL0. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   008AH  1
+EX4. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00A8H  1
+TL1. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   008BH  1
+FLASHCON . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A7H  1
+LIB_E2P_Money_Para . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+TL2. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00CCH  1
+LIB_E2P_ENERGY_DECPULSE_BK . . . . . .  E_CONST  -----  U_CHAR   -----  1
+LIB_E2P_AvailTimer . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+RS0. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00D3H  1
+ADCDH. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C5H  1
+LIB_E2P_Price. . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+GStr_AVAIL_Type. . . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  41
+  us_IDAvailTimer. . . . . . . . . . .  MEMBER   -----  U_INT    0000H  2
+  ucBackMonFlag. . . . . . . . . . . .  MEMBER   -----  U_CHAR   0002H  1
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    0003H  2
+  ulAutRemainingTime . . . . . . . . .  MEMBER   -----  U_LONG   0005H  4
+  ucRechangeMoney. . . . . . . . . . .  MEMBER   -----  ARRAY    0009H  4
+  ucBuybeforeMoney . . . . . . . . . .  MEMBER   -----  ARRAY    000DH  4
+  ucbeforeFwEnergy . . . . . . . . . .  MEMBER   -----  ARRAY    0011H  4
+  ucbeforeBkEnergy . . . . . . . . . .  MEMBER   -----  ARRAY    0015H  4
+  ucE2Key. . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0019H  16
+GU_BoolWordVariable. . . . . . . . . .  TYPEDEF  -----  UNION    -----  2
+  BYTE . . . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  2
+  BIT. . . . . . . . . . . . . . . . .  MEMBER   -----  STRUCT   0000H  2
+TR0. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      008CH  1
+RS1. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00D4H  1
+PWMCON . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   009FH  1
+TR1. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      008EH  1
+char8. . . . . . . . . . . . . . . . .  TYPEDEF  -----  CHAR     -----  1
+TR2. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00CAH  1
+int8_t . . . . . . . . . . . . . . . .  TYPEDEF  -----  CHAR     -----  1
+ADCDL. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C4H  1
+ADT. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C2H  1
+C51 COMPILER V9.54   INTERRUPT                                                             11/18/2021 18:53:12 PAGE 19  
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+LIB_E2P_INDEX. . . . . . . . . . . . .  TYPEDEF  -----  U_CHAR   -----  1
+GStr_PRICE_Type. . . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  14
+  ucaPrice . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  4
+  ucaPurchaseMoneyAll. . . . . . . . .  MEMBER   -----  ARRAY    0004H  4
+  ucPurchaseTimes. . . . . . . . . . .  MEMBER   -----  ARRAY    0008H  4
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    000CH  2
+DPH. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0083H  1
+GStr_Flag. . . . . . . . . . . . . . .  EXTERN   XDATA  STRUCT   -----  16
+DPL. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0082H  1
+SBUF1. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D9H  1
+COMM_BLE_EADV. . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+LIB_E2P_FUN_CONFIG . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+EXEN2. . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00CBH  1
+SBUF2. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00F9H  1
+EMU_COMM_CAL_TAB_Type. . . . . . . . .  TYPEDEF  -----  STRUCT   -----  2
+  ucCommDI1. . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0000H  1
+  ucEmuAddr. . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0001H  1
+LIB_E2P_ENERGY_DECPULSE_FW . . . . . .  E_CONST  -----  U_CHAR   -----  1
+SM11_RXOV1 . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00DEH  1
+PADCL. . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00BEH  1
+REN. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      009CH  1
+SCON1. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D8H  1
+STATUS . . . . . . . . . . . . . . . .  TYPEDEF  -----  U_CHAR   -----  1
+LCDCON1. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D1H  1
+ADCON. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C1H  1
+SCON2. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00F8H  1
+TCON1. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   008FH  1
+LIB_E2P_EventValidPiont. . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+LIB_E2P_ENRGY. . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+SCON3. . . . . . . . . . . . . . . . .  EXTERN   XDATA  U_CHAR   -----  1
+LCDCON2. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D2H  1
+EDTAH. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0092H  1
+T2MOD. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C9H  1
+T2CON. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C8H  1
+EMU_UIPKms_Type. . . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  14
+  ulaKmsuip. . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  12
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    000CH  2
+GStr_FUN_CONFIG_Type . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  16
+  ucFunCurrentVal. . . . . . . . . . .  MEMBER   -----  U_CHAR   0000H  1
+  ucFunMeterConst. . . . . . . . . . .  MEMBER   -----  U_CHAR   0001H  1
+  ucRes. . . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0002H  12
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    000EH  2
+GStr_EventParaData . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  5
+  V_usEventID. . . . . . . . . . . . .  MEMBER   -----  U_INT    0000H  2
+  V_usEventAddr. . . . . . . . . . . .  MEMBER   -----  U_INT    0002H  2
+  V_ucEventLenth . . . . . . . . . . .  MEMBER   -----  U_CHAR   0004H  1
+LIB_E2P_Money. . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+EDTAL. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0094H  1
+GStr_EEPROM_MAP. . . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  8
+  ucE2pAddressIndex. . . . . . . . . .  MEMBER   -----  U_INT    0000H  2
+  usE2pAddress . . . . . . . . . . . .  MEMBER   -----  U_INT    0002H  2
+  ucE2pSize. . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0004H  1
+  ucE2pLen . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0005H  1
+  ucIsCRC. . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0006H  1
+  ucIsBak. . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0007H  1
+EDTAM. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0093H  1
+TK0DIFH. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00BCH  1
+C51 COMPILER V9.54   INTERRUPT                                                             11/18/2021 18:53:12 PAGE 20  
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+SADEN. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   009BH  1
+wchar_t. . . . . . . . . . . . . . . .  TYPEDEF  -----  CHAR     -----  1
+LIB_E2P_METER_INFO . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+TK1DIFH. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00BEH  1
+PBANK. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B6H  1
+GStr_EventValidPiont_Type. . . . . . .  TYPEDEF  -----  STRUCT   -----  8
+  uc_Point . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  6
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    0006H  2
+TK2DIFH. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A5H  1
+EADTP. . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00AEH  1
+SADDR. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   009AH  1
+TK0DIFL. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00CFH  1
+LIB_E2P_ENERGY_DECPULSE_WS . . . . . .  E_CONST  -----  U_CHAR   -----  1
+GStr_MONEY_Type. . . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  14
+  ucaRemainMoney . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  6
+  ucaTickMoney . . . . . . . . . . . .  MEMBER   -----  ARRAY    0006H  6
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    000CH  2
+TK1DIFL. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00BDH  1
+TK2DIFL. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00BFH  1
+P7816L . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00BAH  1
+LPDCON1. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C6H  1
+LIB_E2P_EMU_UIPKms_BAK . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+LPDCON2. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C7H  1
+MAX_BLE_INDEX. . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+LIB_E2P_SecretKey. . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+F0 . . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00D5H  1
+IRDAT. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00AEH  1
+F1 . . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00D1H  1
+EMUIE. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0096H  1
+SFINE. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   009EH  1
+XPAGE. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00F7H  1
+Gstr_VirtualEsam . . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  64
+  ucTempKey. . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  16
+  ucDisKey . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0010H  16
+  ucComplexKey . . . . . . . . . . . .  MEMBER   -----  ARRAY    0020H  16
+  ucRs485RandNum . . . . . . . . . . .  MEMBER   -----  ARRAY    0030H  8
+  ucRs485RandNum2. . . . . . . . . . .  MEMBER   -----  ARRAY    0038H  8
+GStr_MONEY_PARA_Type . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  25
+  ucaAlarmMoneyL1. . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  4
+  ucaAlarmMoneyL2. . . . . . . . . . .  MEMBER   -----  ARRAY    0004H  4
+  ucaMaxMoneyLimit . . . . . . . . . .  MEMBER   -----  ARRAY    0008H  4
+  ucaTickMoneyLimit. . . . . . . . . .  MEMBER   -----  ARRAY    000CH  4
+  ucaAllowcloseMoney . . . . . . . . .  MEMBER   -----  ARRAY    0010H  4
+  ucaOverLoadVal . . . . . . . . . . .  MEMBER   -----  ARRAY    0014H  3
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    0017H  2
+INT8S. . . . . . . . . . . . . . . . .  TYPEDEF  -----  CHAR     -----  1
+EMUIF. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0097H  1
+API_COMM_STATUS_FRAME_OK . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+RTCIE. . . . . . . . . . . . . . . . .  EXTERN   XDATA  U_CHAR   -----  1
+INT8U. . . . . . . . . . . . . . . . .  TYPEDEF  -----  U_CHAR   -----  1
+RTCIF. . . . . . . . . . . . . . . . .  EXTERN   XDATA  U_CHAR   -----  1
+PSW. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D0H  1
+FP32 . . . . . . . . . . . . . . . . .  TYPEDEF  -----  FLOAT    -----  4
+uint32_t . . . . . . . . . . . . . . .  TYPEDEF  -----  U_LONG   -----  4
+API_COMM_STATUS_FRAME. . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+RB81 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00DAH  1
+SPDAT. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A3H  1
+C51 COMPILER V9.54   INTERRUPT                                                             11/18/2021 18:53:12 PAGE 21  
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+IB_CON1. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00F2H  1
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   1066    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----       6
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

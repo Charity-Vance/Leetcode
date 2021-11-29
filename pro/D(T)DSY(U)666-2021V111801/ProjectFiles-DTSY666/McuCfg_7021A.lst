@@ -1,0 +1,13 @@
+C51 COMPILER V9.51   MCUCFG_7021A                                                          03/19/2019 11:03:42 PAGE 1   
+
+
+C51 COMPILER V9.51, COMPILATION OF MODULE MCUCFG_7021A
+OBJECT MODULE PLACED IN .\McuCfg_7021A.obj
+COMPILER INVOKED BY: C:\Keil\C51\BIN\C51.EXE ..\SourceFiles\SH79F7021A\McuCfg_7021A.c LARGE OMF2 WARNINGLEVEL(1) BROWSE 
+                    -DEBUG SYMBOLS PRINT(.\McuCfg_7021A.lst) OBJECT(.\McuCfg_7021A.obj)
+
+line level    source
+
+*** ERROR C318 OF ..\SourceFiles\SH79F7021A\McuCfg_7021A.c: can't open file '..\SourceFiles\SH79F7021A\McuCfg_7021A.c'
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  1 ERROR(S)

@@ -1,0 +1,2783 @@
+C51 COMPILER V9.54   APPPOWERON                                                            11/18/2021 18:51:16 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE APPPOWERON
+OBJECT MODULE PLACED IN .\AppPowerOn.obj
+COMPILER INVOKED BY: C:\Program Files (x86)\Keil_v5 FMSH\C51\BIN\C51.EXE ..\SourceFiles\APP\AppPowerOn.c LARGE OBJECTADV
+                    -ANCED OPTIMIZE(8,SPEED) BROWSE DEFINE(DDSYU666) DEBUG SYMBOLS PRINT(.\AppPowerOn.lst) OBJECT(.\AppPowerOn.obj)
+
+line level    source
+
+   1          /*******************************************************************************************************
+   2          **** Copyright：  (c)Copyright 2019,浙江正泰仪器仪表有限责任公司,电能表应用研发
+   3          ****                            All rights reserved.
+   4          **** FileName:    AppPowerOn.c
+   5          **** Brief:       上电系统配置
+   6          **** Author:      peter.he@chint.com
+   7          **** Version:     V1.0
+   8          **** Date:        2016-7-14
+   9          ****
+  10          **** note:修改历史记录列表，每条修改记录应包括修改日期、修改者
+  11          **** 1.  Author:
+  12          ****     Version:
+  13          ****     Date :
+  14          **** 2.  Author:
+  15          ****     Version:
+  16          ****     Date:
+  17          ****
+  18          ****  addtogroup:Library
+  19          **********************************************************************************************************
+             -/
+  20          
+  21          /*--------------------------------- 文件功能说明 ---------------------------------------------------
+             -----*/
+  22          /*
+  23           *  该文件所有函数的前缀为xxxx_
+  24           *  文件主函数和对外函数需放在文件的首部，并且主函数需要放在第一个位置;
+  25           *  函数注释采用标准模板，函数内部注释采用//;
+  26           *  对于注释较多的部分，可以增加一个注释符，然后详细说明放在文件的尾部;
+  27           *--------------------------------- 文件功能说明 ---------------------------------------------------
+             -----*/
+  28          
+  29          /**有形参的函数格式:*/
+  30          /*------------------------------------------------------------------------------------------------------*/
+  31          /**
+  32           *  @brief    xx任务处理函数
+  33           *
+  34           *  @param    xx :
+  35           *
+  36           *  @return   xx
+  37           *
+  38           *  @note     xx
+  39           *
+  40           */
+  41          /*------------------------------------------------------------------------------------------------------*/
+  42          /**无形参的函数格式:*/
+  43          /*------------------------------------------------------------------------------------------------------*/
+  44          /**
+  45           *  @brief    上电所有口线配置成初始状态，后面可根据需要开启和配置
+  46           *
+  47           *  @return   xx
+  48           *
+  49           *  @note     xx
+  50           *
+  51           */
+C51 COMPILER V9.54   APPPOWERON                                                            11/18/2021 18:51:16 PAGE 2   
+
+  52          /*------------------------------------------------------------------------------------------------------*/
+  53          
+  54          
+  55          /*----------------< 包含文件 >----------------------------------*/
+  56          
+  57          
+  58          #include "..\SourceFiles\PUB\Include.h"
+  59          
+  60          
+  61          
+  62          /*----------------< 宏定义区 >----------------------------------*/
+  63          
+  64          
+  65          /*----------------< 常量定义 >----------------------------------*/
+  66          
+  67          
+  68          /*----------------< 变量定义 >----------------------------------*/
+  69          
+  70          
+  71          /*----------------< 函数声明 >----------------------------------*/
+  72          // 静态函数声明
+  73          static uchar8 ApiPwOn_McuLPDInit(void);
+  74          static void   ApiPwOn_McuRamInit(void);
+  75          static void   ApiPwOn_McuGpioInit(void);
+  76          static void   ApiPwOn_McuDispInit(void);
+  77          static void   ApiPwOn_McuInterruptInit(void);
+  78          static void   ApiPwOn_McuUartInit(void);
+  79          static void   ApiPwOn_EMUInit(void);
+  80          static void   ApiPwOn_McuUartXSetBps(uchar8 v_ucChID); 
+  81          static void   ApiPwOn_RemainMoneyCheck(void) ;
+  82          
+  83          void   ApiPwOn_BleInit(void);
+  84          void   ApiPwOn_SysClkInit(void);
+  85          void   ApiPwOn_McuTimerInit(void);
+  86          void   ApiPwOn_MeterClear(void);
+  87          void   ApiPwOn_MeterInitInFactory(void);
+  88          //全局函数声明
+  89          void   ApiPwOn_McuReset(void);
+  90          uchar8 ApiPwOn_SysTemInit(void);
+  91          void   ApiPwOn_DisplayParaCheck(void);
+  92          void   ApiPwOn_McuUartXInit(uchar8 v_ucChID); 
+  93          void   ApiPwOn_UART_SendEn(uchar8 v_ucChID);
+  94          void   ApiPwOn_MeterInfoParaCheck(void);
+  95          void   ApiPwOn_DLXS_READ(GStr_ENERGY_PULSE_Type *p_strEnergyPulse,ushort16 v_usAddrIndex );
+  96          void   ApiPwOn_EnergyCheck(void);
+  97          void   ApiPwOn_MoneyParaCheck(void);
+  98          void   ApiPwOn_EmuParaCheck(void);
+  99          uchar8 ApiPwOn_EnergyZSCheck(void);
+ 100          void   ApiPwOn_FunConfigParaCheck(void);
+ 101          uchar8 ApiPwOn_PowerChk( void );
+ 102          void   ApiPwOn_KeyStatusCheck(void);
+ 103          void   ApiPwOn_EventPointCheck(void) ;
+ 104          void   ApiPwOn_BleParaChk(void);
+ 105          /*----------------< 函数定义 >----------------------------------*/
+ 106          
+ 107          
+ 108          /*------------------------------------------------------------------------------------------------------*/
+ 109          /**
+ 110           *  @brief    上电配置系统资源寄存器
+ 111           *
+ 112           *  @return   根据情况返回_SUCCESS或_FAILED
+ 113           *
+C51 COMPILER V9.54   APPPOWERON                                                            11/18/2021 18:51:16 PAGE 3   
+
+ 114           *  @note     xx
+ 115           *
+ 116           */
+ 117          /*------------------------------------------------------------------------------------------------------*/
+ 118          
+ 119          uchar8 ApiPwOn_SysTemInit(void)
+ 120          {
+ 121   1      //@brief ---先清一下看门狗
+ 122   1              WDT_Clr();
+ 123   1      //@brief ---关闭所有中断
+ 124   1              DIS_ALL_INT();
+ 125   1      
+ 126   1      //@brief ---检查是否真的掉电
+ 127   1              ApiPwOn_McuLPDInit();
+ 128   1      //      LibPub_DelayNms(100);
+ 129   1              
+ 130   1      //@brief ---上电稳定后配置一下时钟
+ 131   1              ApiPwOn_SysClkInit();
+ 132   1      //      LibPub_DelayNms(100);
+ 133   1      
+ 134   1      //@brief ---配置口线
+ 135   1              ApiPwOn_McuGpioInit();
+ 136   1      
+ 137   1      //@brief ---配置RAM/更新存储数据到RAM
+ 138   1              ApiPwOn_McuRamInit();
+ 139   1      
+ 140   1      //@brief ---配置显示
+ 141   1              ApiPwOn_McuDispInit();
+ 142   1      
+ 143   1      //@brief ---配置定时器
+ 144   1              ApiPwOn_McuTimerInit();
+ 145   1      
+ 146   1      //@brief ---配置中断
+ 147   1              ApiPwOn_McuInterruptInit();
+ 148   1      
+ 149   1      //@brief ---配置通信（蓝牙和RS485 ）
+ 150   1              ApiPwOn_McuUartInit(); 
+ 151   1              
+ 152   1      //@brief --- 配置计量
+ 153   1              ApiPwOn_EMUInit();
+ 154   1      
+ 155   1              EI();
+ 156   1              
+ 157   1              
+ 158   1              return( _SUCCESS );
+ 159   1      }
+ 160          
+ 161          
+ 162          /*------------------------------------------------------------------------------------------------------*/
+ 163          /**
+ 164           *  @brief    软件复位单片机
+ 165           *
+ 166           *  @return   none
+ 167           *
+ 168           *  @note     xx
+ 169           *
+ 170           */
+ 171          /*------------------------------------------------------------------------------------------------------*/
+ 172          void ApiPwOn_McuReset(void)
+ 173          {
+ 174   1               MCU_RST();
+ 175   1      }
+C51 COMPILER V9.54   APPPOWERON                                                            11/18/2021 18:51:16 PAGE 4   
+
+ 176          
+ 177          /*------------------------------------------------------------------------------------------------------*/
+ 178          /**
+ 179           *  @brief    系统时钟配置
+ 180           *
+ 181           *  @return   none
+ 182           *
+ 183           *  @note     xx
+ 184           *
+ 185           */
+ 186          /*------------------------------------------------------------------------------------------------------*/
+ 187          
+ 188          void ApiPwOn_SysClkInit(void)
+ 189          {
+ 190   1              uchar8 V_ucCnti;
+ 191   1      
+ 192   1              if( (CLKCON & CLKCON_32K_SPDUP) !=  CLKCON_32K_SPDUP )
+ 193   1              {
+ 194   2                      CLKCON_WR_ENABLE();
+ 195   2                      CLKCON |= CLKCON_32K_SPDUP;             // 开启加速模式
+ 196   2              }
+ 197   1      
+ 198   1              if( (CLKCON & CLKCON_FSYS_FOSCS_ALL) != CLKCON_FSYS_FOSCS )
+ 199   1              {
+ 200   2                      CLKCON_WR_ENABLE();
+ 201   2                      CLKCON &= CLKCON_FSYS_FOSCS_CLR;        // 先清零
+ 202   2                      
+ 203   2                      CLKCON_WR_ENABLE();
+ 204   2                      CLKCON |= CLKCON_FSYS_FOSCS;            // 00： fSYS = fOSCS  不分频
+ 205   2              }
+ 206   1      
+ 207   1              if( (CLKCON & CLKCON_HFSEL) != CLKCON_HFSEL )
+ 208   1              {
+ 209   2                      CLKCON_WR_ENABLE();
+ 210   2                      CLKCON |= CLKCON_HFSEL;                 // 1: 选择8M RC作为高频时钟源,暂时不需要pll
+ 211   2              }
+ 212   1      
+ 213   1              if( (CLKCON & CLKCON_HFON) != CLKCON_HFON )
+ 214   1              {
+ 215   2                      CLKCON_WR_ENABLE();
+ 216   2                      CLKCON |= CLKCON_HFON;                  // 1: 打开8MhzRC振荡器
+ 217   2              }
+ 218   1              
+ 219   1          for( V_ucCnti=0; V_ucCnti<100; V_ucCnti++)
+ 220   1          {
+ 221   2                      NOP();                                          //2011.10.DELAY 5MS
+ 222   2          }
+ 223   1              
+ 224   1              if( (CLKCON & CLKCON_CLKSEL) != CLKCON_CLKSEL ) 
+ 225   1              {
+ 226   2                      CLKCON_WR_ENABLE();
+ 227   2                      CLKCON |= CLKCON_CLKSEL;                // 1： 选择HFCLK作为OSCSCLK
+ 228   2              }
+ 229   1              
+ 230   1          for( V_ucCnti=0; V_ucCnti<100; V_ucCnti++)
+ 231   1          {
+ 232   2            NOP();                              //2011.10.DELAY 5MS
+ 233   2          }
+ 234   1      }
+ 235          /*
+ 236          选择RC8MCLK作为OSCSCLK， 必须按以下步骤依次设置：
+ 237          (1). 设置高频时钟选择， HFSEL=1
+C51 COMPILER V9.54   APPPOWERON                                                            11/18/2021 18:51:16 PAGE 5   
+
+ 238          (2)设置HFON= 1 ， 打开8MHz RC振荡器
+ 239          (3).等待3个NOP
+ 240          (4).设置CLKSEL=1， 选择HFCLK作为OSCSCLK
+ 241          将系统时钟在PLL和8MHz RC振荡器之间切换时， 需将系统先切换至CK32。
+ 242          */
+ 243          /*------------------------------------------------------------------------------------------------------*/
+ 244          /**
+ 245           *  @brief    上电稳定检测,
+ 246           *
+ 247           *  @return   none
+ 248           *
+ 249           *  @note     使用LPD2，用于监测VOUT电源的电压状态。
+ 250           *
+ 251           */
+ 252          /*------------------------------------------------------------------------------------------------------*/
+ 253          uchar8 ApiPwOn_McuLPDInit(void)
+ 254          {
+ 255   1      
+ 256   1      //@brief ---配置电源相关
+ 257   1              DIS_LPD_INT();          // 先禁止LPD中断
+ 258   1              
+ 259   1              PASLO_POWER_SWITCH_ON();
+ 260   1              LPDCON1 = 0x00;                                 //使能LPD1En（总使能，数据手册没说明） 掉电检测,注意：如果没
+             -有使用VIN引脚，则需要配置选项字节
+ 261   1              
+ 262   1              PASLO_POWER_SWITCH_ON();
+ 263   1              LPDCON2 = 0x00;                                 //关闭LPD2 掉电检测
+ 264   1              
+ 265   1      //#if( METER_TYPE != METER_TYPE_DDSYU666 )      
+ 266   1      //      PASLO_POWER_SWITCH_ON();
+ 267   1      //      LPDCON2 = ( LPDCON2_LPD2EN  | LPDCON2_LPDS_315 );       // 允许低电压检测，开LPD2,禁止LPD3检测�
+             -�电压3.15V 约95%
+ 268   1      
+ 269   1      //      PASLO_POWER_SWITCH_ON();
+ 270   1      //      PWRCON1 = ( PWRCON1_VDD2VOUT | PWRCON1_AUTOS );         // VDD供电至VOUT,禁止供电自动切换
+ 271   1      //#endif
+ 272   1      
+ 273   1      //#if( METER_TYPE == METER_TYPE_DDSYU666 )
+ 274   1              PASLO_POWER_SWITCH_ON();
+ 275   1              LPDCON2 = ( LPDCON2_LPD2EN | LPDCON2_LPDS_300 );        // 允许低电压检测，开LPD2,禁止LPD3检测，�
+             -�压3.00V 约91%
+ 276   1      
+ 277   1              PASLO_POWER_SWITCH_ON();
+ 278   1              PWRCON1 = ( PWRCON1_VDD2VOUT | PWRCON1_AUTOS );         // VDD供电至VOUT,禁止供电自动切换  
+ 279   1      //#endif
+ 280   1      
+ 281   1              PASLO_POWER_SWITCH_ON();
+ 282   1              PWRCON2 =  0x00;//PWRCON2_LDO28ON | PWRCON2_LCDLDO_300;
+ 283   1      
+ 284   1      //@brief ---判断上电是否稳定
+ 285   1              if( _FALSE == ApiPwOn_PowerChk() )
+ 286   1              {
+ 287   2                      ApiPwOn_McuReset();
+ 288   2              }
+ 289   1      //@brief ---上电稳定后，开始配置系统时钟及其他接口模块
+ 290   1              if ( (LPDCON2 & LPDCON2_LPD2F) == LPDCON2_LPD2F )
+ 291   1              {
+ 292   2                      return _FAILED;
+ 293   2              }
+ 294   1      
+ 295   1      //@brief ---允许掉电中断
+ 296   1              DIS_LPD_INT();          // 先禁止LPD中断,在定时节拍中断中查询
+C51 COMPILER V9.54   APPPOWERON                                                            11/18/2021 18:51:16 PAGE 6   
+
+ 297   1              
+ 298   1              return _SUCCESS;
+ 299   1      }
+ 300          
+ 301          /*------------------------------------------------------------------------------------------------------*/
+ 302          /**
+ 303           *  @brief    上电Ram数据初始化
+ 304           *
+ 305           *  @return   none
+ 306           *
+ 307           *  @note     xx
+ 308           *
+ 309           */
+ 310          /*------------------------------------------------------------------------------------------------------*/
+ 311          void ApiPwOn_McuRamInit(void)
+ 312          {
+ 313   1              
+ 314   1      //---------------------------------------------------------------------------
+ 315   1      //@brief ---系统全局变量初始化  所有掉电不保存的标志清零 
+ 316   1              LibPub_MemSetBytes( (uchar8 *)&GStr_Flag.ucSystem, 0x00, GStr_FLAG_Type_LEN);                                           ///* 系统状态 */
+             -//
+ 317   1              LibPub_MemSetBytes( (uchar8 *)&GStr_Monitor.ulTimer_ms, 0x00, GStr_MONITOR_Tpye_LEN);                           ///* 系统节
+             -拍 *///
+ 318   1              LibPub_MemSetBytes( (uchar8 *)&GStr_DisplayPara.ucFullDisp_Time, 0x00, GStr_DISPLAY_PARA_Type_LEN);     ///* 
+             -显示参数 *///
+ 319   1              LibPub_MemSetBytes( (uchar8 *)&GStr_FunConfigPara.ucFunCurrentVal, 0x00, GStr_FUN_CONFIG_TypeLEN);      ///* �
+             -��能配置参数 *///
+ 320   1              LibPub_MemSetBytes( (uchar8 *)&GStr_EnergyPulseFw.ucPulseAdd, 0x00, GStr_ENERGY_PULSE_Type_LEN);        ///* 正
+             -向脉冲 *///
+ 321   1              LibPub_MemSetBytes( (uchar8 *)&GStr_EnergyPulseBk.ucPulseAdd, 0x00, GStr_ENERGY_PULSE_Type_LEN);        ///* 反
+             -向脉冲 *///
+ 322   1              LibPub_MemSetBytes( (uchar8 *)&GStr_Energy.ucaFw_Energy, 0x00, GStr_ENERGY_Type_LEN);                           ///* 电能清�
+             -�，从E2中恢复 *///
+ 323   1              LibPub_MemSetBytes( (uchar8 *)&GStr_AVAIL.us_IDAvailTimer, 0x00, GStr_AVAIL_TypeLEN);                           ///* 身份认�
+             -�有效时长剩余时间 *///
+ 324   1              LibPub_MemSetBytes( (uchar8 *)&GStr_Counter.ucFactoryMode_Cnt, 0x00, GStr_COUNTER_Type_LEN);            ///* 计数
+             -清零、密码错误次数清零
+ 325   1      //---------------------------------------------------------------------------
+ 326   1      //@brief ---更新存储数据到RAM
+ 327   1              GStr_Flag.ucPowerOnFlag=1;///上电标志置1，有该标志时 ，RAM错的时候不复位计量芯片
+ 328   1              ///* E2参数校验更新,整个E2重要数据区块是否需要校验 *///
+ 329   1              ApiPwOn_EnergyCheck() ;                 ///* 电量数据 *///
+ 330   1              ApiPwOn_RemainMoneyCheck();     ///* 上电金额数据处理
+ 331   1              ApiPwOn_EmuParaCheck() ;                ///* 计量参数 *
+ 332   1              ApiPwOn_DisplayParaCheck();             ///* 显示参数 *///
+ 333   1              ApiPwOn_MeterInfoParaCheck() ;  ///* 表信息参数 *///
+ 334   1              ApiPwOn_MoneyParaCheck();       ///* 报警金额等参数校验
+ 335   1              ApiMoney_RefreshPrice();        ///*电价参数效验
+ 336   1              ApiPwOn_FunConfigParaCheck();   ///* 功能配置参数 *///
+ 337   1              ApiPwOn_KeyStatusCheck()        ;   ///* 开户状态和密钥状态*///
+ 338   1              ApiPwOn_EventPointCheck() ;             ///* 事件指针效验*///
+ 339   1              
+ 340   1      //---------------------------------------------------------------------------   
+ 341   1              GV_ucMACErrNum = 0;
+ 342   1              GStr_Flag.ucRunState2 &= ~ F_RUN_INTAUTH_MACNumErrFlag;///上电请身份认证挂起标志
+ 343   1              
+ 344   1              GStr_DisplayPara.ucDisp_tongxin_Flag=0x00;                                      // 通信显示标志清零
+ 345   1              GStr_Flag.ucSystem |= F_PWON ;                                                          // 认为已经在上电 
+ 346   1              GStr_Flag.ucDisp |= ( F_DISP_UPDATA  |F_DISP_DISPALL );         // 上电全显，且刷新显示 
+ 347   1              GStr_DisplayPara.ulDisptimer = GStr_DisplayPara.ucFullDisp_Time*1000/LCD_UPTATA_TIME;//全显时间转换
+             -为ms
+ 348   1              GStr_Flag.ucDispKey = F_KEY_STATUS_IDLE;
+C51 COMPILER V9.54   APPPOWERON                                                            11/18/2021 18:51:16 PAGE 7   
+
+ 349   1              GStr_DisplayPara.ucBackLightTime =GStr_DisplayPara.ucFullDisp_Time;     ///1s减一次   上电背光和跳�
+             -�灯亮的时间等于上电全显时间
+ 350   1              GStr_DisplayPara.ucRelayLEDTime  =GStr_DisplayPara.ucFullDisp_Time;     ///1s减一次   上电背光和跳�
+             -�灯亮的时间等于上电全显时间
+ 351   1      //---------------------------------------------------------------------------   
+ 352   1              if(_TRUE != LibPub_ReadDataFromE2prom(LIB_E2P_RUN_STATE,0,&GStr_Flag.ucRunState))
+ 353   1              {
+ 354   2                      GStr_Flag.ucRunState =0;
+ 355   2              }
+ 356   1              if(GStr_Flag.ucRunState&F_RUN_RELAY_STATE_EE) 
+ 357   1              {
+ 358   2                      GStr_Flag.ucRunState2|=F_RUN_RELAY_STATE;
+ 359   2              }
+ 360   1              ApiRelay_SubtractMoneyRelayJudge();
+ 361   1      }
+ 362          
+ 363          /*------------------------------------------------------------------------------------------------------*/
+ 364          /**
+ 365           *  @brief    上电GPIO配置，使用的时候在配置一次
+ 366           *
+ 367           *  @return   none
+ 368           *
+ 369           *  @note     xx
+ 370           *
+ 371           */
+ 372          /*------------------------------------------------------------------------------------------------------*/
+ 373          #if (METER_TYPE == METER_TYPE_DDSYU666)
+ 374          void ApiPwOn_McuGpioInit(void)
+ 375          {
+ 376   1      // @brief P0口 总共4根口线 p0.1/2/3/7  Lamp/RelayB/RelayA/Alarm
+ 377   1              // 方向
+ 378   1              GPIO_IOCFG_P0_DIR_O( 1);        
+ 379   1              GPIO_IOCFG_P0_DIR_O( 2);        // 01 跳闸 10 合闸
+ 380   1              GPIO_IOCFG_P0_DIR_O( 3);
+ 381   1              GPIO_IOCFG_P0_DIR_O( 7);
+ 382   1              // 上拉     0        
+ 383   1              GPIO_IOCFG_P0_PUP_F( 1);
+ 384   1              GPIO_IOCFG_P0_PUP_F( 2);
+ 385   1              GPIO_IOCFG_P0_PUP_F( 3);
+ 386   1              GPIO_IOCFG_P0_PUP_F( 7);
+ 387   1              // 状态     0        
+ 388   1              GPIO_IOCFG_P0_SET_0( 1);        // 背光
+ 389   1              GPIO_IOCFG_P0_SET_0( 2);
+ 390   1              GPIO_IOCFG_P0_SET_0( 3);
+ 391   1              GPIO_IOCFG_P0_SET_0( 7);        // 拉闸灯
+ 392   1              // 输出模式选择      
+ 393   1              GPIO_IOCFG_P0_OUT_C( 1);        // 开启推挽
+ 394   1              GPIO_IOCFG_P0_OUT_C( 2);
+ 395   1              GPIO_IOCFG_P0_OUT_C( 3);
+ 396   1              GPIO_IOCFG_P0_OUT_C( 7);
+ 397   1              // 端口输出高能力减弱模式选择
+ 398   1              GPIO_IOCFG_P0_OUTH_WEAKEN( 1);
+ 399   1              GPIO_IOCFG_P0_OUTH_WEAKEN( 2);
+ 400   1              GPIO_IOCFG_P0_OUTH_WEAKEN( 3);
+ 401   1              GPIO_IOCFG_P0_OUTH_WEAKEN( 7);
+ 402   1              // 输入上拉模式选择寄存器
+ 403   1              GPIO_IOCFG_P0_PUPM_SWITCH( 1);
+ 404   1              GPIO_IOCFG_P0_PUPM_SWITCH( 2);
+ 405   1              GPIO_IOCFG_P0_PUPM_SWITCH( 3);
+ 406   1              GPIO_IOCFG_P0_PUPM_SWITCH( 7);
+ 407   1              // 端口数据来源选择寄存器
+ 408   1              GPIO_IOCFG_P0_INM_DATA( 1);
+C51 COMPILER V9.54   APPPOWERON                                                            11/18/2021 18:51:16 PAGE 8   
+
+ 409   1              GPIO_IOCFG_P0_INM_DATA( 2);
+ 410   1              GPIO_IOCFG_P0_INM_DATA( 3);
+ 411   1              GPIO_IOCFG_P0_INM_DATA( 7);
+ 412   1      
+ 413   1      
+ 414   1      // @brief P1口 总共1根口线 p1.4    PFout
+ 415   1              // 方向
+ 416   1      //      GPIO_IOCFG_P1_DIR_I( 0);
+ 417   1      //      GPIO_IOCFG_P1_DIR_I( 3);
+ 418   1              GPIO_IOCFG_P1_DIR_I( 4);
+ 419   1              // 上拉     1        
+ 420   1      //      GPIO_IOCFG_P1_PUP_F( 0);
+ 421   1      //      GPIO_IOCFG_P1_PUP_F( 3);
+ 422   1              GPIO_IOCFG_P1_PUP_F( 4);
+ 423   1              // 状态     1        
+ 424   1      //      GPIO_IOCFG_P1_SET_1( 0);
+ 425   1      //      GPIO_IOCFG_P1_SET_1( 3); 
+ 426   1              GPIO_IOCFG_P1_SET_1( 4); // 上电避免脉冲灯亮，设置为输入
+ 427   1      
+ 428   1      //// @brief P2口 总共3根口线 p2.2/6/7     DISPKEY / 485RXD / 485TXD
+ 429   1      //      GPIO_IOCFG_P2_DIR_I( 2);
+ 430   1      //      GPIO_IOCFG_P2_DIR_I( 6);
+ 431   1      //      GPIO_IOCFG_P2_DIR_O( 7);
+ 432   1      //      // 上拉     2
+ 433   1      //      GPIO_IOCFG_P2_PUP_F( 2);
+ 434   1      //      GPIO_IOCFG_P2_PUP_F( 6);
+ 435   1      //      GPIO_IOCFG_P2_PUP_F( 7);
+ 436   1      //      // 状态     2        
+ 437   1      //      GPIO_IOCFG_P2_SET_0( 2);
+ 438   1      //      GPIO_IOCFG_P2_SET_0( 6);
+ 439   1      //      GPIO_IOCFG_P2_SET_0( 7);
+ 440   1      //      // 输出模式选择      
+ 441   1      //      GPIO_IOCFG_P2_OUT_N( 2);
+ 442   1      //      GPIO_IOCFG_P2_OUT_N( 6);
+ 443   1      //      GPIO_IOCFG_P2_OUT_N( 7);
+ 444   1      //      // 端口输出高能力减弱模式选择
+ 445   1      //      GPIO_IOCFG_P2_OUTH_WEAKEN( 2);
+ 446   1      //      GPIO_IOCFG_P2_OUTH_WEAKEN( 6);
+ 447   1      //      GPIO_IOCFG_P2_OUTH_WEAKEN( 7);
+ 448   1      //      // 输入上拉模式选择寄存器  
+ 449   1      //      GPIO_IOCFG_P2_PUPM_SWITCH( 2);
+ 450   1      //      GPIO_IOCFG_P2_PUPM_SWITCH( 6);
+ 451   1      //      GPIO_IOCFG_P2_PUPM_SWITCH( 7);
+ 452   1      //      // 端口数据来源选择寄存器
+ 453   1      //      GPIO_IOCFG_P2_INM_DATA( 2);
+ 454   1      //      GPIO_IOCFG_P2_INM_DATA( 6);
+ 455   1      //      GPIO_IOCFG_P2_INM_DATA( 7);
+ 456   1      
+ 457   1      // @brief P3口 总共3根口线 p3.0/1/2/3/4    BT_RXD / BT_TXD / KEY1/ SCL / SDA
+ 458   1              GPIO_IOCFG_P3_DIR_I( 0);
+ 459   1              GPIO_IOCFG_P3_DIR_O( 1);
+ 460   1              GPIO_IOCFG_P3_DIR_I( 2);
+ 461   1              GPIO_IOCFG_P3_DIR_O( 3);
+ 462   1              GPIO_IOCFG_P3_DIR_O( 4);
+ 463   1              // 上拉     3        
+ 464   1              GPIO_IOCFG_P3_PUP_F( 0);
+ 465   1              GPIO_IOCFG_P3_PUP_F( 1);
+ 466   1              GPIO_IOCFG_P3_PUP_F( 2);
+ 467   1              GPIO_IOCFG_P3_PUP_F( 3);
+ 468   1              GPIO_IOCFG_P3_PUP_F( 4);
+ 469   1              // 状态     3        
+ 470   1              GPIO_IOCFG_P3_SET_0( 0);
+C51 COMPILER V9.54   APPPOWERON                                                            11/18/2021 18:51:16 PAGE 9   
+
+ 471   1              GPIO_IOCFG_P3_SET_0( 1);
+ 472   1              GPIO_IOCFG_P3_SET_1( 2);        
+ 473   1              GPIO_IOCFG_P3_SET_1( 3);         
+ 474   1              GPIO_IOCFG_P3_SET_1( 4);         
+ 475   1              // 输出模式选择
+ 476   1              GPIO_IOCFG_P3_OUT_N( 0);
+ 477   1              GPIO_IOCFG_P3_OUT_N( 1);
+ 478   1              GPIO_IOCFG_P3_OUT_N( 2);
+ 479   1              GPIO_IOCFG_P3_OUT_N( 3);
+ 480   1              GPIO_IOCFG_P3_OUT_N( 4);
+ 481   1      
+ 482   1      // @brief P4口 总共4根口线 p4.4/5/6/7 SEG1/SEG2/SEG3/SEG4
+ 483   1              GPIO_IOCFG_P4_DIR_O( 4);
+ 484   1              GPIO_IOCFG_P4_DIR_O( 5);
+ 485   1              GPIO_IOCFG_P4_DIR_O( 6);
+ 486   1              GPIO_IOCFG_P4_DIR_O( 7);
+ 487   1              // 上拉     4        
+ 488   1              GPIO_IOCFG_P4_PUP_F( 4);
+ 489   1              GPIO_IOCFG_P4_PUP_F( 5);
+ 490   1              GPIO_IOCFG_P4_PUP_F( 6);
+ 491   1              GPIO_IOCFG_P4_PUP_F( 7);
+ 492   1              // 状态     4        
+ 493   1              GPIO_IOCFG_P4_SET_0( 4);
+ 494   1              GPIO_IOCFG_P4_SET_0( 5);
+ 495   1              GPIO_IOCFG_P4_SET_0( 6);
+ 496   1              GPIO_IOCFG_P4_SET_0( 7);
+ 497   1      
+ 498   1      // @brief P5口 总共8根口线 p5.0/1/2/3/4/5/6/7     BT_CTL / BT_ATEN / SEG5 / SEG8 / SEG9(DCK) / SEG10(TDI
+             -) /SEG11(TMS) / SEG12(TDO)
+ 499   1              GPIO_IOCFG_P5_DIR_O( 0);
+ 500   1              GPIO_IOCFG_P5_DIR_I( 1);        //BT_ATEN设置为无上拉电阻输入 GPIO_IOCFG_P5_DIR_O( 1);
+ 501   1              GPIO_IOCFG_P5_DIR_O( 2);
+ 502   1              GPIO_IOCFG_P5_DIR_O( 3);
+ 503   1              GPIO_IOCFG_P5_DIR_O( 4);
+ 504   1              GPIO_IOCFG_P5_DIR_O( 5);
+ 505   1              GPIO_IOCFG_P5_DIR_O( 6);
+ 506   1              GPIO_IOCFG_P5_DIR_O( 7);
+ 507   1              // 上拉     5        
+ 508   1              GPIO_IOCFG_P5_PUP_F( 0);
+ 509   1              GPIO_IOCFG_P5_PUP_F( 1);
+ 510   1              GPIO_IOCFG_P5_PUP_F( 2);
+ 511   1              GPIO_IOCFG_P5_PUP_F( 3);
+ 512   1              GPIO_IOCFG_P5_PUP_F( 4);
+ 513   1              GPIO_IOCFG_P5_PUP_F( 5);
+ 514   1              GPIO_IOCFG_P5_PUP_F( 6);
+ 515   1              GPIO_IOCFG_P5_PUP_F( 7);
+ 516   1              // 状态     5        
+ 517   1              GPIO_IOCFG_P5_SET_0( 0);        // 上电不使能
+ 518   1              GPIO_IOCFG_P5_SET_0( 1);
+ 519   1              GPIO_IOCFG_P5_SET_0( 2);
+ 520   1              GPIO_IOCFG_P5_SET_0( 3);
+ 521   1              GPIO_IOCFG_P5_SET_0( 4);
+ 522   1              GPIO_IOCFG_P5_SET_0( 5);
+ 523   1              GPIO_IOCFG_P5_SET_0( 6);
+ 524   1              GPIO_IOCFG_P5_SET_0( 7);
+ 525   1      
+ 526   1      //// @brief P6口 总共7根口线 p6.1/2/3/4/5/6/7   SEG8/ SEG7/ SEG6/ SEG5/ SEG4/ SEG3/ SEG2
+ 527   1      //      GPIO_IOCFG_P6_DIR_O( 1);
+ 528   1      //      GPIO_IOCFG_P6_DIR_O( 2);
+ 529   1      //      GPIO_IOCFG_P6_DIR_O( 3);
+ 530   1      //      GPIO_IOCFG_P6_DIR_O( 4);
+ 531   1      //      GPIO_IOCFG_P6_DIR_O( 5);
+C51 COMPILER V9.54   APPPOWERON                                                            11/18/2021 18:51:16 PAGE 10  
+
+ 532   1      //      GPIO_IOCFG_P6_DIR_O( 6);
+ 533   1      //      GPIO_IOCFG_P6_DIR_O( 7);
+ 534   1      //      // 上拉     6        
+ 535   1      //      GPIO_IOCFG_P6_PUP_F( 1);
+ 536   1      //      GPIO_IOCFG_P6_PUP_F( 2);
+ 537   1      //      GPIO_IOCFG_P6_PUP_F( 3);
+ 538   1      //      GPIO_IOCFG_P6_PUP_F( 4);
+ 539   1      //      GPIO_IOCFG_P6_PUP_F( 5);
+ 540   1      //      GPIO_IOCFG_P6_PUP_F( 6);
+ 541   1      //      GPIO_IOCFG_P6_PUP_F( 7);
+ 542   1      //      // 状态     6        
+ 543   1      //      GPIO_IOCFG_P6_SET_0( 1);
+ 544   1      //      GPIO_IOCFG_P6_SET_0( 2);
+ 545   1      //      GPIO_IOCFG_P6_SET_0( 3);
+ 546   1      //      GPIO_IOCFG_P6_SET_0( 4);
+ 547   1      //      GPIO_IOCFG_P6_SET_0( 5);
+ 548   1      //      GPIO_IOCFG_P6_SET_0( 6);
+ 549   1      //      GPIO_IOCFG_P6_SET_0( 7); 
+ 550   1      
+ 551   1      // @brief P7口 总共5根口线 p7.5/6/7/ 数据手册寄存器里显示有5个，但实际封装只有3�
+             -�� SEG13/ SEG14/ SEG15
+ 552   1              GPIO_IOCFG_P7_DIR_O( 5);
+ 553   1              GPIO_IOCFG_P7_DIR_O( 6);
+ 554   1              GPIO_IOCFG_P7_DIR_O( 7);
+ 555   1              // 上拉     7        
+ 556   1              GPIO_IOCFG_P7_PUP_F( 5);
+ 557   1              GPIO_IOCFG_P7_PUP_F( 6);
+ 558   1              GPIO_IOCFG_P7_PUP_F( 7);
+ 559   1              // 状态     7        
+ 560   1              GPIO_IOCFG_P7_SET_0( 5);
+ 561   1              GPIO_IOCFG_P7_SET_0( 6);
+ 562   1              GPIO_IOCFG_P7_SET_0( 7);
+ 563   1      
+ 564   1      //// @brief P8口 总共2根口线 p8.6/7 SDA/ SCL
+ 565   1      //      GPIO_IOCFG_P8_DIR_O( 6);
+ 566   1      //      GPIO_IOCFG_P8_DIR_O( 7);
+ 567   1      //      // 上拉     8        
+ 568   1      //      GPIO_IOCFG_P8_PUP_F( 6);
+ 569   1      //      GPIO_IOCFG_P8_PUP_F( 7);
+ 570   1      //      // 状态     8        
+ 571   1      //      GPIO_IOCFG_P8_SET_1( 6);
+ 572   1      //      GPIO_IOCFG_P8_SET_1( 7); 
+ 573   1      
+ 574   1      // @brief P9口 总共8根口线 p9.2/3/4/5/6/7   COM1-COM6 /  
+ 575   1              GPIO_IOCFG_P9_DIR_O( 2);
+ 576   1              GPIO_IOCFG_P9_DIR_O( 3);
+ 577   1              GPIO_IOCFG_P9_DIR_O( 4);
+ 578   1              GPIO_IOCFG_P9_DIR_O( 5);
+ 579   1              GPIO_IOCFG_P9_DIR_O( 6);
+ 580   1              GPIO_IOCFG_P9_DIR_O( 7);        
+ 581   1              // 上拉     9         
+ 582   1              GPIO_IOCFG_P9_PUP_F( 2);
+ 583   1              GPIO_IOCFG_P9_PUP_F( 3);
+ 584   1              GPIO_IOCFG_P9_PUP_F( 4);
+ 585   1              GPIO_IOCFG_P9_PUP_F( 5);
+ 586   1              GPIO_IOCFG_P9_PUP_F( 6);
+ 587   1              GPIO_IOCFG_P9_PUP_F( 7);
+ 588   1              // 状态     9         
+ 589   1              GPIO_IOCFG_P9_SET_0( 2);
+ 590   1              GPIO_IOCFG_P9_SET_0( 3); 
+ 591   1              GPIO_IOCFG_P9_SET_0( 4);
+ 592   1              GPIO_IOCFG_P9_SET_0( 5); 
+C51 COMPILER V9.54   APPPOWERON                                                            11/18/2021 18:51:16 PAGE 11  
+
+ 593   1              GPIO_IOCFG_P9_SET_0( 6);
+ 594   1              GPIO_IOCFG_P9_SET_0( 7); 
+ 595   1              ADCH=0;
+ 596   1      } 
+ 597          
+ 598          #elif ((METER_TYPE == METER_TYPE_DDSY666)||( METER_TYPE == METER_TYPE_DTSY666 ))
+              
+              void ApiPwOn_McuGpioInit(void)
+              {
+              // @brief P0口 总共4根口线 p0.1/2/3/7  Relay1/Relay2/Null/Null
+                      // 方向
+                      GPIO_IOCFG_P0_DIR_O( 1);// 01 跳闸 10 合闸
+                      GPIO_IOCFG_P0_DIR_O( 2);
+                      GPIO_IOCFG_P0_DIR_I( 3);
+                      #if ( METER_TYPE != METER_TYPE_DTSY666)
+                      GPIO_IOCFG_P0_DIR_I( 7);
+                      #else
+                      GPIO_IOCFG_P0_DIR_O( 7);
+                      #endif
+                      
+                      // 上拉     0        
+                      GPIO_IOCFG_P0_PUP_F( 1);
+                      GPIO_IOCFG_P0_PUP_F( 2);
+                      GPIO_IOCFG_P0_PUP_F( 3);
+                      GPIO_IOCFG_P0_PUP_F( 7);
+                      // 状态     0        
+                      GPIO_IOCFG_P0_SET_0( 1);
+                      GPIO_IOCFG_P0_SET_0( 2);
+                      GPIO_IOCFG_P0_SET_0( 3);
+                      GPIO_IOCFG_P0_SET_0( 7);
+                      // 输出模式选择      
+                      GPIO_IOCFG_P0_OUT_C( 1);        // 开启推挽
+                      GPIO_IOCFG_P0_OUT_C( 2);
+                      GPIO_IOCFG_P0_OUT_N( 3);
+                      #if ( METER_TYPE == METER_TYPE_DTSY666)
+                      GPIO_IOCFG_P0_OUT_C( 7);
+                      #else
+                      GPIO_IOCFG_P0_OUT_N( 7);
+                      #endif
+                      // 端口输出高能力减弱模式选择
+                      GPIO_IOCFG_P0_OUTH_WEAKEN( 1);
+                      GPIO_IOCFG_P0_OUTH_WEAKEN( 2);
+                      GPIO_IOCFG_P0_OUTH_WEAKEN( 3);
+                      GPIO_IOCFG_P0_OUTH_WEAKEN( 7);
+                      // 输入上拉模式选择寄存器
+                      GPIO_IOCFG_P0_PUPM_SWITCH( 1);
+                      GPIO_IOCFG_P0_PUPM_SWITCH( 2);
+                      GPIO_IOCFG_P0_PUPM_SWITCH( 3);
+                      GPIO_IOCFG_P0_PUPM_SWITCH( 7);
+                      // 端口数据来源选择寄存器
+                      GPIO_IOCFG_P0_INM_DATA( 1);
+                      GPIO_IOCFG_P0_INM_DATA( 2);
+                      GPIO_IOCFG_P0_INM_DATA( 3);
+                      GPIO_IOCFG_P0_INM_DATA( 7);
+              
+              
+              // @brief P1口 总共3根口线 p1.0/3/4        Null/LED_yellow/PFout
+                      // 方向  三相表P1.0为DISPKEY
+                      GPIO_IOCFG_P1_DIR_I( 0);
+                      GPIO_IOCFG_P1_DIR_O( 3);
+                      GPIO_IOCFG_P1_DIR_I( 4);
+                      // 上拉     1        
+C51 COMPILER V9.54   APPPOWERON                                                            11/18/2021 18:51:16 PAGE 12  
+
+                      GPIO_IOCFG_P1_PUP_F( 0);
+                      GPIO_IOCFG_P1_PUP_F( 3);
+                      GPIO_IOCFG_P1_PUP_F( 4);
+                      // 状态     1        
+                      GPIO_IOCFG_P1_SET_0( 0);
+                      GPIO_IOCFG_P1_SET_1( 3);///跳闸不点亮///后续液晶显示时在同时点亮跳闸灯
+                      GPIO_IOCFG_P1_SET_1( 4);
+              
+              // @brief P2口 总共3根口线 p2.2/6/7       DISPKEY / 485RXD / 485TXD
+              ///三相表P2.2为Pulsein
+                      GPIO_IOCFG_P2_DIR_I( 2);
+                      GPIO_IOCFG_P2_DIR_I( 6);
+                      GPIO_IOCFG_P2_DIR_O( 7);
+                      // 上拉     2
+                      GPIO_IOCFG_P2_PUP_F( 2);
+                      GPIO_IOCFG_P2_PUP_F( 6);
+                      GPIO_IOCFG_P2_PUP_F( 7);
+                      // 状态     2        
+                      GPIO_IOCFG_P2_SET_0( 2);
+                      GPIO_IOCFG_P2_SET_0( 6);
+                      GPIO_IOCFG_P2_SET_0( 7);
+                      // 输出模式选择      
+                      GPIO_IOCFG_P2_OUT_N( 2);
+                      GPIO_IOCFG_P2_OUT_N( 6);
+                      GPIO_IOCFG_P2_OUT_N( 7);
+                      // 端口输出高能力减弱模式选择
+                      GPIO_IOCFG_P2_OUTH_WEAKEN( 2);
+                      GPIO_IOCFG_P2_OUTH_WEAKEN( 6);
+                      GPIO_IOCFG_P2_OUTH_WEAKEN( 7);
+                      // 输入上拉模式选择寄存器  
+                      GPIO_IOCFG_P2_PUPM_SWITCH( 2);
+                      GPIO_IOCFG_P2_PUPM_SWITCH( 6);
+                      GPIO_IOCFG_P2_PUPM_SWITCH( 7);
+                      // 端口数据来源选择寄存器
+                      GPIO_IOCFG_P2_INM_DATA( 2);
+                      GPIO_IOCFG_P2_INM_DATA( 6);
+                      GPIO_IOCFG_P2_INM_DATA( 7);
+              
+              // @brief P3口 总共3根口线 p3.0/1/4/5/6    BT_RXD / BT_TXD / BT_RST/ BT_ATEN / BT_CTL
+                      GPIO_IOCFG_P3_DIR_I( 0);
+                      GPIO_IOCFG_P3_DIR_O( 1);
+                      GPIO_IOCFG_P3_DIR_O( 4);
+                      GPIO_IOCFG_P3_DIR_I( 5);        //BT_ATEN设置为无上拉电阻输入 GPIO_IOCFG_P3_DIR_O( 5);
+                      GPIO_IOCFG_P3_DIR_O( 6);
+                      // 上拉     3        
+                      GPIO_IOCFG_P3_PUP_F( 0);
+                      GPIO_IOCFG_P3_PUP_F( 1);
+                      GPIO_IOCFG_P3_PUP_F( 4);
+                      GPIO_IOCFG_P3_PUP_F( 5);
+                      GPIO_IOCFG_P3_PUP_F( 6);
+                      // 状态     3        
+                      GPIO_IOCFG_P3_SET_0( 0);
+                      GPIO_IOCFG_P3_SET_0( 1);
+                      GPIO_IOCFG_P3_SET_1( 4);        // 0复位，1不复位
+                      GPIO_IOCFG_P3_SET_1( 5);        // 先输出高，使用的时候输出低
+                      GPIO_IOCFG_P3_SET_1( 6);        // 电表上电时，蓝牙模块先不进行供电：0供电，1不供电
+                      // 输出模式选择
+                      GPIO_IOCFG_P3_OUT_N( 0);
+                      GPIO_IOCFG_P3_OUT_N( 1);
+                      GPIO_IOCFG_P3_OUT_N( 4);
+                      GPIO_IOCFG_P3_OUT_N( 5);
+                      GPIO_IOCFG_P3_OUT_N( 6);
+C51 COMPILER V9.54   APPPOWERON                                                            11/18/2021 18:51:16 PAGE 13  
+
+              
+              // @brief P4口 总共4根口线 p4.4/5/6/7 SEG9/SEG10/SEG11/SEG12
+                      GPIO_IOCFG_P4_DIR_I( 4);
+                      GPIO_IOCFG_P4_DIR_O( 5);
+                      GPIO_IOCFG_P4_DIR_O( 6);
+                      GPIO_IOCFG_P4_DIR_O( 7);
+                      // 上拉     4        
+                      GPIO_IOCFG_P4_PUP_F( 4);
+                      GPIO_IOCFG_P4_PUP_F( 5);
+                      GPIO_IOCFG_P4_PUP_F( 6);
+                      GPIO_IOCFG_P4_PUP_F( 7);
+                      // 状态     4        
+                      GPIO_IOCFG_P4_SET_0( 4);
+                      GPIO_IOCFG_P4_SET_0( 5);
+                      GPIO_IOCFG_P4_SET_0( 6);
+                      GPIO_IOCFG_P4_SET_0( 7);
+              
+              // @brief P5口 总共8根口线 p5.0/1/2/3/4/5/6/7     SEG13 / SEG14 / I_J / NULL / DCK / TDI /TMS / TDO
+                      GPIO_IOCFG_P5_DIR_O( 0);
+                      GPIO_IOCFG_P5_DIR_O( 1);
+                      GPIO_IOCFG_P5_DIR_I( 2);
+                      GPIO_IOCFG_P5_DIR_I( 3);
+                      GPIO_IOCFG_P5_DIR_I( 4);
+                      GPIO_IOCFG_P5_DIR_I( 5);
+                      GPIO_IOCFG_P5_DIR_I( 6);
+                      GPIO_IOCFG_P5_DIR_I( 7);
+                      // 上拉     5        
+                      GPIO_IOCFG_P5_PUP_F( 0);
+                      GPIO_IOCFG_P5_PUP_F( 1);
+                      GPIO_IOCFG_P5_PUP_F( 2);
+                      GPIO_IOCFG_P5_PUP_F( 3);
+                      GPIO_IOCFG_P5_PUP_F( 4);
+                      GPIO_IOCFG_P5_PUP_F( 5);
+                      GPIO_IOCFG_P5_PUP_F( 6);
+                      GPIO_IOCFG_P5_PUP_F( 7);
+                      // 状态     5        
+                      GPIO_IOCFG_P5_SET_0( 0);
+                      GPIO_IOCFG_P5_SET_0( 1);
+                      GPIO_IOCFG_P5_SET_0( 2);
+                      GPIO_IOCFG_P5_SET_0( 3);
+                      GPIO_IOCFG_P5_SET_0( 4);
+                      GPIO_IOCFG_P5_SET_0( 5);
+                      GPIO_IOCFG_P5_SET_0( 6);
+                      GPIO_IOCFG_P5_SET_0( 7);
+              
+              // @brief P6口 总共7根口线 p6.1/2/3/4/5/6/7   SEG8/ SEG7/ SEG6/ SEG5/ SEG4/ SEG3/ SEG2
+                      GPIO_IOCFG_P6_DIR_O( 1);
+                      GPIO_IOCFG_P6_DIR_O( 2);
+                      GPIO_IOCFG_P6_DIR_O( 3);
+                      GPIO_IOCFG_P6_DIR_O( 4);
+                      GPIO_IOCFG_P6_DIR_O( 5);
+                      GPIO_IOCFG_P6_DIR_O( 6);
+                      GPIO_IOCFG_P6_DIR_O( 7);
+                      // 上拉     6        
+                      GPIO_IOCFG_P6_PUP_F( 1);
+                      GPIO_IOCFG_P6_PUP_F( 2);
+                      GPIO_IOCFG_P6_PUP_F( 3);
+                      GPIO_IOCFG_P6_PUP_F( 4);
+                      GPIO_IOCFG_P6_PUP_F( 5);
+                      GPIO_IOCFG_P6_PUP_F( 6);
+                      GPIO_IOCFG_P6_PUP_F( 7);
+                      // 状态     6        
+C51 COMPILER V9.54   APPPOWERON                                                            11/18/2021 18:51:16 PAGE 14  
+
+                      GPIO_IOCFG_P6_SET_0( 1);
+                      GPIO_IOCFG_P6_SET_0( 2);
+                      GPIO_IOCFG_P6_SET_0( 3);
+                      GPIO_IOCFG_P6_SET_0( 4);
+                      GPIO_IOCFG_P6_SET_0( 5);
+                      GPIO_IOCFG_P6_SET_0( 6);
+                      GPIO_IOCFG_P6_SET_0( 7); 
+              
+              // @brief P7口 总共5根口线 p7.0/1/5/ 数据手册寄存器里显示有5个，但实际封装只有3�
+             -�� SEG1/ NULL/ NULL
+                      GPIO_IOCFG_P7_DIR_O( 0);
+                      GPIO_IOCFG_P7_DIR_I( 1);
+                      GPIO_IOCFG_P7_DIR_I( 5);
+                      // 上拉     7        
+                      GPIO_IOCFG_P7_PUP_F( 0);
+                      GPIO_IOCFG_P7_PUP_F( 1);
+                      GPIO_IOCFG_P7_PUP_F( 5);
+                      // 状态     7        
+                      GPIO_IOCFG_P7_SET_0( 0);
+                      GPIO_IOCFG_P7_SET_0( 1);
+                      GPIO_IOCFG_P7_SET_0( 5);
+              
+              // @brief P8口 总共2根口线 p8.6/7 SDA/ SCL
+                      GPIO_IOCFG_P8_DIR_O( 6);
+                      GPIO_IOCFG_P8_DIR_O( 7);
+                      // 上拉     8        
+                      GPIO_IOCFG_P8_PUP_F( 6);
+                      GPIO_IOCFG_P8_PUP_F( 7);
+                      // 状态     8        
+                      GPIO_IOCFG_P8_SET_1( 6);
+                      GPIO_IOCFG_P8_SET_1( 7); 
+              
+              // @brief P9口 总共8根口线 p9.0/1/2/3/4/5/6/7   WP/ LED_CTL/ COM1-COM6 / 
+                      GPIO_IOCFG_P9_DIR_I( 0);        
+                      GPIO_IOCFG_P9_DIR_I( 1);        // 先设置成输入,免得上电的时候闪一下
+                      GPIO_IOCFG_P9_DIR_O( 2);
+                      GPIO_IOCFG_P9_DIR_O( 3);
+                      GPIO_IOCFG_P9_DIR_O( 4);
+                      GPIO_IOCFG_P9_DIR_O( 5);
+                      GPIO_IOCFG_P9_DIR_O( 6);
+                      GPIO_IOCFG_P9_DIR_O( 7);        
+                      // 上拉     9        
+                      GPIO_IOCFG_P9_PUP_F( 0);
+                      GPIO_IOCFG_P9_PUP_F( 1);
+                      GPIO_IOCFG_P9_PUP_F( 2);
+                      GPIO_IOCFG_P9_PUP_F( 3);
+                      GPIO_IOCFG_P9_PUP_F( 4);
+                      GPIO_IOCFG_P9_PUP_F( 5);
+                      GPIO_IOCFG_P9_PUP_F( 6);
+                      GPIO_IOCFG_P9_PUP_F( 7);
+                      // 状态     9        
+                      GPIO_IOCFG_P9_SET_1( 0);
+                      GPIO_IOCFG_P9_SET_0( 1);  // 背光点亮
+                      GPIO_IOCFG_P9_SET_0( 2);
+                      GPIO_IOCFG_P9_SET_0( 3); 
+                      GPIO_IOCFG_P9_SET_0( 4);
+                      GPIO_IOCFG_P9_SET_0( 5); 
+                      GPIO_IOCFG_P9_SET_0( 6);
+                      GPIO_IOCFG_P9_SET_0( 7); 
+                      
+                      ADCH=0;
+              
+C51 COMPILER V9.54   APPPOWERON                                                            11/18/2021 18:51:16 PAGE 15  
+
+              }
+              #endif 
+ 842          /*------------------------------------------------------------------------------------------------------*/
+ 843          /**
+ 844           *  @brief    上电显示参数配置
+ 845           *
+ 846           *  @return   none
+ 847           *
+ 848           *  @note     xx
+ 849           *
+ 850           */
+ 851          /*------------------------------------------------------------------------------------------------------*/
+ 852          void ApiPwOn_McuDispInit(void)
+ 853          {
+ 854   1              LCDDrv_Init(POWER_ON);  // 初始化液晶驱动，不涉及显示
+ 855   1      }
+ 856          
+ 857          /*------------------------------------------------------------------------------------------------------*/
+ 858          /**
+ 859           *  @brief    上电定时器配置
+ 860           *
+ 861           *  @return   none
+ 862           *
+ 863           *  @note     xx
+ 864           *
+ 865           */
+ 866          /*------------------------------------------------------------------------------------------------------*/
+ 867          void ApiPwOn_McuTimerInit(void)
+ 868          {
+ 869   1              uchar8 V_ucResult = _OK;
+ 870   1      // @brief 基本节拍定时器  用TIMER0实现，定时1ms 
+ 871   1              
+ 872   1              TMOD  &= ~( TMOD_GATE0 | TMOD_CT0 );
+ 873   1              
+ 874   1              do
+ 875   1              { 
+ 876   2                      if( TMOD_T0_MODE1 != (TMOD & TMOD_T0_MODE_ALL) )
+ 877   2                      { 
+ 878   3                              TMOD  &= TMOD_T0_MODE_CLR;
+ 879   3                              TMOD  |= TMOD_T0_MODE1;                                         // 01： 方式1， 16位向上计数计数器/定时器  
+ 880   3                              V_ucResult = _NOK;
+ 881   3                      }
+ 882   2                      
+ 883   2                      if( TCON1 != TCON1_TCLKP0 )
+ 884   2                      {
+ 885   3                              TCON1 = TCON1_TCLKP0;                                           // 系统时钟作为定时器时钟源，不分频
+ 886   3                              V_ucResult = _NOK;
+ 887   3                      }
+ 888   2                      
+ 889   2                      if( (IEN0 & IEN0_ET0) != IEN0_ET0 )
+ 890   2                      {
+ 891   3                              IEN0 |=  IEN0_ET0;
+ 892   3                              V_ucResult = _NOK;
+ 893   3                      }
+ 894   2                      
+ 895   2                      TCON &= ~(TCON_TF1 | TCON_TR1);         // 不启用定时器1，清除标志并停止
+ 896   2                      
+ 897   2              }while(0);
+ 898   1              
+ 899   1              if( _NOK == V_ucResult )
+ 900   1              {
+ 901   2                      TL0 = T_Xms_TL0;
+C51 COMPILER V9.54   APPPOWERON                                                            11/18/2021 18:51:16 PAGE 16  
+
+ 902   2                      TH0 = T_Xms_TH0;
+ 903   2              }
+ 904   1              
+ 905   1              START_TR0();
+ 906   1              
+ 907   1      }
+ 908          /*------------------------------------------------------------------------------------------------------*/
+ 909          /**EC
+ 910           *  @brief    中断配置
+ 911           *
+ 912           *  @return   none
+ 913           *
+ 914           *  @note     xx
+ 915           *
+ 916           */
+ 917          /*------------------------------------------------------------------------------------------------------*/
+ 918          static void ApiPwOn_McuInterruptInit(void)
+ 919          {
+ 920   1              #if ( METER_TYPE == METER_TYPE_DTSY666)
+                      do
+                      { 
+                              if( (IEN0 & IEN0_EX4) != IEN0_EX4 )
+                              { 
+                                      IEN0 |=  IEN0_EX4;    ////开启外部中断4，用于检测脉冲
+                              }
+                              IENX=0x10;   ///允许使用外部中断44
+                              EXCON1= 0x20;///上升沿触发外部中断
+                              EXF0=0;
+                              
+                      }while(0);
+                      
+                      #endif
+ 934   1      }
+ 935          /*------------------------------------------------------------------------------------------------------*/
+ 936          /**
+ 937           *  @brief    上电通信配置
+ 938           *
+ 939           *  @return   none
+ 940           *
+ 941           *  @note     xx
+ 942           *
+ 943           */
+ 944          /*------------------------------------------------------------------------------------------------------*/
+ 945          void ApiPwOn_McuUartInit(void)
+ 946          {
+ 947   1              ApiPwOn_McuUartXInit(CH_UART_UART0);
+ 948   1              ApiPwOn_McuUartXInit(CH_UART_UART1);
+ 949   1              ApiPwOn_McuUartXInit(CH_UART_UART2);
+ 950   1              ApiPwOn_McuUartXInit(CH_UART_UART3); 
+ 951   1      }
+ 952           
+ 953          /*------------------------------------------------------------------------------------------------------*/
+ 954          /**
+ 955           *  @brief    EUARTX 配置 
+ 956           *
+ 957           *  @param    v_ucChID : 根据通道来初始化对应的串口通道
+ 958           *
+ 959           *  @return   xx
+ 960           *
+ 961           *  @note     xx
+ 962           *
+ 963           */
+C51 COMPILER V9.54   APPPOWERON                                                            11/18/2021 18:51:16 PAGE 17  
+
+ 964          /*------------------------------------------------------------------------------------------------------*/
+ 965          void ApiPwOn_McuUartXInit(uchar8 v_ucChID)
+ 966          {
+ 967   1              uchar8  V_ucTemp;
+ 968   1      // @brief 判断通道，根据通道初始化对应串口
+ 969   1              switch (v_ucChID)
+ 970   1              {
+ 971   2                      case CH_UART_UART0:     // 485,作为备用接口，波特率设定为9600bps
+ 972   2                      {
+ 973   3                              #if( UART0_ENABLE == _ENABLE ) 
+                                      {
+                                              // 配置控制寄存器
+                                              if( PCON != 0X00) { PCON = 0X00; }
+                                              if( (SCON | SCON_TB8) != 0x00 ) { SCON &= ~SCON_TB8;}
+                                              if( (SCON & ( SCON_SM1_RXOV | SCON_SM0_FE ) ) != ( SCON_SM1_RXOV | SCON_SM0_FE ) )
+                                              {
+                                                      SCON |= ( SCON_SM1_RXOV | SCON_SM0_FE );        // 8位uart 可变波特率，异步全双工
+                                              }
+                                              
+                                              // 配置IO口
+                                              UART0_IOCFG_RXD();      // 485RXD 设置成输入，开启上拉  
+                                              UART0_IOCFG_TXD();
+                                              
+                                              // 设置波特率      @8Mhz 9600
+                                              ApiPwOn_McuUartXSetBps(CH_UART_UART0);
+                                               
+                                              // 清空缓冲区、接收使能、允许中断
+                                              ApiComm_CommParaInit(CH_485);
+                                              V_ucTemp = SBUF;
+                                              SCON &= ~(SCON_RI | SCON_TI);
+                                              SCON |=  SCON_REN;
+                                              IEN0 |=  IEN0_ES0;  
+                                      }
+                                      #endif 
+ 998   3                      }break;
+ 999   2                      
+1000   2                      case CH_UART_UART1:     // 蓝牙
+1001   2                      {
+1002   3                              #if( UART1_ENABLE == _ENABLE ) 
+1003   3                              {
+1004   4                                      // 配置控制寄存器
+1005   4                                      if( PCON != 0X00) { PCON = 0X00; }
+1006   4                                      SCON1 &=  ~( SCON1_TB81 | SCON1_RB81); // 清除第9位                 
+1007   4                                      SCON1 |= ( SCON1_SM10_FE | SCON1_SM11_RXOV );   // 9位uart 可变波特率，异步全双工
+1008   4                                      
+1009   4                                      // 配置IO口 
+1010   4                                      UART1_IOCFG_RXD();
+1011   4                                      UART1_IOCFG_TXD();
+1012   4                                      
+1013   4                                      // 设置波特率      @8Mhz 38400
+1014   4                                      ApiPwOn_McuUartXSetBps(CH_UART_UART1);
+1015   4                                       
+1016   4                                      // 清空缓冲区、接收使能、允许中断
+1017   4                                      ApiComm_CommParaInit(CH_BLE);
+1018   4                                      V_ucTemp = SBUF1;
+1019   4                                      SCON1 &= ~(SCON1_RI1 | SCON1_TI1);
+1020   4                                      SCON1 |= SCON1_REN1;
+1021   4                                      IEN1  |= IEN1_ES1;
+1022   4                              } 
+1023   3                              #endif
+1024   3                      }break;
+1025   2                      
+C51 COMPILER V9.54   APPPOWERON                                                            11/18/2021 18:51:16 PAGE 18  
+
+1026   2                      case CH_UART_UART2:     // 7021A没有这个通道
+1027   2                      {
+1028   3                              
+1029   3                      }break;
+1030   2                      
+1031   2                      
+1032   2                      case CH_UART_UART3:     // 预留uart3
+1033   2                      {
+1034   3                              
+1035   3                      }break;
+1036   2                      
+1037   2                      
+1038   2                      default: break;
+1039   2              }
+1040   1              
+1041   1      }
+1042          /*------------------------------------------------------------------------------------------------------*/
+1043          /**
+1044           *  @brief    EUARTX 配置 
+1045           *
+1046           *  @param    v_ucChID : 根据通道来初始化对应的串口通道
+1047           *
+1048           *  @return   xx
+1049           *
+1050           *  @note     xx
+1051           *
+1052           */
+1053          /*------------------------------------------------------------------------------------------------------*/
+1054          void ApiPwOn_UART_SendEn(uchar8 v_ucChID)
+1055          {
+1056   1                      uchar8  V_ucTemp;
+1057   1      // @brief 判断通道，根据通道初始化对应串口
+1058   1              switch (v_ucChID)
+1059   1              {
+1060   2                      case CH_UART_UART0:     // 485,作为备用接口，波特率设定为9600bps
+1061   2                      {
+1062   3                              if( PCON != 0X00) { PCON = 0X00; }
+1063   3                              SCON &= ~SCON_TB8;
+1064   3                              
+1065   3                              SCON |= ( SCON_SM1_RXOV | SCON_SM0_FE );        // 8位uart 可变波特率，异步全双工
+1066   3                              
+1067   3                              // 设置波特率      @8Mhz  
+1068   3                              ApiPwOn_McuUartXSetBps(CH_UART_UART0);
+1069   3                              
+1070   3                              // 清空缓冲区、接收禁止、清除发送接收中断标志、允许中断
+1071   3                              V_ucTemp = SBUF;
+1072   3                              SCON &= ~(SCON_RI | SCON_TI | SCON_REN); 
+1073   3                              IEN0 |=  IEN0_ES0;
+1074   3                              
+1075   3                      }break;
+1076   2                      
+1077   2                      case CH_UART_UART1:     // 蓝牙
+1078   2                      {
+1079   3                              if( PCON != 0X00) { PCON = 0X00; }
+1080   3                              SCON1 &= ~( SCON1_TB81 | SCON1_RB81);
+1081   3                              
+1082   3                              SCON1 |= ( SCON1_SM10_FE | SCON1_SM11_RXOV );   // 方式3 9位uart 可变波特率，异步全双工
+1083   3                              
+1084   3                              // 设置波特率      @8Mhz 38400
+1085   3                              ApiPwOn_McuUartXSetBps(CH_UART_UART1);
+1086   3                              
+1087   3                              // 清空缓冲区、接收禁止、清除发送接收中断标志、允许中断
+C51 COMPILER V9.54   APPPOWERON                                                            11/18/2021 18:51:16 PAGE 19  
+
+1088   3                              V_ucTemp = SBUF1;
+1089   3                              SCON1 &= ~( SCON1_RI1 | SCON_TI | SCON1_REN1);                  
+1090   3                              IEN1  |= IEN1_ES1;
+1091   3                               
+1092   3                      }break;
+1093   2                      
+1094   2                      case CH_UART_UART2:     // 7021A没有这个通道
+1095   2                      {
+1096   3                              
+1097   3                      }break;
+1098   2                      
+1099   2                      
+1100   2                      case CH_UART_UART3:     // 预留uart3
+1101   2                      {
+1102   3                              
+1103   3                      }break;
+1104   2                      
+1105   2                      
+1106   2                      default: break;
+1107   2              }
+1108   1      }
+1109          void ApiPwOn_McuUartXSetBps(uchar8 v_ucChID)
+1110          {
+1111   1      //      uchar8  V_ucTemp;
+1112   1              
+1113   1      // @brief 判断通道，根据通道初始化对应串口
+1114   1              switch (v_ucChID)
+1115   1              {
+1116   2                      case CH_UART_UART0:     // 485,作为备用接口，波特率设定为9600bps
+1117   2                      {  
+1118   3                              // 设置波特率      @8Mhz  9600bps
+1119   3                              if( SBRTL != 0xCC ) { SBRTL  = 0xCC; }
+1120   3                              if( SBRTH != 0x7F ) { SBRTH  = 0x7F; }
+1121   3                               
+1122   3                              if( (SFINE & 0x0F)  != 0x01 ) // bit3-0 管euart0
+1123   3                              { 
+1124   4                                      SFINE &= 0xF0; 
+1125   4                                      SFINE |= 0x01; 
+1126   4                              }
+1127   3                              
+1128   3                              if( (SBRTH & 0x80) != 0x80) { SBRTH |= 0x80; }  // 波特率发生器使能 
+1129   3                              
+1130   3                      }break;
+1131   2                      
+1132   2                      case CH_UART_UART1:     // 蓝牙
+1133   2                      { 
+1134   3                              
+1135   3      //                      // 设置波特率      @8Mhz 9600 485通信
+1136   3      //                      if( SBRT1L != 0xCC) { SBRT1L = 0xCC; }  // 38400
+1137   3      //                      if( SBRT1H != 0x7F) { SBRT1H = 0x7F; }
+1138   3      
+1139   3      //                      if( (SFINE & 0x0F)  != 0x01 ) //  bit7-4 管euart1       38400 设置成0
+1140   3      //                      {
+1141   3      //                              SFINE &=  0xF0; 
+1142   3      //                              SFINE |= 0x01; 
+1143   3      //                      }
+1144   3      //                      
+1145   3      //                      if( (SBRT1H & 0x80) != 0x80) { SBRT1H |= 0x80; }        // 波特率发生器使能 
+1146   3                              // 设置波特率      @8Mhz 38400 蓝牙通信
+1147   3                              if( SBRT1L != 0xF3) { SBRT1L = 0xF3; }  // 38400
+1148   3                              if( SBRT1H != 0x7F) { SBRT1H = 0x7F; }
+1149   3      
+C51 COMPILER V9.54   APPPOWERON                                                            11/18/2021 18:51:16 PAGE 20  
+
+1150   3                              if( (SFINE & 0xf0)  != 0x00 ) //  bit7-4 管euart1       38400 设置成0
+1151   3                              {
+1152   4                                      SFINE &=  0x0F; 
+1153   4                              }
+1154   3                              
+1155   3                              if( (SBRT1H & 0x80) != 0x80) { SBRT1H |= 0x80; }         // 波特率发生器使能 
+1156   3                              
+1157   3                      }break;
+1158   2                      
+1159   2                      case CH_UART_UART2:     // 7021A没有这个通道
+1160   2                      {
+1161   3                              
+1162   3                      }break;
+1163   2                      
+1164   2                      
+1165   2                      case CH_UART_UART3:     // 预留uart3
+1166   2                      {
+1167   3                              
+1168   3                      }break;
+1169   2                      
+1170   2                      
+1171   2                      default: break;
+1172   2              }
+1173   1      }
+1174          
+1175          /*------------------------------------------------------------------------------------------------------*/
+1176          /**
+1177           *  @brief    上电配置计量模块
+1178           *
+1179           *  @return   none
+1180           *
+1181           *  @note     xx
+1182           *
+1183           */
+1184          /*------------------------------------------------------------------------------------------------------*/
+1185          
+1186          static void ApiPwOn_EMUInit(void)
+1187          {
+1188   1              ApiMS_InitMeterICPara();
+1189   1      }
+1190          
+1191          /*------------------------------------------------------------------------------------------------------*/
+1192          /**
+1193           *  @brief    电表初始化（厂内执行)
+1194           *
+1195           *  @return   none
+1196           *
+1197           *  @note     xx
+1198           *
+1199           */
+1200          /*------------------------------------------------------------------------------------------------------*/
+1201          
+1202          void ApiPwOn_MeterInitInFactory(void)
+1203          {
+1204   1              uchar8 V_TempData[7]= { 1 , 2 , 10 , 11 , 9 , 3 , 4  } ;///当前正向电量、反向电量、剩余金�
+             -��、透支金额、电价、通信地址高4低8
+1205   1              uchar8 V_ucTemp[9];
+1206   1              /*------------------------------------------------------------------------------------------------------*
+             -/
+1207   1              // @brief 电表清零
+1208   1              ApiPwOn_MeterClear();
+1209   1      //      GV_ClearFlag=CommClear;
+C51 COMPILER V9.54   APPPOWERON                                                            11/18/2021 18:51:16 PAGE 21  
+
+1210   1              /*------------------------------------------------------------------------------------------------------*
+             -/
+1211   1              // @brief 参数初始化
+1212   1              /* 电能表信息 */
+1213   1              if( _SUCCESS != LibPub_ReadDataFromE2prom(LIB_E2P_METER_INFO, 0, &GStr_MeterIFO.ucaCommAddr[0]) )
+1214   1              {
+1215   2                      LibPub_MemSetBytes( &GStr_MeterIFO.ucaCommAddr[0], 0x00, GStr_METER_IFO_Type_LEN ) ;
+1216   2                      GStr_MeterIFO.ucaCommAddr[5] = 0x01;
+1217   2                      GStr_MeterIFO.ucaMeterID[5] = 0x01;
+1218   2                      GStr_MeterIFO.ucaUserID[5] = 0x01;
+1219   2                      GStr_MeterIFO.ucVoltageTrans[2] = 0x01;
+1220   2                      GStr_MeterIFO.ucCurrentTrans[2]=0x01;///PTCT均为1
+1221   2                      GStr_MeterIFO.ucBpsVal = 0xff;
+1222   2                      
+1223   2                      LibPub_WriteDataToE2prom(LIB_E2P_METER_INFO, 0, &GStr_MeterIFO.ucaCommAddr[0]) ;
+1224   2                      
+1225   2              }
+1226   1              /*---------------------------------------------------------------------------------------------------*/
+1227   1              ///蓝牙相关参数           
+1228   1              ///如果通信地址改变，更改蓝牙参数
+1229   1              BleDrv_InitBleRunPara();
+1230   1              GStr_BLEGroup.ucBleTPL = 0x00;          //发射功率默认00级
+1231   1              BleDrv_SetBleTPL( &GStr_BLEGroup.ucBleTPL );
+1232   1              
+1233   1              /* 计算一下crc，将参数写入E2  */
+1234   1              GStr_BLEGroup.usCRC16 = LibPub_CRC16_CCITT(&GStr_BLEGroup.ucBleMAC[0], GStr_BLE_GROUP_TypeLEN-2); 
+1235   1              LibPub_WriteDataToE2prom( LIB_E2P_BLE_PARA, 0, &GStr_BLEGroup.ucBleMAC[0]);     
+1236   1              
+1237   1              ///功能配置参数
+1238   1                      LibPub_MemSetBytes( (uchar8*)&GStr_FunConfigPara.ucFunCurrentVal, 0x00, GStr_FUN_CONFIG_TypeLEN ) ;
+1239   1                      GStr_FunConfigPara.ucFunCurrentVal = 0x03;              ///* 默认5A *///
+1240   1                      #if ( METER_TYPE != METER_TYPE_DTSY666)
+1241   1                              GStr_FunConfigPara.ucFunMeterConst = 0x10;              ///* 默认常数10（16：即1600）
+1242   1                      #else
+                                      GStr_FunConfigPara.ucFunMeterConst = 0x08;              ///* 默认常数10（8：即800）
+                              #endif
+1245   1                      LibPub_WriteDataToE2prom(LIB_E2P_FUN_CONFIG, 0, (uchar8*)&GStr_FunConfigPara.ucFunCurrentVal) ;////写EE
+1246   1              
+1247   1              /*------------------------------------------------------------------------------------------------------*
+             -/
+1248   1              /* 显示参数 */
+1249   1      //      if ( _SUCCESS != LibPub_ReadDataFromE2prom(LIB_E2P_Display_Para, 0, &GStr_DisplayPara.ucFullDisp_Time) 
+             -)
+1250   1              {
+1251   2                      GStr_DisplayPara.ucFullDisp_Time=LCD_DISP_FULL_TIME;// 上电全显时间默认5s
+1252   2                      GStr_DisplayPara.ucDispDurTime=LCD_DISP_DUR_TIME;       // 每屏显示时间默认5s
+1253   2                      GStr_DisplayPara.ucAutoDispNum= 7 ;                     // 循显默认7屏，当前正向电量、反向电量�
+             -��剩余金额、透支金额、电价、通信地址高4低8
+1254   2                      GStr_DisplayPara.ucKeyDispNum=  7;                      // 键显默认7  当前正向电量、反向电量、�
+             -��余金额、透支金额、电价、通信地址高4低8
+1255   2                  
+1256   2                      LibPub_WriteDataToE2prom(LIB_E2P_Display_Para, 0, &GStr_DisplayPara.ucFullDisp_Time) ;
+1257   2              }
+1258   1                  LibPub_MemSetBytes( GStr_DisplayPara.ucAutoDisptable, 0x00, 62 ) ;
+1259   1                  LibPub_MemCopyBytes( V_TempData , GStr_DisplayPara.ucAutoDisptable , 7 );
+1260   1                      LibPub_MemCopyBytes( V_TempData , GStr_DisplayPara.ucKeyDisptable , 7 );
+1261   1                  LibPub_WriteDataToE2prom(LIB_E2P_Display_Table, 0,  GStr_DisplayPara.ucAutoDisptable) ;
+1262   1                  
+1263   1      //      if ( _FAILED == LibPub_ReadDataFromE2prom(LIB_E2P_Price, 0, &GStr_PRICE.ucaPrice[0]) )
+1264   1              {
+1265   2                      LibPub_MemSetBytes( &GStr_PRICE.ucaPrice[0], 0x00, GStr_PRICE_Type_LEN ) ;
+1266   2                      GStr_PRICE.ucaPrice[2]=0x50;///电价默认为0.5
+C51 COMPILER V9.54   APPPOWERON                                                            11/18/2021 18:51:16 PAGE 22  
+
+1267   2                      LibPub_WriteDataToE2prom(LIB_E2P_Price, 0, &GStr_PRICE.ucaPrice[0]);
+1268   2              }
+1269   1              
+1270   1              /*------------------------------------------------------------------------------------------------------*
+             -/
+1271   1              ///本地报警参数
+1272   1      //      if ( _SUCCESS != LibPub_ReadDataFromE2prom(LIB_E2P_Money_Para, 0, GStr_MoneyPara.ucaAlarmMoneyL1) )
+1273   1              {
+1274   2                      LibPub_MemSetBytes( &GStr_MoneyPara.ucaAlarmMoneyL1[0], 0x00, GStr_MONEY_PARA_Type_LEN ) ;///囤积金�
+             -�、透支金额、合闸允许金额、过载功率为0  不开启
+1275   2                      GStr_MoneyPara.ucaAlarmMoneyL1[2] = 0x20;    /*报警金额一级   00002000*/
+1276   2                      GStr_MoneyPara.ucaAlarmMoneyL2[2] = 0x10;    /*报警金额二级   00001000 */  
+1277   2                      GStr_MoneyPara.ucaMaxMoneyLimit[0] = 0x10;   /*囤积金额限值设置为100000.00*/
+1278   2                      
+1279   2                      LibPub_WriteDataToE2prom(LIB_E2P_Money_Para, 0, GStr_MoneyPara.ucaAlarmMoneyL1) ;
+1280   2              }
+1281   1              ///密码默认为0
+1282   1              LibPub_MemSetBytes( V_ucTemp, 0x00, 9 ) ;
+1283   1              LibPub_WriteDataToE2prom(LIB_E2P_Password, 0, V_ucTemp) ;///密码默认为0 并写EE   
+1284   1              LibPub_MemSetBytes(GStr_Counter.ucPasswordErr_Cnt,0x00,3);//密码错计数器清零
+1285   1              PrepaymentModule_Comm_ClrMACErrNum();//清挂起标志
+1286   1              LibPub_MemSetBytes( (uchar8*)&GStr_Monitor.usPasswordErrTime, 0x00, 8 ) ;///24小时定时器清零
+1287   1              
+1288   1              /*------------------------------------------------------------------------------------------------------*
+             -/
+1289   1              // 系统运行标志
+1290   1          GStr_Flag.ucRunState = 0;///运行标志清0
+1291   1          LibPub_WriteDataToE2prom(LIB_E2P_RUN_STATE,0,&GStr_Flag.ucRunState);
+1292   1          GStr_Flag.ucRunState1 = 0;
+1293   1              GStr_Flag.ucRunState2=0;
+1294   1              
+1295   1              
+1296   1              LibPub_MemSetBytes((uchar8*) &GStr_AVAIL.us_IDAvailTimer, 0x00, GStr_AVAIL_TypeLEN ) ;
+1297   1              LibPub_WriteDataToE2prom(LIB_E2P_SecretKey,0,&GStr_AVAIL.ucE2Key);
+1298   1              ///清开户、退费、密钥状态标志、密钥写为0并存EE
+1299   1              ///身份认证有效时长剩余时间也清零，需重新身份认证
+1300   1              GStr_AVAIL.us_IDAvailTimer=5;///身份认证有效时长为5min
+1301   1              LibPub_WriteDataToE2prom(LIB_E2P_AvailTimer,0,(uchar8*) &GStr_AVAIL.us_IDAvailTimer);
+1302   1              
+1303   1              ApiRelay_SubtractMoneyRelayJudge();
+1304   1              ApiRelay_ControlProcess();
+1305   1              
+1306   1      }
+1307          /*------------------------------------------------------------------------------------------------------*/
+1308          /**
+1309           *  @brief    电表清零
+1310           *
+1311           *  @return   none
+1312           *
+1313           *  @note     xx
+1314           *
+1315           */
+1316          /*------------------------------------------------------------------------------------------------------*/
+1317          void ApiPwOn_MeterClear()
+1318          {
+1319   1              uchar8 V_ucCnt_i,V_ucTempBuff[4];
+1320   1              ///* 电量清零 包括小数电量、脉冲电量等都需要清零 *///
+1321   1              ///* 正反向电量清零 *///
+1322   1              LibPub_MemSetBytes( &GStr_Energy.ucaFw_Energy[0], 0x00, GStr_ENERGY_Type_LEN );
+1323   1              LibPub_WriteDataToE2prom( LIB_E2P_ENRGY, 0, &GStr_Energy.ucaFw_Energy[0] );///整数电量写EE
+1324   1      
+1325   1              ///* 小数电量 *///
+C51 COMPILER V9.54   APPPOWERON                                                            11/18/2021 18:51:16 PAGE 23  
+
+1326   1              LibPub_MemSetBytes( &GStr_EnergyPulseFw.ucPulseAdd, 0x00, GStr_ENERGY_PULSE_Type_LEN);  ///* 正向脉冲�
+             -��括尾数和小数电量 *///
+1327   1              LibPub_MemSetBytes( &GStr_EnergyPulseBk.ucPulseAdd, 0x00, GStr_ENERGY_PULSE_Type_LEN);  ///* 反向脉冲�
+             -��括尾数和小数电量 *///
+1328   1              LibPub_MemSetBytes( &GStr_ENERGYDEC.ucaFw_EnergyDec[0], 0x00, GStr_ENERGYDEC_Type_LEN);///
+1329   1              for ( V_ucCnt_i=0; V_ucCnt_i<13; V_ucCnt_i++ )
+1330   1              {
+1331   2                      LibPub_WriteDataToE2prom( LIB_E2P_ENERGY_DECPULSE_FW, V_ucCnt_i, (uchar8 *)&GStr_EnergyPulseFw.ucPulseAd
+             -d);
+1332   2                      LibPub_WriteDataToE2prom( LIB_E2P_ENERGY_DECPULSE_BK, V_ucCnt_i, (uchar8 *)&GStr_EnergyPulseBk.ucPulseAd
+             -d);
+1333   2              } 
+1334   1          
+1335   1              ///小数位写EE
+1336   1              V_ucTempBuff[0] =   GStr_EnergyPulseFw.ucaPulseRemain[0];
+1337   1              V_ucTempBuff[1] =  ~GStr_EnergyPulseFw.ucaPulseRemain[0];
+1338   1              V_ucTempBuff[2] =   GStr_EnergyPulseBk.ucaPulseRemain[0];
+1339   1              V_ucTempBuff[3] =  ~GStr_EnergyPulseBk.ucaPulseRemain[0]; 
+1340   1              LibPub_WriteDataToE2prom( LIB_E2P_ENERGY_DECPULSE_WS, 0, V_ucTempBuff );        ///* 脉冲尾数存一下， */
+             -//
+1341   1              
+1342   1              ///剩余金额 透支金额 购电金额清零    电价不变
+1343   1      //      if(v_ClearFlag==CommClear)///通信总清
+1344   1      //      {
+1345   1                              LibPub_MemSetBytes( &GStr_Money.ucaRemainMoney[0], 0x00, 12 );  ///透支金额 剩余金额 清零
+1346   1                              LibPub_MemSetBytes( &GStr_PRICE.ucaPurchaseMoneyAll[0], 0x00, 4 );  ///购电金额 清零  
+1347   1                              LibPub_MemSetBytes( &GStr_PRICE.ucPurchaseTimes[0], 0x00, 4 );  ///购电次数 清零
+1348   1                              GStr_Money.usCRC16=LibPub_CRC16_CCITT(&GStr_Money.ucaRemainMoney[0],GStr_MONEY_Type_LEN-2);
+1349   1                              LibPub_WriteDataToE2prom(LIB_E2P_Money, 0, &GStr_Money.ucaRemainMoney[0]);
+1350   1                              LibPub_WriteDataToE2prom(LIB_E2P_Price, 0, &GStr_PRICE.ucaPrice[0]);
+1351   1      //      }
+1352   1              for(V_ucCnt_i=0;V_ucCnt_i<4;V_ucCnt_i++)
+1353   1          {
+1354   2                      DrvE2p_WriteData((LIB_E2P_HoldFirstMoney_Addr+V_ucCnt_i*14),&GStr_Money.ucaRemainMoney[0],14);
+1355   2              }///将定时存储金额的EE区域清零
+1356   1              
+1357   1              ///事件清零  事件次数  事件指针清零
+1358   1               if(GStr_Flag.ucMeterMode &F_FACTORY_MODE)//厂内通信清零清次数和指针，厂外钱包初始化�
+             -��清
+1359   1              {
+1360   2                      LibPub_MemSetBytes( &GStr_EventRecordNum.ucEventTimes[0][0], 0x00, 4);  ///清零次数
+1361   2                      GStr_EventNumPiont.uc_Num[0]=0;
+1362   2                      GStr_EventValidPiont.uc_Point[0]=0;
+1363   2              }
+1364   1              LibPub_MemSetBytes( &GStr_EventRecordNum.ucEventTimes[1][0], 0x00, 4);  ///次数
+1365   1              LibPub_MemSetBytes( &GStr_EventRecordNum.ucEventTimes[2][0], 0x00, 4);  ///次数
+1366   1              LibPub_MemSetBytes( &GStr_EventRecordNum.ucEventTimes[3][0], 0x00, 4);  ///次数
+1367   1              LibPub_MemSetBytes( &GStr_EventRecordNum.ucEventTimes[4][0], 0x00, 4);  ///次数
+1368   1              LibPub_MemSetBytes( &GStr_EventRecordNum.ucEventTimes[5][0], 0x00, 4);  ///次数
+1369   1              GStr_EventRecordNum.usCRC16=LibPub_CRC16_CCITT(&GStr_EventRecordNum.ucEventTimes[0][0],GStr_EventRecordNu
+             -m_TypeLEN-2);
+1370   1              LibPub_WriteDataToE2prom(LIB_E2P_EventNum, 0, &GStr_EventRecordNum.ucEventTimes[0][0] );
+1371   1              
+1372   1              LibPub_MemSetBytes( &GStr_EventNumPiont.uc_Num[1], 0x00, 5);
+1373   1              GStr_EventNumPiont.usCRC16=LibPub_CRC16_CCITT(&GStr_EventNumPiont.uc_Num[0],GStr_EventNumPiont_TypeLEN-2)
+             -;
+1374   1              
+1375   1          LibPub_MemSetBytes( &GStr_EventValidPiont.uc_Point[1],0x00,5);///有效指针和循环指针清零 包
+             -含CRC
+1376   1              GStr_EventValidPiont.usCRC16=LibPub_CRC16_CCITT(&GStr_EventValidPiont.uc_Point[0],GStr_EventValidPiont_Ty
+             -peLEN-2);
+1377   1              
+C51 COMPILER V9.54   APPPOWERON                                                            11/18/2021 18:51:16 PAGE 24  
+
+1378   1              LibPub_WriteDataToE2prom(LIB_E2P_EventNumPiont, 0,  &GStr_EventNumPiont.uc_Num[0]);
+1379   1              LibPub_WriteDataToE2prom(LIB_E2P_EventValidPiont, 0, &GStr_EventValidPiont.uc_Point[0] );
+1380   1              
+1381   1              GStr_Flag.ucRunState = 0;///运行标志清0
+1382   1          LibPub_WriteDataToE2prom(LIB_E2P_RUN_STATE,0,&GStr_Flag.ucRunState);
+1383   1          GStr_Flag.ucRunState1 = 0;
+1384   1              GStr_Flag.ucRunState2&=F_RUN_RELAY_STATE;///除了跳合闸状态其他都清掉
+1385   1      }
+1386          
+1387          /*------------------------------------------------------------------------------------------------------*/
+1388          /**
+1389           *  @brief    电表信息效验   通信地址  表号客户编号  清零次数 购电次数
+1390           *
+1391           *  @return   none
+1392           *
+1393           *  @note     xx
+1394           *
+1395           */
+1396          /*------------------------------------------------------------------------------------------------------*/
+1397          void ApiPwOn_MeterInfoParaCheck(void)
+1398          {
+1399   1              
+1400   1              if ( _TRUE != LibPub_CrcCheck( &GStr_MeterIFO.ucaCommAddr[0], GStr_METER_IFO_Type_LEN-2, GStr_MeterIFO.us
+             -CRC16) )
+1401   1              {
+1402   2                      if ( _FAILED == LibPub_ReadDataFromE2prom(LIB_E2P_METER_INFO, 0, &GStr_MeterIFO.ucaCommAddr[0]) )
+1403   2                      {
+1404   3                              LibPub_MemSetBytes( &GStr_MeterIFO.ucaCommAddr[0], 0x00, GStr_METER_IFO_Type_LEN ) ;
+1405   3                              GStr_MeterIFO.ucaCommAddr[5]=0x01;      ///* 通信地址默认01 *///
+1406   3                              GStr_MeterIFO.ucaMeterID[5]=0x01;       ///* 表号默认01 *///
+1407   3                              GStr_MeterIFO.ucaUserID[5]=0x01;        ///* 户号默认01*///
+1408   3                              GStr_MeterIFO.ucVoltageTrans[2]=0x01;   ///* pt默认01*///
+1409   3                              GStr_MeterIFO.ucCurrentTrans[2]=0x01;   ///* CT默认01*///
+1410   3                              GStr_MeterIFO.ucBpsVal = 0xff;  ///* 波特率默认2400bps *///后续待定
+1411   3                              
+1412   3                      }
+1413   2              }
+1414   1              #if ( METER_TYPE != METER_TYPE_DTSY666)
+1415   1              if((GStr_MeterIFO.ucVoltageTrans[0]!=0)||(GStr_MeterIFO.ucVoltageTrans[1]!=0)||(GStr_MeterIFO.ucVoltageTr
+             -ans[2]!=0x01)
+1416   1              ||(GStr_MeterIFO.ucCurrentTrans[0]!=0)||(GStr_MeterIFO.ucCurrentTrans[1]!=0)||(GStr_MeterIFO.ucCurrentTra
+             -ns[2]!=0x01)
+1417   1              )////非三相表电压电流互感器变比要默认为1
+1418   1              {
+1419   2                      LibPub_MemSetBytes( &GStr_MeterIFO.ucVoltageTrans[0], 0x00, 6 ) ;
+1420   2                      GStr_MeterIFO.ucVoltageTrans[2]=0x01;   ///* pt默认01*///
+1421   2                      GStr_MeterIFO.ucCurrentTrans[2]=0x01;   ///* CT默认01*///
+1422   2                      LibPub_WriteDataToE2prom(LIB_E2P_METER_INFO, 0, &GStr_MeterIFO.ucaCommAddr[0]);
+1423   2              }
+1424   1              #endif
+1425   1              ///* 软I_J时间获取 *///
+1426   1              if( _SUCCESS == LibPub_ReadDataFromE2prom( LIB_E2P_SOFTI_J, 0, ( uchar8*)&GStr_Monitor.ulSoftI_JTime) )
+1427   1              {
+1428   2                      if ( GStr_Monitor.ulSoftI_JTime > FACTORY_MAX_TIME )
+1429   2                      {
+1430   3                              GStr_Monitor.ulSoftI_JTime = 0;
+1431   3                      }
+1432   2              }
+1433   1              else
+1434   1              {
+1435   2                      GStr_Monitor.ulSoftI_JTime = 0;
+1436   2              }
+C51 COMPILER V9.54   APPPOWERON                                                            11/18/2021 18:51:16 PAGE 25  
+
+1437   1              ///* 判断一下厂内状态 *///
+1438   1              if( GStr_Monitor.ulSoftI_JTime )
+1439   1              {
+1440   2                      GStr_Flag.ucMeterMode |= F_FACTORY_MODE;
+1441   2              }
+1442   1              else
+1443   1              { 
+1444   2                      GStr_Flag.ucMeterMode &= ~F_FACTORY_MODE;
+1445   2              }
+1446   1      }
+1447          
+1448          
+1449          /*------------------------------------------------------------------------------------------------------*/
+1450          /**
+1451           *  @brief    显示信息效验
+1452           *
+1453           *  @return   none
+1454           *
+1455           *  @note     xx
+1456           *
+1457           */
+1458          /*------------------------------------------------------------------------------------------------------*/
+1459          void ApiPwOn_DisplayParaCheck(void)
+1460          {
+1461   1              uchar8 V_TempData[7]= { 1 , 2 , 10 , 11 , 9 , 3 , 4  } ;///当前正向电量、反向电量、剩余金�
+             -��、透支金额、电价、通信地址高4低8
+1462   1              if ( _TRUE != LibPub_CrcCheck( &GStr_DisplayPara.ucFullDisp_Time, 4, GStr_DisplayPara.usDisp_ParaCRC16) )
+1463   1              ///上电全显时间、每屏显示时间、循环显示屏数、按键显示屏数各1  
+1464   1              {
+1465   2                      if ( _FAILED == LibPub_ReadDataFromE2prom(LIB_E2P_Display_Para, 0, &GStr_DisplayPara.ucFullDisp_Time) )
+1466   2                      {
+1467   3                              GStr_DisplayPara.ucFullDisp_Time=LCD_DISP_FULL_TIME;//上电全显时间默认5s
+1468   3                              GStr_DisplayPara.ucDispDurTime=LCD_DISP_DUR_TIME;//每屏显示时间默认5s
+1469   3                              GStr_DisplayPara.ucAutoDispNum= 7 ;           ///循显默认7屏，当前正向电量、反向电量�
+             -�剩余金额、透支金额、电价、通信地址高4低8
+1470   3                              GStr_DisplayPara.ucKeyDispNum=  7;              ///键显默认7  当前正向电量、反向电量、�
+             -��余金额、透支金额、电价、通信地址高4低8
+1471   3      
+1472   3                      }
+1473   2              }       
+1474   1              if(_TRUE != LibPub_CrcCheck( &GStr_DisplayPara.ucAutoDisptable[0], 60, GStr_DisplayPara.usDisp_tableCRC16
+             -))
+1475   1              //循显、按键显示各30
+1476   1              {
+1477   2                      if ( _FAILED == LibPub_ReadDataFromE2prom(LIB_E2P_Display_Table, 0, &GStr_DisplayPara.ucAutoDisptable[0]
+             -) )
+1478   2                      {
+1479   3                              LibPub_MemCopyBytes( V_TempData , GStr_DisplayPara.ucAutoDisptable , 7 );
+1480   3                              LibPub_MemCopyBytes( V_TempData , GStr_DisplayPara.ucKeyDisptable , 7 );
+1481   3                      }
+1482   2              }
+1483   1              if((GStr_DisplayPara.ucFullDisp_Time>30)||(GStr_DisplayPara.ucFullDisp_Time<05)) 
+1484   1              {
+1485   2                      GStr_DisplayPara.ucFullDisp_Time=LCD_DISP_FULL_TIME;//上电全显时间默认5~30s,非法默认5s
+1486   2              }
+1487   1              if((GStr_DisplayPara.ucDispDurTime>30)||(GStr_DisplayPara.ucDispDurTime<05)) 
+1488   1              {
+1489   2                      GStr_DisplayPara.ucDispDurTime=LCD_DISP_DUR_TIME;//循环显时间默认5~30s,非法默认5s
+1490   2              }
+1491   1              if(GStr_DisplayPara.ucAutoDispNum>30)///循显按键显示最大30屏，非法为7
+1492   1              {
+1493   2                      GStr_DisplayPara.ucAutoDispNum= 7 ; 
+C51 COMPILER V9.54   APPPOWERON                                                            11/18/2021 18:51:16 PAGE 26  
+
+1494   2              }
+1495   1              if(GStr_DisplayPara.ucKeyDispNum>30)
+1496   1              {
+1497   2                      GStr_DisplayPara.ucKeyDispNum=  7;   
+1498   2              }
+1499   1      }
+1500          /*------------------------------------------------------------------------------------------------------*/
+1501          /**
+1502           *  @brief    报警金额 透支金额 囤积金额过载功率等参数效验
+1503           *
+1504           *  @return   none
+1505           *
+1506           *  @note     xx
+1507           *
+1508           */
+1509          /*------------------------------------------------------------------------------------------------------*/
+1510          void ApiPwOn_MoneyParaCheck(void)
+1511          {
+1512   1          
+1513   1              if ( _TRUE != LibPub_CrcCheck( &GStr_MoneyPara.ucaAlarmMoneyL1[0], GStr_MONEY_PARA_Type_LEN-2, GStr_Money
+             -Para.usCRC16) )
+1514   1              ///一级报警、二级报警、囤积金额、透支金额、过载功率
+1515   1              {
+1516   2                      if ( _FAILED == LibPub_ReadDataFromE2prom(LIB_E2P_Money_Para, 0, &GStr_MoneyPara.ucaAlarmMoneyL1) )
+1517   2                      {
+1518   3                              LibPub_MemSetBytes( &GStr_MoneyPara.ucaAlarmMoneyL1[0], 0x00, GStr_MONEY_PARA_Type_LEN );       
+1519   3                              GStr_MoneyPara.ucaAlarmMoneyL1[1]=0x20;///* 一级报警0020*///
+1520   3                              GStr_MoneyPara.ucaAlarmMoneyL2[1]=0x10;///* 二级报警0010*///
+1521   3                              ///过载功率为0  默认该功率无效\囤积
+1522   3                      }
+1523   2              }
+1524   1              if(_TRUE != LibPub_CrcCheck( &GStr_Money.ucaRemainMoney[0], GStr_MONEY_Type_LEN-2, GStr_Money.usCRC16) )
+1525   1              {
+1526   2                      if ( _FAILED == LibPub_ReadDataFromE2prom(LIB_E2P_Money, 0, &GStr_Money.ucaRemainMoney[0]) )
+1527   2                      {
+1528   3                              LibPub_MemSetBytes( &GStr_Money.ucaRemainMoney[0], 0x00, GStr_MONEY_Type_LEN-2 );
+1529   3                  GStr_Money.ucaRemainMoney[3]=0x50;///默认剩余金额50   
+1530   3                      
+1531   3                      }
+1532   2              }
+1533   1      
+1534   1      }
+1535          
+1536          
+1537          ///*============================================================================================*///
+1538          ///* Function:          void ApiPwOn_DLXS_READ(GStr_ENERGY_PULSE_Type *p_strEnergyPulse,ushort16 v_usAddrIndex) 
+             -                                                                *///
+1539          ///* Description:       读电量小数，                                                                                                                              *///
+1540          ///* Calls:             无                                                                                                                                                     *///
+1541          ///* Called By:         无                                                                                                                                                     *///
+1542          ///* Input:             Add表示用电电量的小数地址，                                                         *///                                                                                    *///                                                        
+1543          ///* Output:                                                                                                    *///
+1544          ///* Return:            无                                                                                                                                                     *///                            
+1545          ///* Others:                                                                                                                                                                    *///
+1546          ///*============================================================================================*///
+1547          void ApiPwOn_DLXS_READ(GStr_ENERGY_PULSE_Type *p_strEnergyPulse,ushort16 v_usAddrIndex )
+1548          {
+1549   1              uchar8  V_TempData[13];
+1550   1              uchar8  i,j;    
+1551   1                      
+1552   1              p_strEnergyPulse->ucPulseDecSavePtr=0;
+1553   1              p_strEnergyPulse->ucPulseDecimal=0;
+C51 COMPILER V9.54   APPPOWERON                                                            11/18/2021 18:51:16 PAGE 27  
+
+1554   1              p_strEnergyPulse->ucPulseDecSaveNoFF=0;
+1555   1              
+1556   1              LibPub_MemSetBytes(V_TempData,0X00,13);
+1557   1              DrvE2p_ReadData(EEPROM_MAP_TAB[v_usAddrIndex].usE2pAddress,V_TempData,13);
+1558   1              
+1559   1              for(i=0;i<12;i++)
+1560   1              {
+1561   2                      if(V_TempData[i]==0xff)
+1562   2                      {
+1563   3                              p_strEnergyPulse->ucPulseDecSavePtr++;
+1564   3                              p_strEnergyPulse->ucPulseDecimal+=8;
+1565   3                      }
+1566   2                      else
+1567   2                      {               
+1568   3                              break;          
+1569   3                      }
+1570   2              }
+1571   1              j=V_TempData[i];
+1572   1              p_strEnergyPulse->ucPulseDecSaveNoFF=j;
+1573   1              for(i=0;i<8;i++)
+1574   1              {
+1575   2                      if((j&0x80)!=0)
+1576   2                      {
+1577   3                              p_strEnergyPulse->ucPulseDecimal+=1;
+1578   3                               j=j<<1;                        
+1579   3                      }
+1580   2                      else
+1581   2                      {
+1582   3                                 break;
+1583   3                      }
+1584   2              }
+1585   1                      
+1586   1      }
+1587          ///**********************************************************************///
+1588          ///* Brief:  电量整数校验                                                */// 
+1589          ///*                                                                    *///
+1590          ///* Return: 正确回 _SUCCESS，错误回 FAILED                              *///
+1591          ///*                                                                    *///
+1592          ///* Note:   修改及其他说明                                              *///
+1593          ///**********************************************************************///
+1594          uchar8 ApiPwOn_EnergyZSCheck(void)
+1595          { 
+1596   1              uchar8 V_ucResultChk = _SUCCESS;
+1597   1              
+1598   1              if (  _TRUE != LibPub_CrcCheck( &GStr_Energy.ucaFw_Energy[0], GStr_ENERGY_Type_LEN-2, GStr_Energy.usCRC16
+             - ) )
+1599   1              {
+1600   2                       V_ucResultChk = LibPub_ReadDataFromE2prom( LIB_E2P_ENRGY, 0 , &GStr_Energy.ucaFw_Energy[0]);
+1601   2              }
+1602   1              
+1603   1              return V_ucResultChk;
+1604   1      }
+1605          ///**********************************************************************///
+1606          ///* Brief:  电量参数校验                                                */// 
+1607          ///*                                                                    *///
+1608          ///* Return: 无                                                         *///
+1609          ///*                                                                    *///
+1610          ///* Note:   修改及其他说明                                              *///
+1611          ///**********************************************************************///
+1612          void ApiPwOn_EnergyCheck(void)
+1613          {
+1614   1      //      uchar8 V_ucCnt;
+C51 COMPILER V9.54   APPPOWERON                                                            11/18/2021 18:51:16 PAGE 28  
+
+1615   1              uchar8 V_ucaTempData[4];
+1616   1              
+1617   1              ///* 整数电量 */// 
+1618   1              if ( _SUCCESS == ApiPwOn_EnergyZSCheck() )
+1619   1              {
+1620   2                      ///* 小数电量 *///
+1621   2                      ApiPwOn_DLXS_READ(&GStr_EnergyPulseFw,LIB_E2P_ENERGY_DECPULSE_FW );
+1622   2                      GStr_Energy.ucaFw_Energy[3] = LibPub_1Hex_2_1BCD( GStr_EnergyPulseFw.ucPulseDecimal );///正向
+1623   2      
+1624   2                      
+1625   2                      ApiPwOn_DLXS_READ(&GStr_EnergyPulseBk,LIB_E2P_ENERGY_DECPULSE_BK );
+1626   2                      GStr_Energy.ucaBk_Energy[3] = LibPub_1Hex_2_1BCD( GStr_EnergyPulseBk.ucPulseDecimal );///反向
+1627   2      
+1628   2                      GStr_Energy.usCRC16 = LibPub_CRC16_CCITT ( &GStr_Energy.ucaFw_Energy[0], GStr_ENERGY_Type_LEN-2);
+1629   2              }
+1630   1                
+1631   1              ///* 尾数,如果校验失败，补一半脉冲尾数  *///
+1632   1              if ( _SUCCESS == LibPub_ReadDataFromE2prom(LIB_E2P_ENERGY_DECPULSE_WS, 0, V_ucaTempData ) )
+1633   1              {
+1634   2                      if ( V_ucaTempData[1] != (uchar8)(~V_ucaTempData[0]) )
+1635   2                      {
+1636   3                              V_ucaTempData[0] = GStr_FunConfigPara.ucFunMeterConst / 2;
+1637   3                      }
+1638   2                      if ( V_ucaTempData[3] != (uchar8)(~V_ucaTempData[2]) )
+1639   2                      {
+1640   3                              V_ucaTempData[2] = GStr_FunConfigPara.ucFunMeterConst / 2;
+1641   3                      }
+1642   2                      GStr_EnergyPulseFw.ucaPulseRemain[0] = V_ucaTempData[0];
+1643   2                      GStr_EnergyPulseBk.ucaPulseRemain[0] = V_ucaTempData[2];
+1644   2              }
+1645   1              else
+1646   1              {
+1647   2                      GStr_EnergyPulseFw.ucaPulseRemain[0] = GStr_FunConfigPara.ucFunMeterConst / 2;
+1648   2                      GStr_EnergyPulseBk.ucaPulseRemain[0] = GStr_FunConfigPara.ucFunMeterConst / 2;
+1649   2              }
+1650   1      
+1651   1      }
+1652          
+1653          ///**********************************************************************///
+1654          ///* Brief:  校表参数校验                                                */// 
+1655          ///*                                                                    *///
+1656          ///* Return: 无                                                         *///
+1657          ///*                                                                    *///
+1658          ///* Note:   修改及其他说明                                              *///
+1659          ///**********************************************************************///
+1660          void ApiPwOn_EmuParaCheck(void)
+1661          { 
+1662   1              ApiMS_MeterICParaCheck();
+1663   1      }
+1664          
+1665          ///**********************************************************************///
+1666          ///* Brief:  电表信息参数校验                                            */// 
+1667          ///*                                                                    *///
+1668          ///* Return: 无                                                         *///
+1669          ///*                                                                    *///
+1670          ///* Note:   修改及其他说明                                              *///
+1671          ///**********************************************************************///
+1672          void ApiPwOn_FunConfigParaCheck(void)
+1673          {
+1674   1              if ( _TRUE != LibPub_CrcCheck( &GStr_FunConfigPara.ucFunCurrentVal, GStr_FUN_CONFIG_TypeLEN-2, GStr_FunCo
+             -nfigPara.usCRC16) )
+1675   1              {
+C51 COMPILER V9.54   APPPOWERON                                                            11/18/2021 18:51:16 PAGE 29  
+
+1676   2                      if ( _FAILED == LibPub_ReadDataFromE2prom( LIB_E2P_FUN_CONFIG, 0, &GStr_FunConfigPara.ucFunCurrentVal) )
+1677   2                      {
+1678   3                              GStr_FunConfigPara.ucFunCurrentVal = 0x03;              ///* 默认5A *///
+1679   3                              #if ( METER_TYPE != METER_TYPE_DTSY666)
+1680   3                              GStr_FunConfigPara.ucFunMeterConst = 0x10;              ///* 默认常数10（16：即1600）
+1681   3                              #else
+                                      GStr_FunConfigPara.ucFunMeterConst = 0x08;              ///* 默认常数10（8：即800）
+                                      #endif
+1684   3                      }
+1685   2                      
+1686   2              }
+1687   1              GStr_UIPDisplay.ucMeterConst[0]=0;
+1688   1              GStr_UIPDisplay.ucMeterConst[1]=LibPub_1Hex_2_1BCD(GStr_FunConfigPara.ucFunMeterConst);
+1689   1              GStr_UIPDisplay.ucMeterConst[2]=0;///给显示的常数赋值
+1690   1      }
+1691          
+1692          //------------------------------------------------------------------------------//
+1693          /**
+1694           *  @brief    掉电检测,主要检测是否掉电或真正上电，只需要返回是否掉电就可以�
+             -��，不需要进入低功耗
+1695           *
+1696           *  @return   如果掉电则返回_TRUE,否则返回_FALSE
+1697           *
+1698           *  @note     xx
+1699           *
+1700           */
+1701          ///**********************************************************************///
+1702          uchar8 ApiPwOn_PowerChk( void )
+1703          { 
+1704   1              ushort16 V_usCnti = 10000;
+1705   1              
+1706   1              while( (LPDCON2 & LPDCON2_LPD2F) == LPDCON2_LPD2F )
+1707   1              {
+1708   2                      V_usCnti--;
+1709   2                      WDT_Clr();
+1710   2                      if( V_usCnti == 0 )
+1711   2                      {
+1712   3                              return _FALSE;
+1713   3                      }
+1714   2              }
+1715   1              
+1716   1              return _TRUE;
+1717   1      }
+1718          ///**********************************************************************///
+1719          ///* Brief:     ///*定期效验密钥状态*///                                           */// 
+1720          ///*                                                                    *///
+1721          ///* Return: 无                                                         *///
+1722          ///*                                                                    *///
+1723          ///* Note:      ///*定期效验密钥状态*///                                            *///
+1724          ///**********************************************************************///
+1725          void ApiPwOn_KeyStatusCheck(void)                                     ///*定期效验密钥状态*///  
+1726          { 
+1727   1              WDT_Clr();
+1728   1              if ( _TRUE != LibPub_CrcCheck( (uchar8*)&GStr_AVAIL.us_IDAvailTimer, 3, GStr_AVAIL.usCRC16) )
+1729   1              {
+1730   2                      if ( _FAILED == LibPub_ReadDataFromE2prom( LIB_E2P_AvailTimer, 0, (uchar8*)&GStr_AVAIL.us_IDAvailTimer) 
+             -)
+1731   2                      {       
+1732   3                              GStr_AVAIL.us_IDAvailTimer = 5; 
+1733   3                              GStr_AVAIL.ucBackMonFlag = 0x00; 
+1734   3                              GStr_AVAIL. usCRC16= 0x00;
+1735   3                      }
+C51 COMPILER V9.54   APPPOWERON                                                            11/18/2021 18:51:16 PAGE 30  
+
+1736   2              }       
+1737   1              if( GStr_AVAIL.ucBackMonFlag & B0000_0100)
+1738   1              { 
+1739   2                      GStr_Flag.ucRunState2 |=  F_RUN_EsamKeyFlag;
+1740   2              }
+1741   1              else 
+1742   1              { 
+1743   2                      GStr_Flag.ucRunState2 &= ~F_RUN_EsamKeyFlag;
+1744   2              }
+1745   1              
+1746   1              if( GStr_AVAIL.ucBackMonFlag & B0000_0010)
+1747   1              { 
+1748   2                      GStr_Flag.ucRunState2 |=  F_RUN_OpenAccoutFlag;
+1749   2              }
+1750   1              else 
+1751   1              { 
+1752   2                      GStr_Flag.ucRunState2 &=  ~F_RUN_OpenAccoutFlag;
+1753   2              }
+1754   1      
+1755   1      }
+1756          /*------------------------------------------------------------------------------------------------------*/
+1757          /**
+1758           *  @brief    上电配置蓝牙参数
+1759           *
+1760           *  @return   
+1761           *
+1762           *  @note     xx
+1763           *
+1764           */
+1765          /*------------------------------------------------------------------------------------------------------*/
+1766          
+1767          void ApiPwOn_BleInit(void)
+1768          {
+1769   1              BleDrv_InitPwn();
+1770   1      }
+1771          /*------------------------------------------------------------------------------------------------------*/
+1772          /**
+1773           *  @brief    蓝牙参数定时检查
+1774           *
+1775           *  @return   
+1776           *
+1777           *  @note     xx
+1778           *
+1779           */
+1780          /*------------------------------------------------------------------------------------------------------*/
+1781          
+1782          void ApiPwOn_BleParaChk(void)
+1783          {
+1784   1              BleDrv_BleParaChk(TIMEING_Mode);                        ///* 定期检查蓝牙参数 *///
+1785   1              
+1786   1              GStr_Monitor.ucBleAdvCnt++;///蓝牙定时校验计数累加
+1787   1              
+1788   1              if( _BUSY != BleDrv_GetBleUartSta() )   // 不忙的时候再去查状态
+1789   1              {
+1790   2                      BleDrv_BleStatuChk();
+1791   2                      /*数据接收完成后，需要初始化串口，设置通信状态*/
+1792   2                      Gstr_UartComm[CH_BLE].ucCommChStatus = API_COMM_STATUS_ERROR;
+1793   2              }
+1794   1      }
+1795          ///**********************************************************************///
+1796          ///* Brief:     ///*定期效验事件指针*/// 和次数                                          */// 
+1797          ///*                                                                    *///
+C51 COMPILER V9.54   APPPOWERON                                                            11/18/2021 18:51:16 PAGE 31  
+
+1798          ///* Return: 无                                                         *///
+1799          ///*                                                                    *///
+1800          ///* Note:                                           *///
+1801          ///**********************************************************************///
+1802          void ApiPwOn_EventPointCheck(void) 
+1803          {
+1804   1              
+1805   1              ///* 轮换指针+计数指针*///
+1806   1              if ( _TRUE != LibPub_CrcCheck( GStr_EventNumPiont.uc_Num, GStr_EventNumPiont_TypeLEN-2, GStr_EventNumPion
+             -t.usCRC16) )
+1807   1              {
+1808   2                      if ( _FAILED == LibPub_ReadDataFromE2prom( LIB_E2P_EventNumPiont, 0, GStr_EventNumPiont.uc_Num) )
+1809   2                      {       
+1810   3                              LibPub_MemSetBytes(GStr_EventNumPiont.uc_Num,0x00, GStr_EventNumPiont_TypeLEN );
+1811   3                      }
+1812   2              }       
+1813   1              if ( _TRUE != LibPub_CrcCheck( GStr_EventValidPiont.uc_Point, GStr_EventValidPiont_TypeLEN-2, GStr_EventV
+             -alidPiont.usCRC16) )
+1814   1              {
+1815   2                      if ( _FAILED == LibPub_ReadDataFromE2prom( LIB_E2P_EventValidPiont, 0, GStr_EventValidPiont.uc_Point) )
+1816   2                      {       
+1817   3                              LibPub_MemSetBytes(GStr_EventValidPiont.uc_Point,0x00, GStr_EventValidPiont_TypeLEN );
+1818   3                      }
+1819   2              }
+1820   1              if(_TRUE != LibPub_CrcCheck( (uchar8*)&GStr_EventRecordNum.ucEventTimes[0][0], GStr_EventRecordNum_TypeLE
+             -N-2, GStr_EventRecordNum.usCRC16) )
+1821   1              {
+1822   2                      if(_FAILED == LibPub_ReadDataFromE2prom( LIB_E2P_EventNum, 0, (uchar8*)&GStr_EventRecordNum.ucEventTimes
+             -[0][0]) )
+1823   2                      {
+1824   3                              LibPub_MemSetBytes(&GStr_EventRecordNum.ucEventTimes[0][0] , 0x00 , GStr_EventRecordNum_TypeLEN);       ///* 
+             -次数默认0次  *///
+1825   3                      }
+1826   2              }       
+1827   1              
+1828   1      }
+1829          
+1830          ///**********************************************************************///
+1831          ///* Brief:     ///上电效验剩余金额和透支金额    ///从备份或循环存储区恢复        
+             -                             */// 
+1832          ///*                                                                    *///
+1833          ///* Return: 无                                                         *///
+1834          ///*                                                                    *///
+1835          ///* Note:                                           *///
+1836          ///**********************************************************************///
+1837          void ApiPwOn_RemainMoneyCheck(void) 
+1838          {
+1839   1              uchar8 V_ucTempData[14],i;
+1840   1              ushort16 V_usCRC16;
+1841   1              uchar8 V_offset;
+1842   1              uchar8 V_ucRemainMoneyData[30];
+1843   1              uchar8 V_ucTickMoneyData[30];
+1844   1              uchar8 V_ucResultData[6];
+1845   1              
+1846   1              DrvE2p_ReadData( LIB_E2P_Money_Addr, V_ucTempData, LIB_E2P_Money_Len);///读剩余金额和透支金额
+1847   1              V_usCRC16  = (ushort16)V_ucTempData[13];
+1848   1              V_usCRC16 |= (ushort16)(V_ucTempData[12] << 8); 
+1849   1              if(V_usCRC16!=LibPub_CRC16_CCITT( V_ucTempData, 12 ))///主数据错
+1850   1              {       
+1851   2                      
+1852   2                      DrvE2p_ReadData( LIB_E2P_Money_BAK_Addr, V_ucTempData, 14);
+1853   2                      V_usCRC16  = (ushort16)V_ucTempData[13];
+C51 COMPILER V9.54   APPPOWERON                                                            11/18/2021 18:51:16 PAGE 32  
+
+1854   2                  V_usCRC16 |= (ushort16)(V_ucTempData[12] << 8); 
+1855   2                      if(V_usCRC16==LibPub_CRC16_CCITT( V_ucTempData, 12 ))
+1856   2                      {
+1857   3                              LibPub_MemCopyBytes(&V_ucTempData[0], &V_ucRemainMoneyData[0], 6);
+1858   3                              LibPub_MemCopyBytes(&V_ucTempData[6], &V_ucTickMoneyData[0], 6);
+1859   3                              V_offset=1; ////后面的数据放在备份数据后面 用于数组比对
+1860   3                      }
+1861   2                      else
+1862   2                      {
+1863   3                              V_offset=0;
+1864   3                      }
+1865   2                      for(i=0;i<4;i++)
+1866   2                      {
+1867   3                              DrvE2p_ReadData( LIB_E2P_HoldFirstMoney_Addr+i*LIB_E2P_HoldFirstMoney_Len, V_ucTempData, 14);
+1868   3                              V_usCRC16  = (ushort16)V_ucTempData[13];
+1869   3                              V_usCRC16 |= (ushort16)(V_ucTempData[12] << 8); 
+1870   3                              if(V_usCRC16==LibPub_CRC16_CCITT( V_ucTempData, 12 ))
+1871   3                          {   
+1872   4                                      LibPub_MemCopyBytes(&V_ucTempData[0],&V_ucRemainMoneyData[V_offset*6],6);
+1873   4                                      LibPub_MemCopyBytes(&V_ucTempData[6],&V_ucTickMoneyData[V_offset*6],6);
+1874   4                                      V_offset+=1;
+1875   4                              }
+1876   3                      }
+1877   2                      if(V_offset==1)///只有一份数据是对的
+1878   2                      {       
+1879   3                              LibPub_MemCopyBytes(&V_ucRemainMoneyData[0],&GStr_Money.ucaRemainMoney[0],6);   
+1880   3                              LibPub_MemCopyBytes(&V_ucTickMoneyData[0],&GStr_Money.ucaTickMoney[0],6);       
+1881   3                      }
+1882   2                      else if(V_offset>1)//不只一份数据是对的 就要进行比对了
+1883   2                      {
+1884   3                              LibPub_CompareNBufs(V_ucRemainMoneyData,V_ucResultData,6,V_offset,C_MIN,CMP_MODE_HIGHT);
+1885   3                              LibPub_MemCopyBytes(&V_ucResultData[0],&GStr_Money.ucaRemainMoney[0],6);///剩余金额最小的为准
+1886   3                              if(_FALSE==LibPub_ZeroCheck( &GStr_Money.ucaRemainMoney[0], 6))///剩余金额不为0，透支金额不
+             -用恢复直接写0
+1887   3                              {
+1888   4                                      LibPub_MemSetBytes(&GStr_Money.ucaTickMoney[0],0x00,6);
+1889   4                              }
+1890   3                              else
+1891   3                              {
+1892   4                                      LibPub_CompareNBufs(V_ucTickMoneyData,V_ucResultData,6,V_offset,C_MAX,CMP_MODE_HIGHT);  
+1893   4                                      LibPub_MemCopyBytes(&V_ucResultData[0],&GStr_Money.ucaTickMoney[0],6);///透支金额以最大的为�
+             -�
+1894   4                              }
+1895   3                      }
+1896   2                      else///没有数据是对的
+1897   2                      {
+1898   3                              LibPub_MemSetBytes(&GStr_Money.ucaRemainMoney[0],0x00,6);
+1899   3                              LibPub_MemSetBytes(&GStr_Money.ucaTickMoney[0],0x00,6);
+1900   3                      }
+1901   2                      GStr_Money.usCRC16= LibPub_CRC16_CCITT(&GStr_Money.ucaRemainMoney[0], GStr_MONEY_Type_LEN-2);
+1902   2                      LibPub_WriteDataToE2prom( LIB_E2P_Money, 0, &GStr_Money.ucaRemainMoney[0]);///更新主备份EE
+1903   2              }
+1904   1              else///主数据对
+1905   1              {
+1906   2                      LibPub_MemCopyBytes(&V_ucTempData[0],&GStr_Money.ucaRemainMoney[0],14);////更新RAM中剩余金额和�
+             -�支金额和crc
+1907   2              }
+1908   1      }
+C51 COMPILER V9.54   APPPOWERON                                                            11/18/2021 18:51:16 PAGE 33  
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+uint16_t . . . . . . . . . . . . . . .  TYPEDEF  -----  U_INT    -----  2
+IB_CON2. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00F3H  1
+COMM_BLE_STAT. . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+API_COMM_STATUS_OVERTIME . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+TB81 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00DBH  1
+P0 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0080H  1
+IB_CON3. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00F4H  1
+ApiPwOn_EnergyZSCheck. . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+  V_ucResultChk. . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0000H  1
+FP64 . . . . . . . . . . . . . . . . .  TYPEDEF  -----  FLOAT    -----  4
+TKCON. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A4H  1
+P1 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0090H  1
+IB_CON4. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00F5H  1
+PASLO. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E7H  1
+ApiPwOn_EMUInit. . . . . . . . . . . .  STATIC   CODE   PROC     0000H  -----
+_DrvE2p_WriteData. . . . . . . . . . .  EXTERN   CODE   PROC     -----  -----
+GStr_ENERGYDEC_Type. . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  26
+  ucaFw_EnergyDec. . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  13
+  ucaBk_EnergyDec. . . . . . . . . . .  MEMBER   -----  ARRAY    000DH  13
+P2 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A0H  1
+OSCLO. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00FEH  1
+IB_CON5. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00F6H  1
+ApiPwOn_SysTemInit . . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+GStr_EventRecordNum_Type . . . . . . .  TYPEDEF  -----  STRUCT   -----  26
+  ucEventTimes . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  24
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    0018H  2
+GStr_FLAG_Type . . . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  16
+  ucSystem . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0000H  1
+  ucMeterMode. . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0001H  1
+  ucPwOnState. . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0002H  1
+  ucRunState . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0003H  1
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    0004H  2
+  ucRunState2. . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0006H  1
+  ucRunState1. . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0007H  1
+  ucRunState3. . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0008H  1
+  ucDisp . . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0009H  1
+  ucFactoryKey . . . . . . . . . . . .  MEMBER   -----  U_CHAR   000AH  1
+  ucDispKey. . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   000BH  1
+  ucMoney. . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   000CH  1
+  ucPowerOnFlag. . . . . . . . . . . .  MEMBER   -----  U_CHAR   000DH  1
+  ucWrE2promSafeByte . . . . . . . . .  MEMBER   -----  U_CHAR   000EH  1
+  ucBLESTATFlag. . . . . . . . . . . .  MEMBER   -----  U_CHAR   000FH  1
+BOOLEAN. . . . . . . . . . . . . . . .  TYPEDEF  -----  U_CHAR   -----  1
+SM1_RXOV . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      009EH  1
+P3 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B0H  1
+AC . . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00D6H  1
+P4 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C0H  1
+SPCON. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A1H  1
+SBRTH. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   009CH  1
+P5 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E9H  1
+LIB_E2P_Price_BAK. . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+EA . . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00AFH  1
+P6 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00EAH  1
+GV_ucMACErrNum . . . . . . . . . . . .  EXTERN   XDATA  U_CHAR   -----  1
+LIB_E2P_Display_Table. . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+GStr_DISPLAY_PARA_Type . . . . . . . .  TYPEDEF  -----  STRUCT   -----  129
+  ucFullDisp_Time. . . . . . . . . . .  MEMBER   -----  U_CHAR   0000H  1
+C51 COMPILER V9.54   APPPOWERON                                                            11/18/2021 18:51:16 PAGE 34  
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+  ucDispDurTime. . . . . . . . . . . .  MEMBER   -----  U_CHAR   0001H  1
+  ucAutoDispNum. . . . . . . . . . . .  MEMBER   -----  U_CHAR   0002H  1
+  ucKeyDispNum . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0003H  1
+  usDisp_ParaCRC16 . . . . . . . . . .  MEMBER   -----  U_INT    0004H  2
+  ucAutoDisptable. . . . . . . . . . .  MEMBER   -----  ARRAY    0006H  30
+  ucKeyDisptable . . . . . . . . . . .  MEMBER   -----  ARRAY    0024H  30
+  usDisp_tableCRC16. . . . . . . . . .  MEMBER   -----  U_INT    0042H  2
+  ucBackLightTime. . . . . . . . . . .  MEMBER   -----  U_CHAR   0044H  1
+  ucRelayLEDTime . . . . . . . . . . .  MEMBER   -----  U_CHAR   0045H  1
+  ulDispUpdataTime . . . . . . . . . .  MEMBER   -----  U_LONG   0046H  4
+  usDispCnt. . . . . . . . . . . . . .  MEMBER   -----  U_INT    004AH  2
+  ulDisptimer. . . . . . . . . . . . .  MEMBER   -----  U_LONG   004CH  4
+  ucKeydelaytimer. . . . . . . . . . .  MEMBER   -----  U_CHAR   0050H  1
+  ucFirstKeyDisp . . . . . . . . . . .  MEMBER   -----  U_CHAR   0051H  1
+  ucDisp_0_flag. . . . . . . . . . . .  MEMBER   -----  U_CHAR   0052H  1
+  ucDisp_tongxin_Flag. . . . . . . . .  MEMBER   -----  U_CHAR   0053H  1
+  ucDisp_tongxin_Time. . . . . . . . .  MEMBER   -----  U_LONG   0054H  4
+  ucDispNum. . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0058H  1
+  ucLCDDrvDispBuf. . . . . . . . . . .  MEMBER   -----  ARRAY    0059H  40
+int32_t. . . . . . . . . . . . . . . .  TYPEDEF  -----  LONG     -----  4
+P7 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00EBH  1
+IB_DATA. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00EFH  1
+P8 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00ECH  1
+int16_t. . . . . . . . . . . . . . . .  TYPEDEF  -----  INT      -----  2
+SBRTL. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   009DH  1
+P9 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00EDH  1
+PBANKLO. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B7H  1
+GStr_COUNTER_Type. . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  9
+  ucFactoryMode_Cnt. . . . . . . . . .  MEMBER   -----  U_INT    0000H  2
+  ucKeyRelayOn_Cnt . . . . . . . . . .  MEMBER   -----  U_INT    0002H  2
+  ucRelayDelay_Cnt . . . . . . . . . .  MEMBER   -----  U_CHAR   0004H  1
+  ucHoldMoney_Cnt. . . . . . . . . . .  MEMBER   -----  U_CHAR   0005H  1
+  ucPasswordErr_Cnt. . . . . . . . . .  MEMBER   -----  ARRAY    0006H  3
+GStr_EnergyPulseBk . . . . . . . . . .  EXTERN   XDATA  STRUCT   -----  8
+BleDrv_InitBleRunPara. . . . . . . . .  EXTERN   CODE   PROC     -----  -----
+SPSTA. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A2H  1
+IEN0 . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A8H  1
+PWRCON1. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B3H  1
+ulong32. . . . . . . . . . . . . . . .  TYPEDEF  -----  U_LONG   -----  4
+EMUSR. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0095H  1
+IEN1 . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A9H  1
+PWRCON2. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B4H  1
+DPH1 . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0085H  1
+P0_0 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0080H  1
+ushort16 . . . . . . . . . . . . . . .  TYPEDEF  -----  U_INT    -----  2
+P1_0 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0090H  1
+P0_1 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0081H  1
+ADCH . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C3H  1
+BLE_DRV_OPERATION_INDEX. . . . . . . .  TYPEDEF  -----  U_CHAR   -----  1
+LIB_E2P_SOFTI_J. . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+P2_0 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00A0H  1
+P1_1 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0091H  1
+P0_2 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0082H  1
+IPH0 . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00BAH  1
+DPL1 . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0084H  1
+size_t . . . . . . . . . . . . . . . .  TYPEDEF  -----  U_INT    -----  2
+ApiMS_MeterICParaCheck . . . . . . . .  EXTERN   CODE   PROC     -----  -----
+C51 COMPILER V9.54   APPPOWERON                                                            11/18/2021 18:51:16 PAGE 35  
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+LIB_E2P_FUN_CONFIG_BAK . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+GStr_MONITOR_Tpye. . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  59
+  ulTimer_ms . . . . . . . . . . . . .  MEMBER   -----  U_LONG   0000H  4
+  ulTimer_ms_old . . . . . . . . . . .  MEMBER   -----  U_LONG   0004H  4
+  ulTimerClrWDT. . . . . . . . . . . .  MEMBER   -----  U_LONG   0008H  4
+  ulTimerMin . . . . . . . . . . . . .  MEMBER   -----  U_LONG   000CH  4
+  ulTimer5ms . . . . . . . . . . . . .  MEMBER   -----  U_LONG   0010H  4
+  ucPowerOnTimer . . . . . . . . . . .  MEMBER   -----  U_CHAR   0014H  1
+  ulTimers . . . . . . . . . . . . . .  MEMBER   -----  U_LONG   0015H  4
+  ulUpDateUIPTime. . . . . . . . . . .  MEMBER   -----  U_LONG   0019H  4
+  ulSoftI_JTime. . . . . . . . . . . .  MEMBER   -----  U_LONG   001DH  4
+  usSoftI_JTimeCRC16 . . . . . . . . .  MEMBER   -----  U_INT    0021H  2
+  usPasswordErrTime. . . . . . . . . .  MEMBER   -----  ARRAY    0023H  8
+  ucCommSymbolTime . . . . . . . . . .  MEMBER   -----  U_CHAR   002BH  1
+  ucPowerLimitNum. . . . . . . . . . .  MEMBER   -----  U_CHAR   002CH  1
+  ulOverDemandCloseTime. . . . . . . .  MEMBER   -----  U_LONG   002DH  4
+  ulProgEventDelayTime . . . . . . . .  MEMBER   -----  U_LONG   0031H  4
+  ulReadRandom2DelayTime . . . . . . .  MEMBER   -----  U_LONG   0035H  4
+  ucBleAdvCnt. . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0039H  1
+  ucBleConnectCnt. . . . . . . . . . .  MEMBER   -----  U_CHAR   003AH  1
+P3_0 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00B0H  1
+P2_1 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00A1H  1
+P1_2 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0092H  1
+P0_3 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0083H  1
+IPH1 . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00BBH  1
+COMM_BLE_MAC . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+ApiPwOn_EmuParaCheck . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+P4_0 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00C0H  1
+P3_1 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00B1H  1
+P2_2 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00A2H  1
+P1_3 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0093H  1
+P0_4 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0084H  1
+EXF0 . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E8H  1
+ApiPwOn_McuInterruptInit . . . . . . .  STATIC   CODE   PROC     0000H  -----
+P4_1 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00C1H  1
+P3_2 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00B2H  1
+P2_3 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00A3H  1
+P1_4 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0094H  1
+P0_5 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0085H  1
+P4_2 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00C2H  1
+P3_3 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00B3H  1
+P2_4 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00A4H  1
+P1_5 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0095H  1
+P0_6 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0086H  1
+EXF2 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00CEH  1
+P0CR . . . . . . . . . . . . . . . . .  EXTERN   XDATA  U_CHAR   -----  1
+TKF0 . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A6H  1
+IPL0 . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B8H  1
+LIB_E2P_ENRGY_BAK. . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+P4_3 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00C3H  1
+P3_4 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00B4H  1
+P2_5 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00A5H  1
+P1_6 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0096H  1
+P0_7 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0087H  1
+REN1 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00DCH  1
+P1CR . . . . . . . . . . . . . . . . .  EXTERN   XDATA  U_CHAR   -----  1
+IPL1 . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B9H  1
+C51 COMPILER V9.54   APPPOWERON                                                            11/18/2021 18:51:16 PAGE 36  
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+ApiPwOn_KeyStatusCheck . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+LIB_E2P_EventNum . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+long32 . . . . . . . . . . . . . . . .  TYPEDEF  -----  LONG     -----  4
+P4_4 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00C4H  1
+P3_5 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00B5H  1
+P2_6 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00A6H  1
+P1_7 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0097H  1
+TK0H . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E2H  1
+SUSLO. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   008EH  1
+P4_5 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00C5H  1
+P3_6 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00B6H  1
+P2_7 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00A7H  1
+P3CR . . . . . . . . . . . . . . . . .  EXTERN   XDATA  U_CHAR   -----  1
+TK1H . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E4H  1
+P4_6 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00C6H  1
+P3_7 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00B7H  1
+P4CR . . . . . . . . . . . . . . . . .  EXTERN   XDATA  U_CHAR   -----  1
+TK2H . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E6H  1
+LIB_E2P_Money_BAK. . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+short16. . . . . . . . . . . . . . . .  TYPEDEF  -----  INT      -----  2
+P4_7 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00C7H  1
+RI . . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0098H  1
+P5CR . . . . . . . . . . . . . . . . .  EXTERN   XDATA  U_CHAR   -----  1
+GStr_EnergyPulseFw . . . . . . . . . .  EXTERN   XDATA  STRUCT   -----  8
+E7816. . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00AAH  1
+CY . . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00D7H  1
+TK0L . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E1H  1
+API_COMM_STATUS_ERROR. . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+_LibPub_CrcCheck . . . . . . . . . . .  EXTERN   CODE   PROC     -----  -----
+TI . . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0099H  1
+P7CR . . . . . . . . . . . . . . . . .  EXTERN   XDATA  U_CHAR   -----  1
+EADR . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0091H  1
+TK1L . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E3H  1
+TK2L . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E5H  1
+SADEN1 . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00DBH  1
+SM10_FE1 . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00DFH  1
+P9CR . . . . . . . . . . . . . . . . .  EXTERN   XDATA  U_CHAR   -----  1
+SADEN2 . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00FBH  1
+LIB_E2P_EMU_CALPARA. . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+GStr_ENERGY_PULSE_Type . . . . . . . .  TYPEDEF  -----  STRUCT   -----  8
+  ucPulseAdd . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0000H  1
+  ucPulseAddBusy . . . . . . . . . . .  MEMBER   -----  U_CHAR   0001H  1
+  ucPulseStatu . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0002H  1
+  ucPulseDecimal . . . . . . . . . . .  MEMBER   -----  U_CHAR   0003H  1
+  ucPulseDecSavePtr. . . . . . . . . .  MEMBER   -----  U_CHAR   0004H  1
+  ucPulseDecSaveNoFF . . . . . . . . .  MEMBER   -----  U_CHAR   0005H  1
+  ucaPulseRemain . . . . . . . . . . .  MEMBER   -----  ARRAY    0006H  2
+PS0L . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00BCH  1
+PT0L . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00B9H  1
+SADDR1 . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00DAH  1
+ApiPwOn_McuLPDInit . . . . . . . . . .  STATIC   CODE   PROC     0000H  -----
+LIB_E2P_INDEX_MAX. . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+LIB_E2P_Display_Para . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+SM12_TXCOL1. . . . . . . . . . . . . .  ABSBIT   -----  BIT      00DDH  1
+PT1L . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00BBH  1
+SADDR2 . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00FAH  1
+RCAP2H . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00CBH  1
+C51 COMPILER V9.54   APPPOWERON                                                            11/18/2021 18:51:16 PAGE 37  
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+BleDrv_GetBleUartSta . . . . . . . . .  EXTERN   CODE   PROC     -----  -----
+COMM_BLE_MOD . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+PT2L . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00BDH  1
+P0OS . . . . . . . . . . . . . . . . .  EXTERN   XDATA  U_CHAR   -----  1
+SP . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0081H  1
+INT32S . . . . . . . . . . . . . . . .  TYPEDEF  -----  LONG     -----  4
+OV . . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00D2H  1
+LIB_E2P_EventNumPiont. . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+_LibPub_ZeroCheck. . . . . . . . . . .  EXTERN   CODE   PROC     -----  -----
+GStr_METER_IFO_Type. . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  27
+  ucaCommAddr. . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  6
+  ucaMeterID . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0006H  6
+  ucaUserID. . . . . . . . . . . . . .  MEMBER   -----  ARRAY    000CH  6
+  ucVoltageTrans . . . . . . . . . . .  MEMBER   -----  ARRAY    0012H  3
+  ucCurrentTrans . . . . . . . . . . .  MEMBER   -----  ARRAY    0015H  3
+  ucBpsVal . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0018H  1
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    0019H  2
+P3OS . . . . . . . . . . . . . . . . .  EXTERN   XDATA  U_CHAR   -----  1
+RCAP2L . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00CAH  1
+INT32U . . . . . . . . . . . . . . . .  TYPEDEF  -----  U_LONG   -----  4
+INT16S . . . . . . . . . . . . . . . .  TYPEDEF  -----  INT      -----  2
+GStr_EventNumPiont . . . . . . . . . .  EXTERN   XDATA  STRUCT   -----  8
+INT16U . . . . . . . . . . . . . . . .  TYPEDEF  -----  U_INT    -----  2
+PX4L . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00B8H  1
+C_T2 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00C9H  1
+SFINE2 . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00DEH  1
+ApiPwOn_PowerChk . . . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+  V_usCnti . . . . . . . . . . . . . .  * REG *  DATA   U_INT    0006H  2
+_LibPub_WriteDataToE2prom. . . . . . .  EXTERN   CODE   PROC     -----  -----
+GStr_BLE_GROUP_Type. . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  26
+  ucBleMAC . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  6
+  ucBleName. . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0006H  12
+  ucBleKey . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0012H  3
+  usAdvTime. . . . . . . . . . . . . .  MEMBER   -----  U_INT    0015H  2
+  ucBleTPL . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0017H  1
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    0018H  2
+COMM_BLE_MFV . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+GStr_UIPDisplay. . . . . . . . . . . .  EXTERN   XDATA  STRUCT   -----  135
+GStr_EventNumPiont_Type. . . . . . . .  TYPEDEF  -----  STRUCT   -----  8
+  uc_Num . . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  6
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    0006H  2
+ApiPwOn_BleInit. . . . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+IRCON1 . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00ADH  1
+IRCON2 . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00AFH  1
+GStr_Comm_MAP. . . . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  14
+  ucaDataId. . . . . . . . . . . . . .  MEMBER   -----  U_LONG   0000H  4
+  ucaRamAdd. . . . . . . . . . . . . .  MEMBER   -----  PTR      0004H  3
+  IsWrite. . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0007H  1
+  ucaE2pIndex. . . . . . . . . . . . .  MEMBER   -----  U_INT    0008H  2
+  ucaE2offset. . . . . . . . . . . . .  MEMBER   -----  U_CHAR   000AH  1
+  ucaDataLen . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   000BH  1
+  IsBCD. . . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   000CH  1
+  EEIsHEX. . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   000DH  1
+ApiPwOn_MeterInitInFactory . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+  V_TempData . . . . . . . . . . . . .  AUTO     XDATA  ARRAY    0000H  7
+  V_ucTemp . . . . . . . . . . . . . .  AUTO     XDATA  ARRAY    0007H  9
+ApiPwOn_McuReset . . . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+C51 COMPILER V9.54   APPPOWERON                                                            11/18/2021 18:51:16 PAGE 38  
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+API_COMM_STATUS_IDLE . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+Gstr_UartComm. . . . . . . . . . . . .  EXTERN   XDATA  ARRAY    -----  -----
+EXCON1 . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00ABH  1
+SBUF . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0099H  1
+EXCON2 . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00ACH  1
+PCON . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0087H  1
+B32_B08. . . . . . . . . . . . . . . .  * TAG *  -----  UNION    -----  4
+  B08. . . . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  4
+  B16. . . . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  4
+  B32. . . . . . . . . . . . . . . . .  MEMBER   -----  U_LONG   0000H  4
+AUXC . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00F1H  1
+COMM_BLE_TPL . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+GStr_UART_COMM_Type. . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  423
+  ucCommChStatus . . . . . . . . . . .  MEMBER   -----  U_CHAR   0000H  1
+  ucCommRevStep. . . . . . . . . . . .  MEMBER   -----  U_CHAR   0001H  1
+  ucCommRevLen . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0002H  1
+  ucCommSndLen . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0003H  1
+  ucCommSndCnt . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0004H  1
+  ucCommAddrType . . . . . . . . . . .  MEMBER   -----  U_CHAR   0005H  1
+  ucCommError. . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0006H  1
+  ulCommTimeInit . . . . . . . . . . .  MEMBER   -----  U_LONG   0007H  4
+  ulCommRcvByteOverTime. . . . . . . .  MEMBER   -----  U_LONG   000BH  4
+  ulCommSndByteOverTime. . . . . . . .  MEMBER   -----  U_LONG   000FH  4
+  ulCommRspOverTime. . . . . . . . . .  MEMBER   -----  U_LONG   0013H  4
+  ucaCommRXBuff. . . . . . . . . . . .  MEMBER   -----  ARRAY    0017H  200
+  ucaCommTXBuff. . . . . . . . . . . .  MEMBER   -----  ARRAY    00DFH  200
+GStr_ENERGY_Type . . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  10
+  ucaFw_Energy . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  4
+  ucaBk_Energy . . . . . . . . . . . .  MEMBER   -----  ARRAY    0004H  4
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    0008H  2
+GU_B32_B08_Type. . . . . . . . . . . .  TYPEDEF  -----  UNION    -----  4
+  B08. . . . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  4
+  B16. . . . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  4
+  B32. . . . . . . . . . . . . . . . .  MEMBER   -----  U_LONG   0000H  4
+SCON . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0098H  1
+TK0BASEH . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D4H  1
+TMOD . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0089H  1
+TCON . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0088H  1
+IENX . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00AAH  1
+IB_OFFSET. . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00EEH  1
+ApiPwOn_BleParaChk . . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+P0DRVH . . . . . . . . . . . . . . . .  EXTERN   XDATA  U_CHAR   -----  1
+TK1BASEH . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D6H  1
+SBRT1H . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00DCH  1
+_ApiComm_CommParaInit. . . . . . . . .  EXTERN   CODE   PROC     -----  -----
+TK2BASEH . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00DFH  1
+SBRT2H . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00FCH  1
+_ApiPwOn_McuUartXInit. . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+  v_ucChID . . . . . . . . . . . . . .  * REG *  DATA   U_CHAR   0007H  1
+  V_ucTemp . . . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0000H  1
+RSTSTAT. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B1H  1
+PrepaymentModule_Comm_ClrMACErrNum . .  EXTERN   CODE   PROC     -----  -----
+LIB_E2P_Password . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+TK0BASEL . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D3H  1
+LIB_E2P_BLE_PARA . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+LIB_E2P_RUN_STATE. . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+TK1BASEL . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D5H  1
+C51 COMPILER V9.54   APPPOWERON                                                            11/18/2021 18:51:16 PAGE 39  
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+SBRT1L . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00DDH  1
+COMM_BLE_TTP . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+EMU_EPADR_Type . . . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  5
+  ucEmuAddr. . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0000H  1
+  ulEmuRegData . . . . . . . . . . . .  MEMBER   -----  U_LONG   0001H  4
+TK2BASEL . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D7H  1
+SBRT2L . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00FDH  1
+API_COMM_STATUS_SEND . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+_LibPub_CRC16_CCITT. . . . . . . . . .  EXTERN   CODE   PROC     -----  -----
+SM0_FE . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      009FH  1
+CLKCON . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B2H  1
+_ApiPwOn_DLXS_READ . . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+  p_strEnergyPulse . . . . . . . . . .  AUTO     XDATA  PTR      0000H  3
+  v_usAddrIndex. . . . . . . . . . . .  AUTO     XDATA  U_INT    0003H  2
+  V_TempData . . . . . . . . . . . . .  AUTO     XDATA  ARRAY    0005H  13
+  i. . . . . . . . . . . . . . . . . .  * REG *  DATA   U_CHAR   0007H  1
+  j. . . . . . . . . . . . . . . . . .  * REG *  DATA   U_CHAR   0006H  1
+API_COMM_STATUS_RECV_OK. . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+SM2_TXCOL. . . . . . . . . . . . . . .  ABSBIT   -----  BIT      009DH  1
+LDOCON . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B5H  1
+B. . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00F0H  1
+API_COMM_STATUS_RECV . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+EEPROM_MAP_TAB . . . . . . . . . . . .  EXTERN   XDATA  ARRAY    -----  -----
+GStr_MeterIFO. . . . . . . . . . . . .  EXTERN   XDATA  STRUCT   -----  27
+_?ix1000 . . . . . . . . . . . . . . .  STATIC   CODE   ARRAY    0000H  7
+_?ix1001 . . . . . . . . . . . . . . .  STATIC   CODE   ARRAY    0007H  7
+EMU_CALPARA_Type . . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  22
+  ulaCalPara . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  20
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    0014H  2
+GStr_DisplayPara . . . . . . . . . . .  EXTERN   XDATA  STRUCT   -----  129
+CP_RL2 . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00C8H  1
+ApiPwOn_McuTimerInit . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+  V_ucResult . . . . . . . . . . . . .  * REG *  DATA   U_CHAR   0007H  1
+LIB_E2P_EMU_UIPKms . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+ApiPwOn_DisplayParaCheck . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+  V_TempData . . . . . . . . . . . . .  AUTO     XDATA  ARRAY    0000H  7
+GStr_UIP_GROUP_Type. . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  68
+  ulVoltage. . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  16
+  ulCurrent. . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0010H  16
+  ulPower. . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0020H  16
+  ulFactory. . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0030H  16
+  ulFrequency. . . . . . . . . . . . .  MEMBER   -----  U_LONG   0040H  4
+ApiRelay_ControlProcess. . . . . . . .  EXTERN   CODE   PROC     -----  -----
+ENUM_API_COMM_STATUS . . . . . . . . .  TYPEDEF  -----  U_CHAR   -----  1
+GStr_BLEGroup. . . . . . . . . . . . .  EXTERN   XDATA  STRUCT   -----  26
+GStr_Counter . . . . . . . . . . . . .  EXTERN   XDATA  STRUCT   -----  9
+ACC. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E0H  1
+ApiMS_InitMeterICPara. . . . . . . . .  EXTERN   CODE   PROC     -----  -----
+ES0. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00ACH  1
+ET0. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00A9H  1
+ApiRelay_SubtractMoneyRelayJudge . . .  EXTERN   CODE   PROC     -----  -----
+ET1. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00ABH  1
+TF0. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      008DH  1
+ET2. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00ADH  1
+TF1. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      008FH  1
+RI1. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00D8H  1
+RB8. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      009AH  1
+C51 COMPILER V9.54   APPPOWERON                                                            11/18/2021 18:51:16 PAGE 40  
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+TF2. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00CFH  1
+TH0. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   008CH  1
+INSCON . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0086H  1
+TH1. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   008DH  1
+uchar8 . . . . . . . . . . . . . . . .  TYPEDEF  -----  U_CHAR   -----  1
+TI1. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00D9H  1
+TB8. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      009BH  1
+TH2. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00CDH  1
+LIB_E2P_EMU_CALPARA_BAK. . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+_LibPub_CompareNBufs . . . . . . . . .  EXTERN   CODE   PROC     -----  -----
+GStr_Monitor . . . . . . . . . . . . .  EXTERN   XDATA  STRUCT   -----  59
+uint8_t. . . . . . . . . . . . . . . .  TYPEDEF  -----  U_CHAR   -----  1
+P. . . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00D0H  1
+ApiPwOn_RemainMoneyCheck . . . . . . .  STATIC   CODE   PROC     0000H  -----
+  V_ucTempData . . . . . . . . . . . .  AUTO     XDATA  ARRAY    0000H  14
+  i. . . . . . . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   000EH  1
+  V_usCRC16. . . . . . . . . . . . . .  AUTO     XDATA  U_INT    000FH  2
+  V_offset . . . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0011H  1
+  V_ucRemainMoneyData. . . . . . . . .  AUTO     XDATA  ARRAY    0012H  30
+  V_ucTickMoneyData. . . . . . . . . .  AUTO     XDATA  ARRAY    0030H  30
+  V_ucResultData . . . . . . . . . . .  AUTO     XDATA  ARRAY    004EH  6
+GStr_Energy. . . . . . . . . . . . . .  EXTERN   XDATA  STRUCT   -----  10
+GStr_UIP_DISPLAY_Type. . . . . . . . .  TYPEDEF  -----  STRUCT   -----  135
+  ucVoltage. . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  4
+  ucVoltageA . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0004H  4
+  ucVoltageB . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0008H  4
+  ucVoltageC . . . . . . . . . . . . .  MEMBER   -----  ARRAY    000CH  4
+  ucCOMMVoltage. . . . . . . . . . . .  MEMBER   -----  ARRAY    0010H  4
+  ucCOMMVoltageA . . . . . . . . . . .  MEMBER   -----  ARRAY    0014H  4
+  ucCOMMVoltageB . . . . . . . . . . .  MEMBER   -----  ARRAY    0018H  4
+  ucCOMMVoltageC . . . . . . . . . . .  MEMBER   -----  ARRAY    001CH  4
+  ucCurrent. . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0020H  4
+  ucCurrentA . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0024H  4
+  ucCurrentB . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0028H  4
+  ucCurrentC . . . . . . . . . . . . .  MEMBER   -----  ARRAY    002CH  4
+  ucCOMMCurrent. . . . . . . . . . . .  MEMBER   -----  ARRAY    0030H  4
+  ucCOMMCurrentA . . . . . . . . . . .  MEMBER   -----  ARRAY    0034H  4
+  ucCOMMCurrentB . . . . . . . . . . .  MEMBER   -----  ARRAY    0038H  4
+  ucCOMMCurrentC . . . . . . . . . . .  MEMBER   -----  ARRAY    003CH  4
+  ucPower. . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0040H  4
+  ucPowerA . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0044H  4
+  ucPowerB . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0048H  4
+  ucPowerC . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    004CH  4
+  ucCOMMPower. . . . . . . . . . . . .  MEMBER   -----  ARRAY    0050H  4
+  ucCOMMPowerA . . . . . . . . . . . .  MEMBER   -----  ARRAY    0054H  4
+  ucCOMMPowerB . . . . . . . . . . . .  MEMBER   -----  ARRAY    0058H  4
+  ucCOMMPowerC . . . . . . . . . . . .  MEMBER   -----  ARRAY    005CH  4
+  ucFactory. . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0060H  4
+  ucFactoryA . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0064H  4
+  ucFactoryB . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0068H  4
+  ucFactoryC . . . . . . . . . . . . .  MEMBER   -----  ARRAY    006CH  4
+  ucCOMMFactory. . . . . . . . . . . .  MEMBER   -----  ARRAY    0070H  4
+  ucCOMMFactoryA . . . . . . . . . . .  MEMBER   -----  ARRAY    0074H  4
+  ucCOMMFactoryB . . . . . . . . . . .  MEMBER   -----  ARRAY    0078H  4
+  ucCOMMFactoryC . . . . . . . . . . .  MEMBER   -----  ARRAY    007CH  4
+  ucFrequency. . . . . . . . . . . . .  MEMBER   -----  ARRAY    0080H  4
+  ucMeterConst . . . . . . . . . . . .  MEMBER   -----  ARRAY    0084H  3
+C51 COMPILER V9.54   APPPOWERON                                                            11/18/2021 18:51:16 PAGE 41  
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+TL0. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   008AH  1
+GStr_AVAIL . . . . . . . . . . . . . .  EXTERN   XDATA  STRUCT   -----  41
+EX4. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00A8H  1
+TL1. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   008BH  1
+FLASHCON . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A7H  1
+ApiPwOn_McuGpioInit. . . . . . . . . .  STATIC   CODE   PROC     0000H  -----
+ApiMoney_RefreshPrice. . . . . . . . .  EXTERN   CODE   PROC     -----  -----
+ApiPwOn_EnergyCheck. . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+  V_ucaTempData. . . . . . . . . . . .  AUTO     XDATA  ARRAY    0000H  4
+LIB_E2P_Money_Para . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+TL2. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00CCH  1
+ApiPwOn_McuDispInit. . . . . . . . . .  STATIC   CODE   PROC     0000H  -----
+LIB_E2P_ENERGY_DECPULSE_BK . . . . . .  E_CONST  -----  U_CHAR   -----  1
+LIB_E2P_AvailTimer . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+RS0. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00D3H  1
+ADCDH. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C5H  1
+_BleDrv_BleParaChk . . . . . . . . . .  EXTERN   CODE   PROC     -----  -----
+LIB_E2P_Price. . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+GStr_AVAIL_Type. . . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  41
+  us_IDAvailTimer. . . . . . . . . . .  MEMBER   -----  U_INT    0000H  2
+  ucBackMonFlag. . . . . . . . . . . .  MEMBER   -----  U_CHAR   0002H  1
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    0003H  2
+  ulAutRemainingTime . . . . . . . . .  MEMBER   -----  U_LONG   0005H  4
+  ucRechangeMoney. . . . . . . . . . .  MEMBER   -----  ARRAY    0009H  4
+  ucBuybeforeMoney . . . . . . . . . .  MEMBER   -----  ARRAY    000DH  4
+  ucbeforeFwEnergy . . . . . . . . . .  MEMBER   -----  ARRAY    0011H  4
+  ucbeforeBkEnergy . . . . . . . . . .  MEMBER   -----  ARRAY    0015H  4
+  ucE2Key. . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0019H  16
+GU_BoolWordVariable. . . . . . . . . .  TYPEDEF  -----  UNION    -----  2
+  BYTE . . . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  2
+  BIT. . . . . . . . . . . . . . . . .  MEMBER   -----  STRUCT   0000H  2
+TR0. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      008CH  1
+RS1. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00D4H  1
+PWMCON . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   009FH  1
+_BleDrv_SetBleTPL. . . . . . . . . . .  EXTERN   CODE   PROC     -----  -----
+GStr_PRICE . . . . . . . . . . . . . .  EXTERN   XDATA  STRUCT   -----  14
+TR1. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      008EH  1
+char8. . . . . . . . . . . . . . . . .  TYPEDEF  -----  CHAR     -----  1
+TR2. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00CAH  1
+int8_t . . . . . . . . . . . . . . . .  TYPEDEF  -----  CHAR     -----  1
+ADCDL. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C4H  1
+ADT. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C2H  1
+LIB_E2P_INDEX. . . . . . . . . . . . .  TYPEDEF  -----  U_CHAR   -----  1
+GStr_PRICE_Type. . . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  14
+  ucaPrice . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  4
+  ucaPurchaseMoneyAll. . . . . . . . .  MEMBER   -----  ARRAY    0004H  4
+  ucPurchaseTimes. . . . . . . . . . .  MEMBER   -----  ARRAY    0008H  4
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    000CH  2
+DPH. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0083H  1
+GStr_Flag. . . . . . . . . . . . . . .  EXTERN   XDATA  STRUCT   -----  16
+ApiPwOn_McuUartInit. . . . . . . . . .  STATIC   CODE   PROC     0000H  -----
+DPL. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0082H  1
+_ApiPwOn_UART_SendEn . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+  v_ucChID . . . . . . . . . . . . . .  * REG *  DATA   U_CHAR   0007H  1
+  V_ucTemp . . . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0000H  1
+ApiPwOn_McuRamInit . . . . . . . . . .  STATIC   CODE   PROC     0000H  -----
+SBUF1. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D9H  1
+C51 COMPILER V9.54   APPPOWERON                                                            11/18/2021 18:51:16 PAGE 42  
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+COMM_BLE_EADV. . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+LIB_E2P_FUN_CONFIG . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+EXEN2. . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00CBH  1
+SBUF2. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00F9H  1
+BleDrv_BleStatuChk . . . . . . . . . .  EXTERN   CODE   PROC     -----  -----
+EMU_COMM_CAL_TAB_Type. . . . . . . . .  TYPEDEF  -----  STRUCT   -----  2
+  ucCommDI1. . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0000H  1
+  ucEmuAddr. . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0001H  1
+LIB_E2P_ENERGY_DECPULSE_FW . . . . . .  E_CONST  -----  U_CHAR   -----  1
+SM11_RXOV1 . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00DEH  1
+PADCL. . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00BEH  1
+REN. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      009CH  1
+P0INM. . . . . . . . . . . . . . . . .  EXTERN   XDATA  U_CHAR   -----  1
+SCON1. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D8H  1
+STATUS . . . . . . . . . . . . . . . .  TYPEDEF  -----  U_CHAR   -----  1
+P0PHM. . . . . . . . . . . . . . . . .  EXTERN   XDATA  U_CHAR   -----  1
+P0PCR. . . . . . . . . . . . . . . . .  EXTERN   XDATA  U_CHAR   -----  1
+LCDCON1. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D1H  1
+ADCON. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C1H  1
+SCON2. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00F8H  1
+TCON1. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   008FH  1
+LIB_E2P_EventValidPiont. . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+LIB_E2P_ENRGY. . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+_LibPub_1Hex_2_1BCD. . . . . . . . . .  EXTERN   CODE   PROC     -----  -----
+P1PCR. . . . . . . . . . . . . . . . .  EXTERN   XDATA  U_CHAR   -----  1
+LCDCON2. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D2H  1
+EDTAH. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0092H  1
+T2MOD. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C9H  1
+T2CON. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C8H  1
+EMU_UIPKms_Type. . . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  14
+  ulaKmsuip. . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  12
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    000CH  2
+GStr_EventValidPiont . . . . . . . . .  EXTERN   XDATA  STRUCT   -----  8
+P3PCR. . . . . . . . . . . . . . . . .  EXTERN   XDATA  U_CHAR   -----  1
+GStr_FUN_CONFIG_Type . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  16
+  ucFunCurrentVal. . . . . . . . . . .  MEMBER   -----  U_CHAR   0000H  1
+  ucFunMeterConst. . . . . . . . . . .  MEMBER   -----  U_CHAR   0001H  1
+  ucRes. . . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0002H  12
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    000EH  2
+P4PCR. . . . . . . . . . . . . . . . .  EXTERN   XDATA  U_CHAR   -----  1
+GStr_EventParaData . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  5
+  V_usEventID. . . . . . . . . . . . .  MEMBER   -----  U_INT    0000H  2
+  V_usEventAddr. . . . . . . . . . . .  MEMBER   -----  U_INT    0002H  2
+  V_ucEventLenth . . . . . . . . . . .  MEMBER   -----  U_CHAR   0004H  1
+LIB_E2P_Money. . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+_LibPub_MemCopyBytes . . . . . . . . .  EXTERN   CODE   PROC     -----  -----
+P5PCR. . . . . . . . . . . . . . . . .  EXTERN   XDATA  U_CHAR   -----  1
+EDTAL. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0094H  1
+GStr_EEPROM_MAP. . . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  8
+  ucE2pAddressIndex. . . . . . . . . .  MEMBER   -----  U_INT    0000H  2
+  usE2pAddress . . . . . . . . . . . .  MEMBER   -----  U_INT    0002H  2
+  ucE2pSize. . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0004H  1
+  ucE2pLen . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0005H  1
+  ucIsCRC. . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0006H  1
+  ucIsBak. . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0007H  1
+EDTAM. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0093H  1
+TK0DIFH. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00BCH  1
+C51 COMPILER V9.54   APPPOWERON                                                            11/18/2021 18:51:16 PAGE 43  
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+SADEN. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   009BH  1
+wchar_t. . . . . . . . . . . . . . . .  TYPEDEF  -----  CHAR     -----  1
+ApiPwOn_MeterClear . . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+  V_ucCnt_i. . . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0000H  1
+  V_ucTempBuff . . . . . . . . . . . .  AUTO     XDATA  ARRAY    0001H  4
+LIB_E2P_METER_INFO . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+_LibPub_ReadDataFromE2prom . . . . . .  EXTERN   CODE   PROC     -----  -----
+GStr_Money . . . . . . . . . . . . . .  EXTERN   XDATA  STRUCT   -----  14
+P7PCR. . . . . . . . . . . . . . . . .  EXTERN   XDATA  U_CHAR   -----  1
+TK1DIFH. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00BEH  1
+PBANK. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B6H  1
+GStr_FunConfigPara . . . . . . . . . .  EXTERN   XDATA  STRUCT   -----  16
+GStr_EventValidPiont_Type. . . . . . .  TYPEDEF  -----  STRUCT   -----  8
+  uc_Point . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  6
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    0006H  2
+TK2DIFH. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A5H  1
+EADTP. . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00AEH  1
+P9PCR. . . . . . . . . . . . . . . . .  EXTERN   XDATA  U_CHAR   -----  1
+SADDR. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   009AH  1
+BleDrv_InitPwn . . . . . . . . . . . .  EXTERN   CODE   PROC     -----  -----
+ApiPwOn_FunConfigParaCheck . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+TK0DIFL. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00CFH  1
+_DrvE2p_ReadData . . . . . . . . . . .  EXTERN   CODE   PROC     -----  -----
+LIB_E2P_ENERGY_DECPULSE_WS . . . . . .  E_CONST  -----  U_CHAR   -----  1
+GStr_MONEY_Type. . . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  14
+  ucaRemainMoney . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  6
+  ucaTickMoney . . . . . . . . . . . .  MEMBER   -----  ARRAY    0006H  6
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    000CH  2
+TK1DIFL. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00BDH  1
+TK2DIFL. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00BFH  1
+P7816L . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00BAH  1
+LPDCON1. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C6H  1
+LIB_E2P_EMU_UIPKms_BAK . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+GStr_MoneyPara . . . . . . . . . . . .  EXTERN   XDATA  STRUCT   -----  25
+LPDCON2. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C7H  1
+MAX_BLE_INDEX. . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+LIB_E2P_SecretKey. . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+F0 . . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00D5H  1
+IRDAT. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00AEH  1
+_ApiPwOn_McuUartXSetBps. . . . . . . .  STATIC   CODE   PROC     0000H  -----
+  v_ucChID . . . . . . . . . . . . . .  * REG *  DATA   U_CHAR   0007H  1
+ApiPwOn_MoneyParaCheck . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+ApiPwOn_SysClkInit . . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+  V_ucCnti . . . . . . . . . . . . . .  * REG *  DATA   U_CHAR   0007H  1
+F1 . . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00D1H  1
+EMUIE. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0096H  1
+SFINE. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   009EH  1
+XPAGE. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00F7H  1
+Gstr_VirtualEsam . . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  64
+  ucTempKey. . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  16
+  ucDisKey . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0010H  16
+  ucComplexKey . . . . . . . . . . . .  MEMBER   -----  ARRAY    0020H  16
+  ucRs485RandNum . . . . . . . . . . .  MEMBER   -----  ARRAY    0030H  8
+  ucRs485RandNum2. . . . . . . . . . .  MEMBER   -----  ARRAY    0038H  8
+ApiPwOn_EventPointCheck. . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+GStr_MONEY_PARA_Type . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  25
+  ucaAlarmMoneyL1. . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  4
+C51 COMPILER V9.54   APPPOWERON                                                            11/18/2021 18:51:16 PAGE 44  
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+  ucaAlarmMoneyL2. . . . . . . . . . .  MEMBER   -----  ARRAY    0004H  4
+  ucaMaxMoneyLimit . . . . . . . . . .  MEMBER   -----  ARRAY    0008H  4
+  ucaTickMoneyLimit. . . . . . . . . .  MEMBER   -----  ARRAY    000CH  4
+  ucaAllowcloseMoney . . . . . . . . .  MEMBER   -----  ARRAY    0010H  4
+  ucaOverLoadVal . . . . . . . . . . .  MEMBER   -----  ARRAY    0014H  3
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    0017H  2
+INT8S. . . . . . . . . . . . . . . . .  TYPEDEF  -----  CHAR     -----  1
+EMUIF. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0097H  1
+_LCDDrv_Init . . . . . . . . . . . . .  EXTERN   CODE   PROC     -----  -----
+API_COMM_STATUS_FRAME_OK . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+INT8U. . . . . . . . . . . . . . . . .  TYPEDEF  -----  U_CHAR   -----  1
+ApiPwOn_MeterInfoParaCheck . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+PSW. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D0H  1
+_LibPub_MemSetBytes. . . . . . . . . .  EXTERN   CODE   PROC     -----  -----
+FP32 . . . . . . . . . . . . . . . . .  TYPEDEF  -----  FLOAT    -----  4
+GStr_ENERGYDEC . . . . . . . . . . . .  EXTERN   XDATA  STRUCT   -----  26
+uint32_t . . . . . . . . . . . . . . .  TYPEDEF  -----  U_LONG   -----  4
+API_COMM_STATUS_FRAME. . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+GStr_EventRecordNum. . . . . . . . . .  EXTERN   XDATA  STRUCT   -----  26
+RB81 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00DAH  1
+SPDAT. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A3H  1
+IB_CON1. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00F2H  1
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   5122    ----
+   CONSTANT SIZE    =     14    ----
+   XDATA SIZE       =   ----     137
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

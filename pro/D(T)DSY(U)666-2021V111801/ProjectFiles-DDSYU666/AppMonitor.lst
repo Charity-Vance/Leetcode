@@ -1,0 +1,968 @@
+C51 COMPILER V9.54   APPMONITOR                                                            11/18/2021 18:51:16 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE APPMONITOR
+OBJECT MODULE PLACED IN .\AppMonitor.obj
+COMPILER INVOKED BY: C:\Program Files (x86)\Keil_v5 FMSH\C51\BIN\C51.EXE ..\SourceFiles\APP\AppMonitor.c LARGE OBJECTADV
+                    -ANCED OPTIMIZE(8,SPEED) BROWSE DEFINE(DDSYU666) DEBUG SYMBOLS PRINT(.\AppMonitor.lst) OBJECT(.\AppMonitor.obj)
+
+line level    source
+
+   1          /*******************************************************************************************************
+   2          **** Copyright£º  (c)Copyright 2019,Õã½­ÕýÌ©ÒÇÆ÷ÒÇ±íÓÐÏÞÔðÈÎ¹«Ë¾,µçÄÜ±íÓ¦ÓÃÑÐ·¢                       
+   3          ****                            All rights reserved.                                                 
+   4          **** FileName:    AppMonitor.c                                                                          
+   5          **** Brief:       ¶¨Ê±¼à¿ØÎÄ¼þ                                                                     
+   6          **** Author:      peter.he@chint.com                                                                 
+   7          **** Version:     V1.0                                                                               
+   8          **** Date:        2016-7-14                                                                          
+   9          ****                                                                                                 
+  10          **** note:ÐÞ¸ÄÀúÊ·¼ÇÂ¼ÁÐ±í£¬Ã¿ÌõÐÞ¸Ä¼ÇÂ¼Ó¦°üÀ¨ÐÞ¸ÄÈÕÆÚ¡¢ÐÞ¸ÄÕß                                          
+  11          **** 1.  Author:                                                                                     
+  12          ****     Version:                                                                                    
+  13          ****     Date :                                                                                      
+  14          **** 2.  Author:                                                                                     
+  15          ****     Version:                                                                                       
+  16          ****     Date:
+  17          ****                                                                                        
+  18          ****  addtogroup:Library                                                             
+  19          **********************************************************************************************************
+             -/
+  20          
+  21          /*--------------------------------- ÎÄ¼þ¹¦ÄÜËµÃ÷ -------------------------------------------------------*/
+  22          /*
+  23           *  ¸ÃÎÄ¼þËùÓÐº¯ÊýµÄÇ°×ºÎªxxxx_
+  24           *  ÎÄ¼þÖ÷º¯ÊýºÍ¶ÔÍâº¯ÊýÐè·ÅÔÚÎÄ¼þµÄÊ×²¿£¬²¢ÇÒÖ÷º¯ÊýÐèÒª·ÅÔÚµÚÒ»¸öÎ»ÖÃ;
+  25           *  º¯Êý×¢ÊÍ²ÉÓÃ±ê×¼Ä£°å£¬º¯ÊýÄÚ²¿×¢ÊÍ²ÉÓÃ//;
+  26           *  ¶ÔÓÚ×¢ÊÍ½Ï¶àµÄ²¿·Ö£¬¿ÉÒÔÔö¼ÓÒ»¸ö×¢ÊÍ·û£¬È»ºóÏêÏ¸ËµÃ÷·ÅÔÚÎÄ¼þµÄÎ²²¿;
+  27           *--------------------------------- ÎÄ¼þ¹¦ÄÜËµÃ÷ -------------------------------------------------------*/
+  28           
+  29          /**ÓÐÐÎ²ÎµÄº¯Êý¸ñÊ½:*/
+  30          /*------------------------------------------------------------------------------------------------------*/
+  31          /**
+  32           *  @brief    xxÈÎÎñ´¦Àíº¯Êý
+  33           *
+  34           *  @param    xx :
+  35           *
+  36           *  @return   xx
+  37           *
+  38           *  @note     xx
+  39           *
+  40           */
+  41          /*------------------------------------------------------------------------------------------------------*/
+  42          /**ÎÞÐÎ²ÎµÄº¯Êý¸ñÊ½:*/
+  43          /*------------------------------------------------------------------------------------------------------*/
+  44          /**
+  45           *  @brief    ÉÏµçËùÓÐ¿ÚÏßÅäÖÃ³É³õÊ¼×´Ì¬£¬ºóÃæ¿É¸ù¾ÝÐèÒª¿ªÆôºÍÅäÖÃ
+  46           *
+  47           *  @return   xx
+  48           *
+  49           *  @note     xx
+  50           *
+  51           */
+  52          /*------------------------------------------------------------------------------------------------------*/
+  53           
+C51 COMPILER V9.54   APPMONITOR                                                            11/18/2021 18:51:16 PAGE 2   
+
+  54           
+  55          /*----------------< °üº¬ÎÄ¼þ >----------------------------------*/
+  56          #include "..\SourceFiles\PUB\Include.h"
+  57          
+  58          /*----------------< ºê¶¨ÒåÇø >----------------------------------*/
+  59          
+  60          
+  61          /*----------------< ³£Á¿¶¨Òå >----------------------------------*/
+  62          
+  63          
+  64          /*----------------< ±äÁ¿¶¨Òå >----------------------------------*/
+  65          
+  66          
+  67          /*----------------< º¯ÊýÉùÃ÷ >----------------------------------*/
+  68          
+  69          void ApiMntr_PeripheralMonitor(void);
+  70          
+  71          void ApiMntr_MonitorTask(void);
+  72          /*----------------< º¯Êý¶¨Òå >----------------------------------*/
+  73          
+  74          
+  75          
+  76          
+  77          /*------------------------------------------------------------------------------------------------------*/
+  78          /**
+  79           *  @brief    ¶¨Ê±¼à¿Øº¯Êý£¬¶¨Ê½¼à¿ØÓ²¼þ£¬²ÎÊý£¬¼Ä´æÆ÷ÅäÖÃµÈ
+  80           *
+  81           *  @return   xx
+  82           *
+  83           *  @note     xx
+  84           *
+  85           */
+  86          /*------------------------------------------------------------------------------------------------------*/
+  87           
+  88          void ApiMntr_MonitorTask(void)
+  89          {
+  90   1              uchar8 i;
+  91   1              // @brief  ¼ì²âÒ»ÏÂ°´¼üºÍ³§ÄÚÄ£Ê½¶Ì½Óµã
+  92   1              ApiMntr_PeripheralMonitor();
+  93   1              
+  94   1              ApiPwOn_SysClkInit();   // ¼ì²éÒ»ÏÂÏµÍ³Ê±ÖÓ
+  95   1              
+  96   1              ApiPwOn_McuTimerInit(); // ¶¨Ê±Æ÷¼ì²é£¨»ù±¾½ÚÅÄ¶¨Ê±Æ÷£©
+  97   1              
+  98   1         // @brief  1S
+  99   1              if ( _TRUE == LibPub_GetDiffTime( GStr_Monitor.ulTimers, LibPub_GetTimerBeat(), 1000) ) ///* 1S¶¨Ê± *///
+ 100   1              { 
+ 101   2                      GStr_Monitor.ulTimers= LibPub_GetTimerBeat();
+ 102   2                                      
+ 103   2                      if( GStr_Monitor.ucPowerOnTimer < 60 )
+ 104   2                      {
+ 105   3                              GStr_Monitor.ucPowerOnTimer++;                          
+ 106   3                              
+ 107   3                              /* ÉÏµç5s£¨ÔÝ¶¨£©ÒÔºóÔÙ²Ù×÷À¶ÑÀÄ£×é*/
+ 108   3                              if( 5 == GStr_Monitor.ucPowerOnTimer )  
+ 109   3                              {
+ 110   4                                      ApiPwOn_BleInit();
+ 111   4                              }
+ 112   3                      }
+ 113   2                      
+ 114   2                      APiDisp_LcdledControl(); 
+ 115   2                      ApiRelay_ControlProcess();//Ã¿ÃëÅÐ¶ÏÒ»´ÎÊÇ·ñÓÐÌøÕ¢µ«ÊÇÃ»Ìø³É¹¦µÄ
+C51 COMPILER V9.54   APPMONITOR                                                            11/18/2021 18:51:16 PAGE 3   
+
+ 116   2                      Api_PowerLoadLimitedCheck();//¹ýÔØÌøÕ¢¼ì²â
+ 117   2                      if(GStr_Flag.ucRunState1&F_RUN_OVER_DEMAND_CLOSE)
+ 118   2                      {
+ 119   3                              if(_TRUE == LibPub_GetDiffTime( GStr_Monitor.ulOverDemandCloseTime, LibPub_GetTimerBeat(), 300000) )
+ 120   3                              {///¹ýÔØºó5min ×Ô¶¯ºÏÕ¢
+ 121   4                                      GStr_Monitor.ulOverDemandCloseTime=LibPub_GetTimerBeat();
+ 122   4                                      GStr_Flag.ucRunState1 &=~F_RUN_OVER_DEMAND_CLOSE;///Çë¹ýÔØ»Ö¸´ºÏÕ¢ÃüÁî£¬Ö±½ÓºÏÕ¢
+ 123   4                                      ApiRelay_ControlProcess();
+ 124   4                              }
+ 125   3                      }
+ 126   2                      /*µç±íÐÞ¸ÄÁËÍ¨ÐÅµØÖ·£¬ÐèÒªÖØÆôÀ¶ÑÀÄ£¿é£¬ÉèÖÃÀ¶ÑÀ²ÎÊý*/
+ 127   2                      if( (BLE_STAT_RST == GStr_Flag.ucBLESTATFlag)
+ 128   2                              || (BLE_STAT_ERRREP == GStr_Flag.ucBLESTATFlag) )       /* Ä£¿éÉÏ±¨Á¬½ÓÒì³££¬Ö±½Ó¸´Î» */
+ 129   2                      {
+ 130   3                              /*Ð´ÍêÍ¨ÐÅµØÖ·ºóÐèÒªÖØÐÂÉèÖÃÀ¶ÑÀÄ£¿é²ÎÊý£¬²¢ÖØÐÂ¹ã²¥*/
+ 131   3                              BleDrv_BleReset();
+ 132   3                              BleDrv_InitBleRunPara();
+ 133   3                              BleDrv_SetBleStat();     
+ 134   3                      }
+ 135   2      //              if((GV_ClearFlag==MoneyClear)||(GV_ClearFlag==CommClear))///×ÜÇå´¦Àí
+ 136   2      //              {
+ 137   2      //                              ApiPwOn_MeterClear(GV_ClearFlag);
+ 138   2      //              }
+ 139   2                      if((!(GStr_Flag.ucRunState2&F_RUN_INTAUTHAvailabilityFlag))&&(GStr_Flag.ucRunState3&F_RUN_READ_RANDOM2))
+ 140   2                      {
+ 141   3                              if(_TRUE == LibPub_GetDiffTime( GStr_Monitor.ulReadRandom2DelayTime, LibPub_GetTimerBeat(), 300000) )
+ 142   3                              ///5minºóÉí·ÝÈÏÖ¤»¹ÊÇÊ§Ð§£¬Çå±êÖ¾£¬ÖØÐÂÉú³ÉËæ»úÊý2
+ 143   3                              {
+ 144   4                                      GStr_Flag.ucRunState3 &=~F_RUN_READ_RANDOM2;///Çå¶ÁËæ»úÊý±êÖ¾
+ 145   4                                      PrepaymentModule_GetChallenge(&GStr_VirtualEsamPara.ucRs485RandNum2[0], 0x04) ;///»ñÈ¡Ëæ»úÊý2
+ 146   4                                      LibPub_MemSetBytes(&GStr_VirtualEsamPara.ucRs485RandNum2[4], 0x00, 4);///Ëæ»úÊý2ÖØÐÂÉú³É
+ 147   4                              }       
+ 148   3                      }
+ 149   2                      if(GStr_Flag.ucRunState2 &F_RUN_PROG_10MIN_FLAG)
+ 150   2                      {
+ 151   3                              if(_TRUE == LibPub_GetDiffTime( GStr_Monitor.ulProgEventDelayTime, LibPub_GetTimerBeat(), 600000) )
+ 152   3                              {
+ 153   4                                      GStr_Flag.ucRunState2 &=~F_RUN_PROG_10MIN_FLAG;///Çë±êÖ¾
+ 154   4                              }
+ 155   3                      }
+ 156   2                      if(GStr_AVAIL.ulAutRemainingTime)
+ 157   2                      {
+ 158   3                              GStr_Flag.ucRunState2 |= F_RUN_INTAUTHAvailabilityFlag;
+ 159   3                              GStr_AVAIL.ulAutRemainingTime--;
+ 160   3                              if(0==GStr_AVAIL.ulAutRemainingTime)
+ 161   3                              {
+ 162   4                                      GStr_Flag.ucRunState2 &= ~F_RUN_INTAUTHAvailabilityFlag;
+ 163   4                              }
+ 164   3                      }
+ 165   2                      else
+ 166   2                      {
+ 167   3                              GStr_Flag.ucRunState2 &= ~F_RUN_INTAUTHAvailabilityFlag;
+ 168   3                              GStr_Flag.ucRunState3 &=~F_RUN_READ_RANDOM2;///Çå¶ÁËæ»úÊý±êÖ¾
+ 169   3                              PrepaymentModule_GetChallenge(&GStr_VirtualEsamPara.ucRs485RandNum2[0], 0x04) ;///»ñÈ¡Ëæ»úÊý2
+ 170   3                              LibPub_MemSetBytes(&GStr_VirtualEsamPara.ucRs485RandNum2[4], 0x00, 4);///Ëæ»úÊý2ÖØÐÂÉú³É
+ 171   3                      }               
+ 172   2              }
+ 173   1              
+ 174   1              // @brief  1·ÖÖÓ¶¨Ê±¼à²âÏà¹Ø²ÎÊý ¶¨Ê±¼ì²â²ÎÊý¶¨Ê±
+ 175   1               
+ 176   1              if ( _TRUE == LibPub_GetDiffTime( GStr_Monitor.ulTimerMin, LibPub_GetTimerBeat(), 60000) ) ///* 1·ÖÖÓ *//
+             -/
+C51 COMPILER V9.54   APPMONITOR                                                            11/18/2021 18:51:16 PAGE 4   
+
+ 177   1              {
+ 178   2                      GStr_Monitor.ulTimerMin = LibPub_GetTimerBeat();
+ 179   2                      
+ 180   2                      GStr_Flag.ucPowerOnFlag=0;///RAM´íÐèÒª³õÊ¼»¯¼ÆÁ¿
+ 181   2                      
+ 182   2                      ApiPwOn_EmuParaCheck() ;                ///* ¼ÆÁ¿²ÎÊýÐ£Ñé *///
+ 183   2                      ApiPwOn_MeterInfoParaCheck();   ///* ±íÐÅÏ¢£¬Í¨ÐÅµØÖ·¡¢±íºÅ¡¢²¨ÌØÂÊ¡¢×ÜÇå´ÎÊý¡¢¹ºµç´ÎÊý *///  
+ 184   2                      ApiPwOn_DisplayParaCheck();     ///* ÏÔÊ¾ÐÅÏ¢Ð£Ñé
+ 185   2                      ApiPwOn_MoneyParaCheck();       ///* ±¨¾¯½ð¶îµÈ²ÎÊýÐ£Ñé  °üÀ¨Ê£Óà½ð¶îÐ§Ñé
+ 186   2                      ApiMoney_RefreshPrice();                ////*µç¼Û²ÎÊýÐ§Ñé
+ 187   2                      ApiPwOn_FunConfigParaCheck();   ///* ¹¦ÄÜÅäÖÃ¶¨ÆÚ¼ì²é */// 
+ 188   2                      ApiPwOn_KeyStatusCheck();       ///* ÃÜÔ¿×´Ì¬ºÍ¿ª»§×´Ì¬ *///
+ 189   2                      ApiPwOn_BleParaChk();                   ///* ¶¨ÆÚ¼ì²éÀ¶ÑÀ²ÎÊý */// 
+ 190   2                      ApiPwOn_EventPointCheck();      ///* ÊÂ¼þÖ¸ÕëÐ§Ñé
+ 191   2                      ApiMoney_TimeingHoldMoney();    ///¶¨Ê±±£´æÊ£Óà½ð¶îºÍÍ¸Ö§½ð¶î
+ 192   2                      
+ 193   2      
+ 194   2                
+ 195   2                      for( i=0; i<4; i++)
+ 196   2                      {
+ 197   3                              if( GStr_Monitor.usPasswordErrTime[i] != 0 )
+ 198   3                              {
+ 199   4                                      GStr_Monitor.usPasswordErrTime[i]--;
+ 200   4                                      if( GStr_Monitor.usPasswordErrTime[i] == 0 )
+ 201   4                                      {
+ 202   5                                              if( i== 3 )
+ 203   5                                              {
+ 204   6                                                      PrepaymentModule_Comm_ClrMACErrNum();
+ 205   6                                              }
+ 206   5                                              else
+ 207   5                                              {
+ 208   6                                                      GStr_Counter.ucPasswordErr_Cnt[i]=0;
+ 209   6                                              }
+ 210   5      
+ 211   5                                      }
+ 212   4                              }
+ 213   3                      }
+ 214   2                       
+ 215   2                      if( GStr_Monitor.ulSoftI_JTime != 0 )
+ 216   2                      {
+ 217   3                              GStr_Flag.ucMeterMode |= F_FACTORY_MODE;
+ 218   3                              
+ 219   3                              GStr_Monitor.ulSoftI_JTime--;
+ 220   3                              if( GStr_Monitor.ulSoftI_JTime == 0 )
+ 221   3                              {
+ 222   4                                      GStr_Flag.ucMeterMode &= ~F_FACTORY_MODE;
+ 223   4                              }
+ 224   3                              LibPub_WriteDataToE2prom( LIB_E2P_SOFTI_J, 0, (uchar8 *)&GStr_Monitor.ulSoftI_JTime);
+ 225   3                      }
+ 226   2                      else
+ 227   2                      { 
+ 228   3                              GStr_Flag.ucMeterMode &= ~F_FACTORY_MODE;
+ 229   3                      }
+ 230   2                      
+ 231   2                      #if(METER_TYPE==METER_TYPE_DTSY666)     
+                              if(     (GStr_Flag.ucRunState3 & F_RUN_Relayact_Voltage) && !(GStr_Flag.ucRunState2&F_RUN_RELAY_STATE) )        //Ó
+             -ÐÒ»ÏàµçÑ¹¸ßÓÚ82%Un,ÇÒµç±íÈÏÎªÊÇºÏÕ¢×´Ì¬
+                              {
+                                      GStr_Counter.ucRelayon_Cnt++;
+                                      if( GStr_Counter.ucRelayon_Cnt >= Relayon_Delaytimer )                          //Ò»¶¨Ê±¼äÄÚÃ»ÓÐÂö³åÐÅºÅ£¬ÔòÈÏÎªµç±íºÏÕ¢×´Ì¬Ã
+             -»ÓÐºÏÕ¢
+                                      { 
+C51 COMPILER V9.54   APPMONITOR                                                            11/18/2021 18:51:16 PAGE 5   
+
+                                              GStr_Counter.ucRelayon_Cnt = 0;
+                                              RelayDrv_Closerelay();                                                                  //¼ÌµçÆ÷ºÏÕ¢
+                                              GStr_Counter.ucRelayDelay_Cnt = RelayOnce_Delaytimer;   //3sÖÃÎ»
+                                      }
+                              }
+                              else
+                              {
+                                      GStr_Counter.ucRelayon_Cnt = 0;
+                              }
+                              #endif
+ 247   2                      
+ 248   2              } 
+ 249   1              
+ 250   1      }
+ 251          
+ 252          /*------------------------------------------------------------------------------------------------------*/
+ 253          /**
+ 254           *  @brief    ÍâÉè¼à¿Øº¯Êý£¬Ö÷ÒªÊÇ°´¼ü¡¢¶Ì½ÓµãµÈ///ÌøÕ¢¿ÚÏßÖÃÎ»ÑÓÊ±Ò²ÔÚÕâÀï×ö
+ 255           *
+ 256           *  @return   xx
+ 257           *
+ 258           *  @note     xx
+ 259           *
+ 260           */
+ 261          /*------------------------------------------------------------------------------------------------------*/
+ 262           
+ 263          void ApiMntr_PeripheralMonitor(void)
+ 264          {
+ 265   1              /* 5ms¼ì²âÒ»´Î */
+ 266   1              if ( _TRUE == LibPub_GetDiffTime( GStr_Monitor.ulTimer5ms, LibPub_GetTimerBeat(), 5) )
+ 267   1              {
+ 268   2                      GStr_Monitor.ulTimer5ms =  LibPub_GetTimerBeat();
+ 269   2                      DrvKey_FactoryKeyMonitor();
+ 270   2                      DrvKey_DisplayKeyMonitor();
+ 271   2                      RelayDrv_DelayTimeMonitor();
+ 272   2                      if(((GStr_Flag.ucRunState1&F_RUN_L2_ALRAM)&&(!(GStr_Flag.ucRunState&F_RUN_CLOSE_L2)))
+ 273   2                      ||((GStr_Flag.ucRunState1&F_RUN_REMAIND_ZERO)&&(!(GStr_Flag.ucRunState&F_RUN_CLOSE_ZERO))))
+ 274   2                      {
+ 275   3                                      DrvKey_DisplayKeyInit();  
+ 276   3                                      if(DISPLAY_KEY_LOW)
+ 277   3                                      {
+ 278   4                                              GStr_Counter.ucKeyRelayOn_Cnt++;
+ 279   4                                      }
+ 280   3                                      if(GStr_Counter.ucKeyRelayOn_Cnt>=1000)
+ 281   3                                      {
+ 282   4                                                      if(GStr_Flag.ucRunState1&F_RUN_L2_ALRAM)
+ 283   4                                                      {
+ 284   5                                                                      GStr_Flag.ucRunState|=F_RUN_CLOSE_L2;
+ 285   5                                                      }
+ 286   4                                                      if(GStr_Flag.ucRunState1&F_RUN_REMAIND_ZERO)
+ 287   4                                                      {
+ 288   5                                                                      GStr_Flag.ucRunState|=F_RUN_CLOSE_ZERO;
+ 289   5                                                      }
+ 290   4                                                      LibPub_MemSetBytes(GA_ucRelayOperCode,0xFF,4);///°´¼üÀ­Õ¢µÄ²Ù×÷Õß´úÂëÎªFFFFFFFF
+ 291   4                                                      ApiRelay_ControlProcess();
+ 292   4                                                      LibPub_WriteDataToE2prom(LIB_E2P_RUN_STATE,0,&GStr_Flag.ucRunState);    
+ 293   4                                      }
+ 294   3                      }
+ 295   2                      else
+ 296   2                      {
+ 297   3                                      GStr_Counter.ucKeyRelayOn_Cnt=0;
+ 298   3                      }
+C51 COMPILER V9.54   APPMONITOR                                                            11/18/2021 18:51:16 PAGE 6   
+
+ 299   2      
+ 300   2              }
+ 301   1      }
+ 302          
+C51 COMPILER V9.54   APPMONITOR                                                            11/18/2021 18:51:16 PAGE 7   
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+uint16_t . . . . . . . . . . . . . . .  TYPEDEF  -----  U_INT    -----  2
+IB_CON2. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00F3H  1
+COMM_BLE_STAT. . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+API_COMM_STATUS_OVERTIME . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+TB81 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00DBH  1
+P0 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0080H  1
+IB_CON3. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00F4H  1
+RelayDrv_DelayTimeMonitor. . . . . . .  EXTERN   CODE   PROC     -----  -----
+FP64 . . . . . . . . . . . . . . . . .  TYPEDEF  -----  FLOAT    -----  4
+TKCON. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A4H  1
+P1 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0090H  1
+IB_CON4. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00F5H  1
+PASLO. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E7H  1
+GStr_ENERGYDEC_Type. . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  26
+  ucaFw_EnergyDec. . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  13
+  ucaBk_EnergyDec. . . . . . . . . . .  MEMBER   -----  ARRAY    000DH  13
+P2 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A0H  1
+OSCLO. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00FEH  1
+IB_CON5. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00F6H  1
+GStr_EventRecordNum_Type . . . . . . .  TYPEDEF  -----  STRUCT   -----  26
+  ucEventTimes . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  24
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    0018H  2
+GStr_FLAG_Type . . . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  16
+  ucSystem . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0000H  1
+  ucMeterMode. . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0001H  1
+  ucPwOnState. . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0002H  1
+  ucRunState . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0003H  1
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    0004H  2
+  ucRunState2. . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0006H  1
+  ucRunState1. . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0007H  1
+  ucRunState3. . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0008H  1
+  ucDisp . . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0009H  1
+  ucFactoryKey . . . . . . . . . . . .  MEMBER   -----  U_CHAR   000AH  1
+  ucDispKey. . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   000BH  1
+  ucMoney. . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   000CH  1
+  ucPowerOnFlag. . . . . . . . . . . .  MEMBER   -----  U_CHAR   000DH  1
+  ucWrE2promSafeByte . . . . . . . . .  MEMBER   -----  U_CHAR   000EH  1
+  ucBLESTATFlag. . . . . . . . . . . .  MEMBER   -----  U_CHAR   000FH  1
+BOOLEAN. . . . . . . . . . . . . . . .  TYPEDEF  -----  U_CHAR   -----  1
+SM1_RXOV . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      009EH  1
+P3 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B0H  1
+AC . . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00D6H  1
+P4 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C0H  1
+BleDrv_SetBleStat. . . . . . . . . . .  EXTERN   CODE   PROC     -----  -----
+SPCON. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A1H  1
+SBRTH. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   009CH  1
+P5 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E9H  1
+LIB_E2P_Price_BAK. . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+EA . . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00AFH  1
+P6 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00EAH  1
+LIB_E2P_Display_Table. . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+GStr_DISPLAY_PARA_Type . . . . . . . .  TYPEDEF  -----  STRUCT   -----  129
+  ucFullDisp_Time. . . . . . . . . . .  MEMBER   -----  U_CHAR   0000H  1
+  ucDispDurTime. . . . . . . . . . . .  MEMBER   -----  U_CHAR   0001H  1
+  ucAutoDispNum. . . . . . . . . . . .  MEMBER   -----  U_CHAR   0002H  1
+  ucKeyDispNum . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0003H  1
+  usDisp_ParaCRC16 . . . . . . . . . .  MEMBER   -----  U_INT    0004H  2
+C51 COMPILER V9.54   APPMONITOR                                                            11/18/2021 18:51:16 PAGE 8   
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+  ucAutoDisptable. . . . . . . . . . .  MEMBER   -----  ARRAY    0006H  30
+  ucKeyDisptable . . . . . . . . . . .  MEMBER   -----  ARRAY    0024H  30
+  usDisp_tableCRC16. . . . . . . . . .  MEMBER   -----  U_INT    0042H  2
+  ucBackLightTime. . . . . . . . . . .  MEMBER   -----  U_CHAR   0044H  1
+  ucRelayLEDTime . . . . . . . . . . .  MEMBER   -----  U_CHAR   0045H  1
+  ulDispUpdataTime . . . . . . . . . .  MEMBER   -----  U_LONG   0046H  4
+  usDispCnt. . . . . . . . . . . . . .  MEMBER   -----  U_INT    004AH  2
+  ulDisptimer. . . . . . . . . . . . .  MEMBER   -----  U_LONG   004CH  4
+  ucKeydelaytimer. . . . . . . . . . .  MEMBER   -----  U_CHAR   0050H  1
+  ucFirstKeyDisp . . . . . . . . . . .  MEMBER   -----  U_CHAR   0051H  1
+  ucDisp_0_flag. . . . . . . . . . . .  MEMBER   -----  U_CHAR   0052H  1
+  ucDisp_tongxin_Flag. . . . . . . . .  MEMBER   -----  U_CHAR   0053H  1
+  ucDisp_tongxin_Time. . . . . . . . .  MEMBER   -----  U_LONG   0054H  4
+  ucDispNum. . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0058H  1
+  ucLCDDrvDispBuf. . . . . . . . . . .  MEMBER   -----  ARRAY    0059H  40
+int32_t. . . . . . . . . . . . . . . .  TYPEDEF  -----  LONG     -----  4
+P7 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00EBH  1
+IB_DATA. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00EFH  1
+P8 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00ECH  1
+int16_t. . . . . . . . . . . . . . . .  TYPEDEF  -----  INT      -----  2
+SBRTL. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   009DH  1
+P9 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00EDH  1
+PBANKLO. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B7H  1
+GStr_COUNTER_Type. . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  9
+  ucFactoryMode_Cnt. . . . . . . . . .  MEMBER   -----  U_INT    0000H  2
+  ucKeyRelayOn_Cnt . . . . . . . . . .  MEMBER   -----  U_INT    0002H  2
+  ucRelayDelay_Cnt . . . . . . . . . .  MEMBER   -----  U_CHAR   0004H  1
+  ucHoldMoney_Cnt. . . . . . . . . . .  MEMBER   -----  U_CHAR   0005H  1
+  ucPasswordErr_Cnt. . . . . . . . . .  MEMBER   -----  ARRAY    0006H  3
+BleDrv_InitBleRunPara. . . . . . . . .  EXTERN   CODE   PROC     -----  -----
+SPSTA. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A2H  1
+IEN0 . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A8H  1
+PWRCON1. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B3H  1
+ulong32. . . . . . . . . . . . . . . .  TYPEDEF  -----  U_LONG   -----  4
+EMUSR. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0095H  1
+IEN1 . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A9H  1
+PWRCON2. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B4H  1
+DPH1 . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0085H  1
+P0_0 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0080H  1
+ushort16 . . . . . . . . . . . . . . .  TYPEDEF  -----  U_INT    -----  2
+P1_0 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0090H  1
+P0_1 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0081H  1
+ADCH . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C3H  1
+BLE_DRV_OPERATION_INDEX. . . . . . . .  TYPEDEF  -----  U_CHAR   -----  1
+LIB_E2P_SOFTI_J. . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+P2_0 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00A0H  1
+P1_1 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0091H  1
+P0_2 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0082H  1
+IPH0 . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00BAH  1
+DPL1 . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0084H  1
+size_t . . . . . . . . . . . . . . . .  TYPEDEF  -----  U_INT    -----  2
+LIB_E2P_FUN_CONFIG_BAK . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+GStr_MONITOR_Tpye. . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  59
+  ulTimer_ms . . . . . . . . . . . . .  MEMBER   -----  U_LONG   0000H  4
+  ulTimer_ms_old . . . . . . . . . . .  MEMBER   -----  U_LONG   0004H  4
+  ulTimerClrWDT. . . . . . . . . . . .  MEMBER   -----  U_LONG   0008H  4
+  ulTimerMin . . . . . . . . . . . . .  MEMBER   -----  U_LONG   000CH  4
+C51 COMPILER V9.54   APPMONITOR                                                            11/18/2021 18:51:16 PAGE 9   
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+  ulTimer5ms . . . . . . . . . . . . .  MEMBER   -----  U_LONG   0010H  4
+  ucPowerOnTimer . . . . . . . . . . .  MEMBER   -----  U_CHAR   0014H  1
+  ulTimers . . . . . . . . . . . . . .  MEMBER   -----  U_LONG   0015H  4
+  ulUpDateUIPTime. . . . . . . . . . .  MEMBER   -----  U_LONG   0019H  4
+  ulSoftI_JTime. . . . . . . . . . . .  MEMBER   -----  U_LONG   001DH  4
+  usSoftI_JTimeCRC16 . . . . . . . . .  MEMBER   -----  U_INT    0021H  2
+  usPasswordErrTime. . . . . . . . . .  MEMBER   -----  ARRAY    0023H  8
+  ucCommSymbolTime . . . . . . . . . .  MEMBER   -----  U_CHAR   002BH  1
+  ucPowerLimitNum. . . . . . . . . . .  MEMBER   -----  U_CHAR   002CH  1
+  ulOverDemandCloseTime. . . . . . . .  MEMBER   -----  U_LONG   002DH  4
+  ulProgEventDelayTime . . . . . . . .  MEMBER   -----  U_LONG   0031H  4
+  ulReadRandom2DelayTime . . . . . . .  MEMBER   -----  U_LONG   0035H  4
+  ucBleAdvCnt. . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0039H  1
+  ucBleConnectCnt. . . . . . . . . . .  MEMBER   -----  U_CHAR   003AH  1
+P3_0 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00B0H  1
+P2_1 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00A1H  1
+P1_2 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0092H  1
+P0_3 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0083H  1
+IPH1 . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00BBH  1
+COMM_BLE_MAC . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+ApiPwOn_EmuParaCheck . . . . . . . . .  EXTERN   CODE   PROC     -----  -----
+P4_0 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00C0H  1
+P3_1 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00B1H  1
+P2_2 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00A2H  1
+P1_3 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0093H  1
+P0_4 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0084H  1
+EXF0 . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E8H  1
+P4_1 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00C1H  1
+P3_2 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00B2H  1
+P2_3 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00A3H  1
+P1_4 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0094H  1
+P0_5 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0085H  1
+P4_2 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00C2H  1
+P3_3 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00B3H  1
+P2_4 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00A4H  1
+P1_5 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0095H  1
+P0_6 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0086H  1
+EXF2 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00CEH  1
+TKF0 . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A6H  1
+IPL0 . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B8H  1
+LIB_E2P_ENRGY_BAK. . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+P4_3 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00C3H  1
+P3_4 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00B4H  1
+P2_5 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00A5H  1
+P1_6 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0096H  1
+P0_7 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0087H  1
+REN1 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00DCH  1
+IPL1 . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B9H  1
+ApiPwOn_KeyStatusCheck . . . . . . . .  EXTERN   CODE   PROC     -----  -----
+LIB_E2P_EventNum . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+long32 . . . . . . . . . . . . . . . .  TYPEDEF  -----  LONG     -----  4
+P4_4 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00C4H  1
+P3_5 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00B5H  1
+P2_6 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00A6H  1
+P1_7 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0097H  1
+TK0H . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E2H  1
+SUSLO. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   008EH  1
+C51 COMPILER V9.54   APPMONITOR                                                            11/18/2021 18:51:16 PAGE 10  
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+P4_5 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00C5H  1
+P3_6 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00B6H  1
+P2_7 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00A7H  1
+TK1H . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E4H  1
+P4_6 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00C6H  1
+P3_7 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00B7H  1
+TK2H . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E6H  1
+LIB_E2P_Money_BAK. . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+short16. . . . . . . . . . . . . . . .  TYPEDEF  -----  INT      -----  2
+P4_7 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00C7H  1
+RI . . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0098H  1
+E7816. . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00AAH  1
+CY . . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00D7H  1
+TK0L . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E1H  1
+API_COMM_STATUS_ERROR. . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+TI . . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0099H  1
+EADR . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0091H  1
+TK1L . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E3H  1
+TK2L . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E5H  1
+SADEN1 . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00DBH  1
+SM10_FE1 . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00DFH  1
+SADEN2 . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00FBH  1
+LIB_E2P_EMU_CALPARA. . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+GStr_ENERGY_PULSE_Type . . . . . . . .  TYPEDEF  -----  STRUCT   -----  8
+  ucPulseAdd . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0000H  1
+  ucPulseAddBusy . . . . . . . . . . .  MEMBER   -----  U_CHAR   0001H  1
+  ucPulseStatu . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0002H  1
+  ucPulseDecimal . . . . . . . . . . .  MEMBER   -----  U_CHAR   0003H  1
+  ucPulseDecSavePtr. . . . . . . . . .  MEMBER   -----  U_CHAR   0004H  1
+  ucPulseDecSaveNoFF . . . . . . . . .  MEMBER   -----  U_CHAR   0005H  1
+  ucaPulseRemain . . . . . . . . . . .  MEMBER   -----  ARRAY    0006H  2
+PS0L . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00BCH  1
+ApiMntr_PeripheralMonitor. . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+APiDisp_LcdledControl. . . . . . . . .  EXTERN   CODE   PROC     -----  -----
+PT0L . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00B9H  1
+SADDR1 . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00DAH  1
+LIB_E2P_INDEX_MAX. . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+LIB_E2P_Display_Para . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+SM12_TXCOL1. . . . . . . . . . . . . .  ABSBIT   -----  BIT      00DDH  1
+PT1L . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00BBH  1
+SADDR2 . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00FAH  1
+RCAP2H . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00CBH  1
+COMM_BLE_MOD . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+_PrepaymentModule_GetChallenge . . . .  EXTERN   CODE   PROC     -----  -----
+ApiMntr_MonitorTask. . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+  i. . . . . . . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0000H  1
+PT2L . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00BDH  1
+SP . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0081H  1
+INT32S . . . . . . . . . . . . . . . .  TYPEDEF  -----  LONG     -----  4
+OV . . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00D2H  1
+LIB_E2P_EventNumPiont. . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+GStr_METER_IFO_Type. . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  27
+  ucaCommAddr. . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  6
+  ucaMeterID . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0006H  6
+  ucaUserID. . . . . . . . . . . . . .  MEMBER   -----  ARRAY    000CH  6
+  ucVoltageTrans . . . . . . . . . . .  MEMBER   -----  ARRAY    0012H  3
+  ucCurrentTrans . . . . . . . . . . .  MEMBER   -----  ARRAY    0015H  3
+C51 COMPILER V9.54   APPMONITOR                                                            11/18/2021 18:51:16 PAGE 11  
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+  ucBpsVal . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0018H  1
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    0019H  2
+RCAP2L . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00CAH  1
+INT32U . . . . . . . . . . . . . . . .  TYPEDEF  -----  U_LONG   -----  4
+INT16S . . . . . . . . . . . . . . . .  TYPEDEF  -----  INT      -----  2
+INT16U . . . . . . . . . . . . . . . .  TYPEDEF  -----  U_INT    -----  2
+PX4L . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00B8H  1
+C_T2 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00C9H  1
+SFINE2 . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00DEH  1
+_LibPub_WriteDataToE2prom. . . . . . .  EXTERN   CODE   PROC     -----  -----
+GStr_BLE_GROUP_Type. . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  26
+  ucBleMAC . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  6
+  ucBleName. . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0006H  12
+  ucBleKey . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0012H  3
+  usAdvTime. . . . . . . . . . . . . .  MEMBER   -----  U_INT    0015H  2
+  ucBleTPL . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0017H  1
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    0018H  2
+COMM_BLE_MFV . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+DrvKey_DisplayKeyMonitor . . . . . . .  EXTERN   CODE   PROC     -----  -----
+GStr_EventNumPiont_Type. . . . . . . .  TYPEDEF  -----  STRUCT   -----  8
+  uc_Num . . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  6
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    0006H  2
+ApiPwOn_BleInit. . . . . . . . . . . .  EXTERN   CODE   PROC     -----  -----
+IRCON1 . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00ADH  1
+DrvKey_FactoryKeyMonitor . . . . . . .  EXTERN   CODE   PROC     -----  -----
+IRCON2 . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00AFH  1
+GStr_Comm_MAP. . . . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  14
+  ucaDataId. . . . . . . . . . . . . .  MEMBER   -----  U_LONG   0000H  4
+  ucaRamAdd. . . . . . . . . . . . . .  MEMBER   -----  PTR      0004H  3
+  IsWrite. . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0007H  1
+  ucaE2pIndex. . . . . . . . . . . . .  MEMBER   -----  U_INT    0008H  2
+  ucaE2offset. . . . . . . . . . . . .  MEMBER   -----  U_CHAR   000AH  1
+  ucaDataLen . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   000BH  1
+  IsBCD. . . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   000CH  1
+  EEIsHEX. . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   000DH  1
+API_COMM_STATUS_IDLE . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+EXCON1 . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00ABH  1
+SBUF . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0099H  1
+EXCON2 . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00ACH  1
+PCON . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0087H  1
+B32_B08. . . . . . . . . . . . . . . .  * TAG *  -----  UNION    -----  4
+  B08. . . . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  4
+  B16. . . . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  4
+  B32. . . . . . . . . . . . . . . . .  MEMBER   -----  U_LONG   0000H  4
+AUXC . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00F1H  1
+COMM_BLE_TPL . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+GStr_UART_COMM_Type. . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  423
+  ucCommChStatus . . . . . . . . . . .  MEMBER   -----  U_CHAR   0000H  1
+  ucCommRevStep. . . . . . . . . . . .  MEMBER   -----  U_CHAR   0001H  1
+  ucCommRevLen . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0002H  1
+  ucCommSndLen . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0003H  1
+  ucCommSndCnt . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0004H  1
+  ucCommAddrType . . . . . . . . . . .  MEMBER   -----  U_CHAR   0005H  1
+  ucCommError. . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0006H  1
+  ulCommTimeInit . . . . . . . . . . .  MEMBER   -----  U_LONG   0007H  4
+  ulCommRcvByteOverTime. . . . . . . .  MEMBER   -----  U_LONG   000BH  4
+  ulCommSndByteOverTime. . . . . . . .  MEMBER   -----  U_LONG   000FH  4
+C51 COMPILER V9.54   APPMONITOR                                                            11/18/2021 18:51:16 PAGE 12  
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+  ulCommRspOverTime. . . . . . . . . .  MEMBER   -----  U_LONG   0013H  4
+  ucaCommRXBuff. . . . . . . . . . . .  MEMBER   -----  ARRAY    0017H  200
+  ucaCommTXBuff. . . . . . . . . . . .  MEMBER   -----  ARRAY    00DFH  200
+GStr_ENERGY_Type . . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  10
+  ucaFw_Energy . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  4
+  ucaBk_Energy . . . . . . . . . . . .  MEMBER   -----  ARRAY    0004H  4
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    0008H  2
+GU_B32_B08_Type. . . . . . . . . . . .  TYPEDEF  -----  UNION    -----  4
+  B08. . . . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  4
+  B16. . . . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  4
+  B32. . . . . . . . . . . . . . . . .  MEMBER   -----  U_LONG   0000H  4
+SCON . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0098H  1
+TK0BASEH . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D4H  1
+TMOD . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0089H  1
+TCON . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0088H  1
+IENX . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00AAH  1
+IB_OFFSET. . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00EEH  1
+ApiPwOn_BleParaChk . . . . . . . . . .  EXTERN   CODE   PROC     -----  -----
+TK1BASEH . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D6H  1
+SBRT1H . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00DCH  1
+TK2BASEH . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00DFH  1
+SBRT2H . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00FCH  1
+RSTSTAT. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B1H  1
+PrepaymentModule_Comm_ClrMACErrNum . .  EXTERN   CODE   PROC     -----  -----
+LIB_E2P_Password . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+TK0BASEL . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D3H  1
+LIB_E2P_BLE_PARA . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+LIB_E2P_RUN_STATE. . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+TK1BASEL . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D5H  1
+SBRT1L . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00DDH  1
+COMM_BLE_TTP . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+EMU_EPADR_Type . . . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  5
+  ucEmuAddr. . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0000H  1
+  ulEmuRegData . . . . . . . . . . . .  MEMBER   -----  U_LONG   0001H  4
+TK2BASEL . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D7H  1
+SBRT2L . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00FDH  1
+API_COMM_STATUS_SEND . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+SM0_FE . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      009FH  1
+CLKCON . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B2H  1
+API_COMM_STATUS_RECV_OK. . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+BleDrv_BleReset. . . . . . . . . . . .  EXTERN   CODE   PROC     -----  -----
+Api_PowerLoadLimitedCheck. . . . . . .  EXTERN   CODE   PROC     -----  -----
+SM2_TXCOL. . . . . . . . . . . . . . .  ABSBIT   -----  BIT      009DH  1
+LDOCON . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B5H  1
+B. . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00F0H  1
+API_COMM_STATUS_RECV . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+EMU_CALPARA_Type . . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  22
+  ulaCalPara . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  20
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    0014H  2
+CP_RL2 . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00C8H  1
+ApiPwOn_McuTimerInit . . . . . . . . .  EXTERN   CODE   PROC     -----  -----
+LIB_E2P_EMU_UIPKms . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+ApiPwOn_DisplayParaCheck . . . . . . .  EXTERN   CODE   PROC     -----  -----
+GStr_UIP_GROUP_Type. . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  68
+  ulVoltage. . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  16
+  ulCurrent. . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0010H  16
+  ulPower. . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0020H  16
+C51 COMPILER V9.54   APPMONITOR                                                            11/18/2021 18:51:16 PAGE 13  
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+  ulFactory. . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0030H  16
+  ulFrequency. . . . . . . . . . . . .  MEMBER   -----  U_LONG   0040H  4
+ApiRelay_ControlProcess. . . . . . . .  EXTERN   CODE   PROC     -----  -----
+ENUM_API_COMM_STATUS . . . . . . . . .  TYPEDEF  -----  U_CHAR   -----  1
+LibPub_GetTimerBeat. . . . . . . . . .  EXTERN   CODE   PROC     -----  -----
+GStr_Counter . . . . . . . . . . . . .  EXTERN   XDATA  STRUCT   -----  9
+ACC. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E0H  1
+ES0. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00ACH  1
+ET0. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00A9H  1
+ET1. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00ABH  1
+TF0. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      008DH  1
+ET2. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00ADH  1
+TF1. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      008FH  1
+RI1. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00D8H  1
+RB8. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      009AH  1
+TF2. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00CFH  1
+TH0. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   008CH  1
+INSCON . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0086H  1
+TH1. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   008DH  1
+uchar8 . . . . . . . . . . . . . . . .  TYPEDEF  -----  U_CHAR   -----  1
+TI1. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00D9H  1
+TB8. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      009BH  1
+TH2. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00CDH  1
+LIB_E2P_EMU_CALPARA_BAK. . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+GStr_Monitor . . . . . . . . . . . . .  EXTERN   XDATA  STRUCT   -----  59
+uint8_t. . . . . . . . . . . . . . . .  TYPEDEF  -----  U_CHAR   -----  1
+P. . . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00D0H  1
+GStr_UIP_DISPLAY_Type. . . . . . . . .  TYPEDEF  -----  STRUCT   -----  135
+  ucVoltage. . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  4
+  ucVoltageA . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0004H  4
+  ucVoltageB . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0008H  4
+  ucVoltageC . . . . . . . . . . . . .  MEMBER   -----  ARRAY    000CH  4
+  ucCOMMVoltage. . . . . . . . . . . .  MEMBER   -----  ARRAY    0010H  4
+  ucCOMMVoltageA . . . . . . . . . . .  MEMBER   -----  ARRAY    0014H  4
+  ucCOMMVoltageB . . . . . . . . . . .  MEMBER   -----  ARRAY    0018H  4
+  ucCOMMVoltageC . . . . . . . . . . .  MEMBER   -----  ARRAY    001CH  4
+  ucCurrent. . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0020H  4
+  ucCurrentA . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0024H  4
+  ucCurrentB . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0028H  4
+  ucCurrentC . . . . . . . . . . . . .  MEMBER   -----  ARRAY    002CH  4
+  ucCOMMCurrent. . . . . . . . . . . .  MEMBER   -----  ARRAY    0030H  4
+  ucCOMMCurrentA . . . . . . . . . . .  MEMBER   -----  ARRAY    0034H  4
+  ucCOMMCurrentB . . . . . . . . . . .  MEMBER   -----  ARRAY    0038H  4
+  ucCOMMCurrentC . . . . . . . . . . .  MEMBER   -----  ARRAY    003CH  4
+  ucPower. . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0040H  4
+  ucPowerA . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0044H  4
+  ucPowerB . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0048H  4
+  ucPowerC . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    004CH  4
+  ucCOMMPower. . . . . . . . . . . . .  MEMBER   -----  ARRAY    0050H  4
+  ucCOMMPowerA . . . . . . . . . . . .  MEMBER   -----  ARRAY    0054H  4
+  ucCOMMPowerB . . . . . . . . . . . .  MEMBER   -----  ARRAY    0058H  4
+  ucCOMMPowerC . . . . . . . . . . . .  MEMBER   -----  ARRAY    005CH  4
+  ucFactory. . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0060H  4
+  ucFactoryA . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0064H  4
+  ucFactoryB . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0068H  4
+  ucFactoryC . . . . . . . . . . . . .  MEMBER   -----  ARRAY    006CH  4
+  ucCOMMFactory. . . . . . . . . . . .  MEMBER   -----  ARRAY    0070H  4
+C51 COMPILER V9.54   APPMONITOR                                                            11/18/2021 18:51:16 PAGE 14  
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+  ucCOMMFactoryA . . . . . . . . . . .  MEMBER   -----  ARRAY    0074H  4
+  ucCOMMFactoryB . . . . . . . . . . .  MEMBER   -----  ARRAY    0078H  4
+  ucCOMMFactoryC . . . . . . . . . . .  MEMBER   -----  ARRAY    007CH  4
+  ucFrequency. . . . . . . . . . . . .  MEMBER   -----  ARRAY    0080H  4
+  ucMeterConst . . . . . . . . . . . .  MEMBER   -----  ARRAY    0084H  3
+TL0. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   008AH  1
+_LibPub_GetDiffTime. . . . . . . . . .  EXTERN   CODE   PROC     -----  -----
+GStr_AVAIL . . . . . . . . . . . . . .  EXTERN   XDATA  STRUCT   -----  41
+EX4. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00A8H  1
+TL1. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   008BH  1
+FLASHCON . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A7H  1
+ApiMoney_RefreshPrice. . . . . . . . .  EXTERN   CODE   PROC     -----  -----
+LIB_E2P_Money_Para . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+TL2. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00CCH  1
+LIB_E2P_ENERGY_DECPULSE_BK . . . . . .  E_CONST  -----  U_CHAR   -----  1
+LIB_E2P_AvailTimer . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+RS0. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00D3H  1
+ADCDH. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C5H  1
+DrvKey_DisplayKeyInit. . . . . . . . .  EXTERN   CODE   PROC     -----  -----
+LIB_E2P_Price. . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+GStr_AVAIL_Type. . . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  41
+  us_IDAvailTimer. . . . . . . . . . .  MEMBER   -----  U_INT    0000H  2
+  ucBackMonFlag. . . . . . . . . . . .  MEMBER   -----  U_CHAR   0002H  1
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    0003H  2
+  ulAutRemainingTime . . . . . . . . .  MEMBER   -----  U_LONG   0005H  4
+  ucRechangeMoney. . . . . . . . . . .  MEMBER   -----  ARRAY    0009H  4
+  ucBuybeforeMoney . . . . . . . . . .  MEMBER   -----  ARRAY    000DH  4
+  ucbeforeFwEnergy . . . . . . . . . .  MEMBER   -----  ARRAY    0011H  4
+  ucbeforeBkEnergy . . . . . . . . . .  MEMBER   -----  ARRAY    0015H  4
+  ucE2Key. . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0019H  16
+GU_BoolWordVariable. . . . . . . . . .  TYPEDEF  -----  UNION    -----  2
+  BYTE . . . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  2
+  BIT. . . . . . . . . . . . . . . . .  MEMBER   -----  STRUCT   0000H  2
+TR0. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      008CH  1
+RS1. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00D4H  1
+PWMCON . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   009FH  1
+TR1. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      008EH  1
+char8. . . . . . . . . . . . . . . . .  TYPEDEF  -----  CHAR     -----  1
+TR2. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00CAH  1
+GA_ucRelayOperCode . . . . . . . . . .  EXTERN   XDATA  ARRAY    -----  4
+int8_t . . . . . . . . . . . . . . . .  TYPEDEF  -----  CHAR     -----  1
+ADCDL. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C4H  1
+ADT. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C2H  1
+LIB_E2P_INDEX. . . . . . . . . . . . .  TYPEDEF  -----  U_CHAR   -----  1
+GStr_PRICE_Type. . . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  14
+  ucaPrice . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  4
+  ucaPurchaseMoneyAll. . . . . . . . .  MEMBER   -----  ARRAY    0004H  4
+  ucPurchaseTimes. . . . . . . . . . .  MEMBER   -----  ARRAY    0008H  4
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    000CH  2
+DPH. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0083H  1
+GStr_VirtualEsamPara . . . . . . . . .  EXTERN   XDATA  STRUCT   -----  64
+GStr_Flag. . . . . . . . . . . . . . .  EXTERN   XDATA  STRUCT   -----  16
+DPL. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0082H  1
+SBUF1. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D9H  1
+COMM_BLE_EADV. . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+LIB_E2P_FUN_CONFIG . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+EXEN2. . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00CBH  1
+C51 COMPILER V9.54   APPMONITOR                                                            11/18/2021 18:51:16 PAGE 15  
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+SBUF2. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00F9H  1
+EMU_COMM_CAL_TAB_Type. . . . . . . . .  TYPEDEF  -----  STRUCT   -----  2
+  ucCommDI1. . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0000H  1
+  ucEmuAddr. . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0001H  1
+LIB_E2P_ENERGY_DECPULSE_FW . . . . . .  E_CONST  -----  U_CHAR   -----  1
+SM11_RXOV1 . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00DEH  1
+PADCL. . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00BEH  1
+REN. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      009CH  1
+SCON1. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D8H  1
+STATUS . . . . . . . . . . . . . . . .  TYPEDEF  -----  U_CHAR   -----  1
+LCDCON1. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D1H  1
+ADCON. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C1H  1
+SCON2. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00F8H  1
+TCON1. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   008FH  1
+LIB_E2P_EventValidPiont. . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+LIB_E2P_ENRGY. . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+LCDCON2. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D2H  1
+EDTAH. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0092H  1
+T2MOD. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C9H  1
+T2CON. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C8H  1
+EMU_UIPKms_Type. . . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  14
+  ulaKmsuip. . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  12
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    000CH  2
+GStr_FUN_CONFIG_Type . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  16
+  ucFunCurrentVal. . . . . . . . . . .  MEMBER   -----  U_CHAR   0000H  1
+  ucFunMeterConst. . . . . . . . . . .  MEMBER   -----  U_CHAR   0001H  1
+  ucRes. . . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0002H  12
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    000EH  2
+GStr_EventParaData . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  5
+  V_usEventID. . . . . . . . . . . . .  MEMBER   -----  U_INT    0000H  2
+  V_usEventAddr. . . . . . . . . . . .  MEMBER   -----  U_INT    0002H  2
+  V_ucEventLenth . . . . . . . . . . .  MEMBER   -----  U_CHAR   0004H  1
+LIB_E2P_Money. . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+EDTAL. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0094H  1
+GStr_EEPROM_MAP. . . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  8
+  ucE2pAddressIndex. . . . . . . . . .  MEMBER   -----  U_INT    0000H  2
+  usE2pAddress . . . . . . . . . . . .  MEMBER   -----  U_INT    0002H  2
+  ucE2pSize. . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0004H  1
+  ucE2pLen . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0005H  1
+  ucIsCRC. . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0006H  1
+  ucIsBak. . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0007H  1
+EDTAM. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0093H  1
+TK0DIFH. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00BCH  1
+SADEN. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   009BH  1
+wchar_t. . . . . . . . . . . . . . . .  TYPEDEF  -----  CHAR     -----  1
+LIB_E2P_METER_INFO . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+TK1DIFH. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00BEH  1
+PBANK. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B6H  1
+GStr_EventValidPiont_Type. . . . . . .  TYPEDEF  -----  STRUCT   -----  8
+  uc_Point . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  6
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    0006H  2
+TK2DIFH. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A5H  1
+ApiMoney_TimeingHoldMoney. . . . . . .  EXTERN   CODE   PROC     -----  -----
+EADTP. . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00AEH  1
+SADDR. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   009AH  1
+ApiPwOn_FunConfigParaCheck . . . . . .  EXTERN   CODE   PROC     -----  -----
+TK0DIFL. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00CFH  1
+C51 COMPILER V9.54   APPMONITOR                                                            11/18/2021 18:51:16 PAGE 16  
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+LIB_E2P_ENERGY_DECPULSE_WS . . . . . .  E_CONST  -----  U_CHAR   -----  1
+GStr_MONEY_Type. . . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  14
+  ucaRemainMoney . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  6
+  ucaTickMoney . . . . . . . . . . . .  MEMBER   -----  ARRAY    0006H  6
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    000CH  2
+TK1DIFL. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00BDH  1
+TK2DIFL. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00BFH  1
+P7816L . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00BAH  1
+LPDCON1. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C6H  1
+LIB_E2P_EMU_UIPKms_BAK . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+LPDCON2. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C7H  1
+MAX_BLE_INDEX. . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+LIB_E2P_SecretKey. . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+F0 . . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00D5H  1
+IRDAT. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00AEH  1
+ApiPwOn_MoneyParaCheck . . . . . . . .  EXTERN   CODE   PROC     -----  -----
+ApiPwOn_SysClkInit . . . . . . . . . .  EXTERN   CODE   PROC     -----  -----
+F1 . . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00D1H  1
+EMUIE. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0096H  1
+SFINE. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   009EH  1
+XPAGE. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00F7H  1
+Gstr_VirtualEsam . . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  64
+  ucTempKey. . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  16
+  ucDisKey . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0010H  16
+  ucComplexKey . . . . . . . . . . . .  MEMBER   -----  ARRAY    0020H  16
+  ucRs485RandNum . . . . . . . . . . .  MEMBER   -----  ARRAY    0030H  8
+  ucRs485RandNum2. . . . . . . . . . .  MEMBER   -----  ARRAY    0038H  8
+ApiPwOn_EventPointCheck. . . . . . . .  EXTERN   CODE   PROC     -----  -----
+GStr_MONEY_PARA_Type . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  25
+  ucaAlarmMoneyL1. . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  4
+  ucaAlarmMoneyL2. . . . . . . . . . .  MEMBER   -----  ARRAY    0004H  4
+  ucaMaxMoneyLimit . . . . . . . . . .  MEMBER   -----  ARRAY    0008H  4
+  ucaTickMoneyLimit. . . . . . . . . .  MEMBER   -----  ARRAY    000CH  4
+  ucaAllowcloseMoney . . . . . . . . .  MEMBER   -----  ARRAY    0010H  4
+  ucaOverLoadVal . . . . . . . . . . .  MEMBER   -----  ARRAY    0014H  3
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    0017H  2
+INT8S. . . . . . . . . . . . . . . . .  TYPEDEF  -----  CHAR     -----  1
+EMUIF. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0097H  1
+API_COMM_STATUS_FRAME_OK . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+INT8U. . . . . . . . . . . . . . . . .  TYPEDEF  -----  U_CHAR   -----  1
+ApiPwOn_MeterInfoParaCheck . . . . . .  EXTERN   CODE   PROC     -----  -----
+PSW. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D0H  1
+_LibPub_MemSetBytes. . . . . . . . . .  EXTERN   CODE   PROC     -----  -----
+FP32 . . . . . . . . . . . . . . . . .  TYPEDEF  -----  FLOAT    -----  4
+uint32_t . . . . . . . . . . . . . . .  TYPEDEF  -----  U_LONG   -----  4
+API_COMM_STATUS_FRAME. . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+RB81 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00DAH  1
+SPDAT. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A3H  1
+IB_CON1. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00F2H  1
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   1062    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----       1
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+C51 COMPILER V9.54   APPMONITOR                                                            11/18/2021 18:51:16 PAGE 17  
+
+   BIT SIZE         =   ----    ----
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

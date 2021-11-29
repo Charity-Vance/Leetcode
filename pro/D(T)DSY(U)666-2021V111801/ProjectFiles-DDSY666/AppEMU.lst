@@ -1,0 +1,13 @@
+C51 COMPILER V9.03   APPEMU                                                                04/11/2019 08:45:23 PAGE 1   
+
+
+C51 COMPILER V9.03, COMPILATION OF MODULE APPEMU
+OBJECT MODULE PLACED IN .\AppEMU.obj
+COMPILER INVOKED BY: C:\Keil\C51\BIN\C51.EXE ..\SourceFiles\APP\AppEMU.c LARGE OMF2 WARNINGLEVEL(1) OPTIMIZE(7,SPEED) BR
+                    -OWSE DEBUG SYMBOLS PRINT(.\AppEMU.lst) OBJECT(.\AppEMU.obj)
+
+line level    source
+
+*** ERROR C318 OF ..\SourceFiles\APP\AppEMU.c: can't open file '..\SourceFiles\APP\AppEMU.c'
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  1 ERROR(S)

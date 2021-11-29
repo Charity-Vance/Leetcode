@@ -1,0 +1,1265 @@
+C51 COMPILER V9.54   IICDRV                                                                11/18/2021 18:53:13 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE IICDRV
+OBJECT MODULE PLACED IN .\IICDrv.obj
+COMPILER INVOKED BY: C:\Program Files (x86)\Keil_v5 FMSH\C51\BIN\C51.EXE ..\SourceFiles\DRV\IICDrv.c LARGE OBJECTADVANCE
+                    -D OPTIMIZE(8,SPEED) BROWSE DEFINE(DDSY666) DEBUG SYMBOLS PRINT(.\IICDrv.lst) OBJECT(.\IICDrv.obj)
+
+line level    source
+
+   1          /*******************************************************************************************************
+   2          **** Copyright£º  (c)Copyright 2019,Õã½­ÕýÌ©ÒÇÆ÷ÒÇ±íÓÐÏÞÔðÈÎ¹«Ë¾,µçÄÜ±íÓ¦ÓÃÑÐ·¢                       
+   3          ****                            All rights reserved.                                                 
+   4          **** FileName:    IICDrv.c                                                                          
+   5          **** Brief:       IIC×ÜÏßÇý¶¯º¯Êý                                                                     
+   6          **** Author:      peter.he@chint.com                                                                 
+   7          **** Version:     V1.0                                                                               
+   8          **** Date:        2016-7-14                                                                          
+   9          ****                                                                                                 
+  10          **** note:ÐÞ¸ÄÀúÊ·¼ÇÂ¼ÁÐ±í£¬Ã¿ÌõÐÞ¸Ä¼ÇÂ¼Ó¦°üÀ¨ÐÞ¸ÄÈÕÆÚ¡¢ÐÞ¸ÄÕß                                          
+  11          **** 1.  Author:                                                                                     
+  12          ****     Version:                                                                                    
+  13          ****     Date :                                                                                      
+  14          **** 2.  Author:                                                                                     
+  15          ****     Version:                                                                                       
+  16          ****     Date:
+  17          ****                                                                                        
+  18          ****  addtogroup:Library                                                             
+  19          **********************************************************************************************************
+             -/
+  20          
+  21          /*--------------------------------- ÎÄ¼þ¹¦ÄÜËµÃ÷ -------------------------------------------------------*/
+  22          /*
+  23           *  ¸ÃÎÄ¼þËùÓÐº¯ÊýµÄÇ°×ºÎªxxxx_
+  24           *  ÎÄ¼þÖ÷º¯ÊýºÍ¶ÔÍâº¯ÊýÐè·ÅÔÚÎÄ¼þµÄÊ×²¿£¬²¢ÇÒÖ÷º¯ÊýÐèÒª·ÅÔÚµÚÒ»¸öÎ»ÖÃ;
+  25           *  º¯Êý×¢ÊÍ²ÉÓÃ±ê×¼Ä£°å£¬º¯ÊýÄÚ²¿×¢ÊÍ²ÉÓÃ//;
+  26           *  ¶ÔÓÚ×¢ÊÍ½Ï¶àµÄ²¿·Ö£¬¿ÉÒÔÔö¼ÓÒ»¸ö×¢ÊÍ·û£¬È»ºóÏêÏ¸ËµÃ÷·ÅÔÚÎÄ¼þµÄÎ²²¿;
+  27           *--------------------------------- ÎÄ¼þ¹¦ÄÜËµÃ÷ -------------------------------------------------------*/
+  28           
+  29          /**ÓÐÐÎ²ÎµÄº¯Êý¸ñÊ½:*/
+  30          /*------------------------------------------------------------------------------------------------------*/
+  31          /**
+  32           *  @brief    xxÈÎÎñ´¦Àíº¯Êý
+  33           *
+  34           *  @param    xx :
+  35           *
+  36           *  @return   xx
+  37           *
+  38           *  @note     xx
+  39           *
+  40           */
+  41          /*------------------------------------------------------------------------------------------------------*/
+  42          /**ÎÞÐÎ²ÎµÄº¯Êý¸ñÊ½:*/
+  43          /*------------------------------------------------------------------------------------------------------*/
+  44          /**
+  45           *  @brief    ÉÏµçËùÓÐ¿ÚÏßÅäÖÃ³É³õÊ¼×´Ì¬£¬ºóÃæ¿É¸ù¾ÝÐèÒª¿ªÆôºÍÅäÖÃ
+  46           *
+  47           *  @return   xx
+  48           *
+  49           *  @note     xx
+  50           *
+  51           */
+  52          /*------------------------------------------------------------------------------------------------------*/
+  53           
+C51 COMPILER V9.54   IICDRV                                                                11/18/2021 18:53:13 PAGE 2   
+
+  54           
+  55          /*----------------< °üº¬ÎÄ¼þ >----------------------------------*/
+  56          
+  57          #include "..\SourceFiles\PUB\Include.h"
+  58          /*----------------< ºê¶¨ÒåÇø >----------------------------------*/
+  59          #if( METER_TYPE == METER_TYPE_DDSY666 )
+  60                  #define  I2C_SCL_OUT()              GPIO_IOCFG_P8_DIR_O( 7)
+  61                  #define  I2C_SCL_IN()               GPIO_IOCFG_P8_DIR_I( 7)  /// SCL ÉèÖÃÎªÊäÈëÊä³ö
+  62                  #define  I2C_SCL_HIGHT()            GPIO_IOCFG_P8_SET_1( 7)  ///ÉèÖÃSCLµÄÊä³öÎª1
+  63                  #define  I2C_SCL_LOW()              GPIO_IOCFG_P8_SET_0( 7)  ///ÉèÖÃSCLµÄÊä³öÎª0
+  64          
+  65                  #define  I2C_SDA_OUT()          GPIO_IOCFG_P8_DIR_O( 6)
+  66                  #define  I2C_SDA_IN()           GPIO_IOCFG_P8_DIR_I( 6)  /// SDAÉèÖÃÎªÊäÈëÊä³ö
+  67                  #define  I2C_SDA_HIGHT()            GPIO_IOCFG_P8_SET_1( 6)  ///ÉèÖÃSDAµÄÊä³öÎª1
+  68                  #define  I2C_SDA_LOW()              GPIO_IOCFG_P8_SET_0( 6)  ///ÉèÖÃSDAµÄÊä³öÎª0
+  69                  #define  I2C_SDA_Status_HIGHT   GPIO_IOCFG_P8_STAT_H(6)  //¶ÁÈ¡SDAµÄ×´Ì¬Îª1     
+  70                  #define  I2C_SDA_Status_LOW             GPIO_IOCFG_P8_STAT_H(6)  //¶ÁÈ¡SDAµÄ×´Ì¬Îª0
+  71          
+  72                  #define  I2C_WP_OUT()           GPIO_IOCFG_P9_DIR_O( 0)  ///WPÉèÖÃÎªÊä³ö        
+  73                  #define  I2C_WP_LOW()           GPIO_IOCFG_P9_SET_0( 0)  ///WPÉèÖÃÎª0
+  74          #endif
+  75          
+  76          #if( METER_TYPE == METER_TYPE_DTSY666 )
+                      #define  I2C_SCL_OUT()              GPIO_IOCFG_P8_DIR_O( 7)
+                      #define  I2C_SCL_IN()               GPIO_IOCFG_P8_DIR_I( 7)  /// SCL ÉèÖÃÎªÊäÈëÊä³ö
+                      #define  I2C_SCL_HIGHT()            GPIO_IOCFG_P8_SET_1( 7)  ///ÉèÖÃSCLµÄÊä³öÎª1
+                      #define  I2C_SCL_LOW()              GPIO_IOCFG_P8_SET_0( 7)  ///ÉèÖÃSCLµÄÊä³öÎª0
+              
+                      #define  I2C_SDA_OUT()          GPIO_IOCFG_P8_DIR_O( 6)
+                      #define  I2C_SDA_IN()           GPIO_IOCFG_P8_DIR_I( 6)  /// SDAÉèÖÃÎªÊäÈëÊä³ö
+                      #define  I2C_SDA_HIGHT()            GPIO_IOCFG_P8_SET_1( 6)  ///ÉèÖÃSDAµÄÊä³öÎª1
+                      #define  I2C_SDA_LOW()              GPIO_IOCFG_P8_SET_0( 6)  ///ÉèÖÃSDAµÄÊä³öÎª0
+                      #define  I2C_SDA_Status_HIGHT   GPIO_IOCFG_P8_STAT_H(6)  //¶ÁÈ¡SDAµÄ×´Ì¬Îª1     
+                      #define  I2C_SDA_Status_LOW             GPIO_IOCFG_P8_STAT_H(6)  //¶ÁÈ¡SDAµÄ×´Ì¬Îª0
+              
+                      #define  I2C_WP_OUT()           GPIO_IOCFG_P9_DIR_O( 0)  ///WPÉèÖÃÎªÊä³ö        
+                      #define  I2C_WP_LOW()           GPIO_IOCFG_P9_SET_0( 0)  ///WPÉèÖÃÎª0
+              #endif
+  92          
+  93          #if( METER_TYPE == METER_TYPE_DDSYU666 )
+                      #define  I2C_SCL_OUT()              GPIO_IOCFG_P3_DIR_O( 3)
+                      #define  I2C_SCL_IN()               GPIO_IOCFG_P3_DIR_I( 3)  /// SCL ÉèÖÃÎªÊäÈëÊä³ö
+                      #define  I2C_SCL_HIGHT()            GPIO_IOCFG_P3_SET_1( 3)  ///ÉèÖÃSCLµÄÊä³öÎª1
+                      #define  I2C_SCL_LOW()              GPIO_IOCFG_P3_SET_0( 3)  ///ÉèÖÃSCLµÄÊä³öÎª0
+              
+                      #define  I2C_SDA_OUT()          GPIO_IOCFG_P3_DIR_O( 4)
+                      #define  I2C_SDA_IN()           GPIO_IOCFG_P3_DIR_I( 4)  /// SDAÉèÖÃÎªÊäÈëÊä³ö
+                      #define  I2C_SDA_HIGHT()            GPIO_IOCFG_P3_SET_1( 4)  ///ÉèÖÃSDAµÄÊä³öÎª1
+                      #define  I2C_SDA_LOW()              GPIO_IOCFG_P3_SET_0( 4)  ///ÉèÖÃSDAµÄÊä³öÎª0
+                      #define  I2C_SDA_Status_HIGHT   GPIO_IOCFG_P3_STAT_H(4)  //¶ÁÈ¡SDAµÄ×´Ì¬Îª1     
+                      #define  I2C_SDA_Status_LOW             GPIO_IOCFG_P3_STAT_H(4)  //¶ÁÈ¡SDAµÄ×´Ì¬Îª0
+              
+                      #define  I2C_WP_OUT()           NOP()//GPIO_IOCFG_P9_DIR_O( 0)  ///WPÉèÖÃÎªÊä³ö 
+                      #define  I2C_WP_LOW()           NOP()//GPIO_IOCFG_P9_SET_0( 0)  ///WPÉèÖÃÎª0
+              
+              #endif
+ 110          
+ 111          #define DRV_E2P_DEV_ADDR_WRITE  0xa0
+ 112          #define DRV_E2P_DEV_ADDR_READ   0xa1
+ 113          #define DRV_E2P_DEV_ADDR_WRPAGE1        0xa2
+ 114          #define DRV_E2P_Max_Page_LEN     8
+ 115          #define DRV_E2P_Max_Data_LEN     32
+C51 COMPILER V9.54   IICDRV                                                                11/18/2021 18:53:13 PAGE 3   
+
+ 116          
+ 117          /*----------------< ³£Á¿¶¨Òå >----------------------------------*/
+ 118          
+ 119          
+ 120          /*----------------< ±äÁ¿¶¨Òå >----------------------------------*/
+ 121          #pragma SAVE
+ 122          #pragma OT(0)
+ 123          /*----------------< º¯ÊýÉùÃ÷ >----------------------------------*/
+ 124          uchar8 DrvE2p_ReadData(ushort16 v_usAddress, uchar8 *p_ucDatabuf, uchar8 v_ucLen);
+ 125          uchar8 DrvE2p_WriteData(ushort16 v_usAddress, uchar8 *p_ucDatabuf, uchar8 v_ucLen);
+ 126          
+ 127          
+ 128          /*----------------< º¯Êý¶¨Òå >----------------------------------*/
+ 129          static void DrvE2p_I2CStart(void);
+ 130          static void DrvE2p_I2CStop(void);
+ 131          static uchar8 DrvE2p_ReadOneByteAck(void);
+ 132          static uchar8 DrvE2p_ReadOneByteNoAck(void);
+ 133          static uchar8 DrvE2p_WriteOneByte(uchar8 v_ucData);
+ 134          static void DrvE2p_I2CDelay_5us(void);
+ 135          static void DrvE2p_I2CDelay_2us(void);
+ 136          static void DrvE2p_I2CDelay_3us(void);
+ 137          static uchar8 DrvE2p_WRDataTemp(ushort16 v_usAddress, uchar8 *p_ucDatabuf, uchar8 v_ucLen);
+ 138          static void DrvE2p_ChkBusBusy(void);
+ 139          
+ 140          static void DrvE2p_I2CDelay_5us(void)
+ 141          {
+ 142   1              uchar8 i = 1;
+ 143   1              while(i--)
+ 144   1              {
+ 145   2              }
+ 146   1      }
+ 147          
+ 148          static void DrvE2p_I2CDelay_3us(void)
+ 149          {
+ 150   1              uchar8 i = 1;
+ 151   1      //      while(i--)
+ 152   1      //      {
+ 153   1      //              
+ 154   1      //      }       
+ 155   1              
+ 156   1      }
+ 157          
+ 158          static void DrvE2p_I2CDelay_2us(void)
+ 159          {
+ 160   1              return;
+ 161   1      }
+ 162          
+ 163          
+ 164          
+ 165          void DrvI2C_Init( void )
+ 166          {
+ 167   1              P8SS &= ( ~P8SS_P8S7 )|( ~P8SS_P8S6 );//P8.6,P8.7ÎªIO¿Ú  SCL  SDA
+ 168   1              P9SS &= ( ~P9SS_P9S0 );//P9.0ÎªIO  Wp
+ 169   1          I2C_WP_OUT();
+ 170   1              I2C_WP_LOW();
+ 171   1      }
+ 172          ///**********************************************************************///
+ 173          ///* Brief:  ²éÑ¯×ÜÏßÊÇ·ñÃ¦                                                 *///
+ 174          ///*                                                                    *///
+ 175          ///* Return: ÎÞ                                                         *///
+ 176          ///*                                                                    *///
+ 177          ///* Note:                                                              *///
+C51 COMPILER V9.54   IICDRV                                                                11/18/2021 18:53:13 PAGE 4   
+
+ 178          ///**********************************************************************///
+ 179          void DrvE2p_ChkBusBusy(void)
+ 180          {
+ 181   1              uchar8 v_ucCnt;
+ 182   1              uchar8 v_ucCst = 255;                                                                                                                                           ///* ÊýÖµ´ý²âÊÔ *///
+ 183   1              
+ 184   1              for (v_ucCnt = 0;v_ucCnt < v_ucCst; v_ucCnt++)
+ 185   1              {
+ 186   2                      DrvE2p_I2CStart();
+ 187   2                      if      (DrvE2p_WriteOneByte(DRV_E2P_DEV_ADDR_WRITE) == _SUCCESS)       
+ 188   2                      {
+ 189   3                                      DrvE2p_I2CStop();
+ 190   3                                      break;  
+ 191   3                      }               ///* Éè±¸µØÖ·(Ð´),ÅÐ¶Ï×ÜÏßÊÇ·ñ¿ÕÏÐ *///
+ 192   2              }
+ 193   1      }
+ 194          
+ 195          ///**********************************************************************///
+ 196          ///* Brief:  I2C×ÜÏß¼¤»î                                                        *///
+ 197          ///*                                                                    *///
+ 198          ///* Return: ÎÞ                                                         *///
+ 199          ///*                                                                    *///
+ 200          ///* Note:                                                              *///
+ 201          ///**********************************************************************///
+ 202          static void DrvE2p_I2CStart(void)
+ 203          {
+ 204   1              DrvI2C_Init();
+ 205   1              
+ 206   1              I2C_SDA_OUT();
+ 207   1              I2C_SDA_HIGHT();
+ 208   1              I2C_SCL_OUT();
+ 209   1              I2C_SCL_HIGHT();
+ 210   1              DrvE2p_I2CDelay_5us();
+ 211   1              I2C_SDA_LOW();
+ 212   1              DrvE2p_I2CDelay_5us();  ///* ÑÓÊ±´óÓÚ4us *///
+ 213   1              I2C_SCL_LOW();
+ 214   1      }
+ 215          ///**********************************************************************///
+ 216          ///* Brief:  I2C×ÜÏßÍ£Ö¹                                                        *///
+ 217          ///*                                                                    *///
+ 218          ///* Return: ÎÞ                                                         *///
+ 219          ///*                                                                    *///
+ 220          ///* Note:                                                              *///
+ 221          ///**********************************************************************///
+ 222          static void DrvE2p_I2CStop(void)
+ 223          {
+ 224   1              uchar8 V_Couter = 0;
+ 225   1              
+ 226   1              I2C_SDA_IN();
+ 227   1              
+ 228   1              for (V_Couter=20 ;V_Couter > 0; V_Couter--)
+ 229   1              {
+ 230   2      
+ 231   2                      if (I2C_SDA_Status_HIGHT)
+ 232   2                      {
+ 233   3                              break;
+ 234   3                      }
+ 235   2                      I2C_SCL_HIGHT();
+ 236   2                      DrvE2p_I2CDelay_5us();
+ 237   2                  I2C_SCL_LOW();
+ 238   2              }
+ 239   1              I2C_SDA_OUT();
+C51 COMPILER V9.54   IICDRV                                                                11/18/2021 18:53:13 PAGE 5   
+
+ 240   1              I2C_SCL_OUT();
+ 241   1              I2C_SDA_LOW();
+ 242   1              I2C_SCL_LOW();
+ 243   1              DrvE2p_I2CDelay_5us();  ///* ÑÓÊ±´óÓÚ4us *///
+ 244   1          I2C_SCL_HIGHT();
+ 245   1              DrvE2p_I2CDelay_5us();  ///* ÑÓÊ±´óÓÚ4us *///
+ 246   1              I2C_SDA_HIGHT();
+ 247   1      }
+ 248          
+ 249          ///**********************************************************************///
+ 250          ///* Brief:  ¶Á1×Ö½Ú´øAck                                                       *///
+ 251          ///*                                                                    *///
+ 252          ///* Return: ·µ»Ø¶Á³öµÄÖµ                                               *///
+ 253          ///*                                                                    *///
+ 254          ///* Note:                                                              *///
+ 255          ///**********************************************************************///
+ 256          static uchar8 DrvE2p_ReadOneByteAck(void)
+ 257          {
+ 258   1              volatile uchar8 V_ucResult = 0;
+ 259   1              uchar8 V_ucCnt_i = 8;
+ 260   1              
+ 261   1              I2C_SCL_OUT();
+ 262   1              I2C_SDA_IN();
+ 263   1              I2C_SCL_LOW();
+ 264   1              
+ 265   1              for (V_ucCnt_i = 0; V_ucCnt_i < 8; V_ucCnt_i++)         ///* ¶Á8Î»Êý¾Ý *///
+ 266   1              {
+ 267   2                      DrvE2p_I2CDelay_3us();
+ 268   2                      V_ucResult = V_ucResult << 1;
+ 269   2                      I2C_SCL_HIGHT();
+ 270   2                      if (I2C_SDA_Status_HIGHT)
+ 271   2                      {
+ 272   3                              V_ucResult = V_ucResult|0x01;
+ 273   3                      }
+ 274   2                      DrvE2p_I2CDelay_3us();
+ 275   2                      V_ucResult = V_ucResult;
+ 276   2                      I2C_SCL_LOW();
+ 277   2              }
+ 278   1              
+ 279   1              I2C_SDA_OUT();
+ 280   1              I2C_SDA_LOW();
+ 281   1              I2C_SCL_HIGHT();
+ 282   1              DrvE2p_I2CDelay_5us();  ///* ÑÓÊ±´óÓÚ4us *///
+ 283   1              I2C_SCL_LOW();
+ 284   1              I2C_SDA_HIGHT();
+ 285   1              
+ 286   1              return V_ucResult;
+ 287   1      }
+ 288          ///**********************************************************************///
+ 289          ///* Brief:  ¶Á1×Ö½Ú´øÎÞAck                                                     *///
+ 290          ///*                                                                    *///
+ 291          ///* Return: ·µ»Ø¶Á³öµÄÖµ                                               *///
+ 292          ///*                                                                    *///
+ 293          ///* Note:                                                              *///
+ 294          ///**********************************************************************///
+ 295          static uchar8 DrvE2p_ReadOneByteNoAck(void)
+ 296          {
+ 297   1              uchar8 V_ucResult = 0;
+ 298   1              uchar8 V_ucCnt_i = 0;
+ 299   1              
+ 300   1              I2C_SCL_OUT();
+ 301   1              I2C_SDA_IN();
+C51 COMPILER V9.54   IICDRV                                                                11/18/2021 18:53:13 PAGE 6   
+
+ 302   1              I2C_SCL_LOW();
+ 303   1              
+ 304   1              for ( V_ucCnt_i = 0; V_ucCnt_i < 8; V_ucCnt_i++)                ///* ¶Á8Î»Êý¾Ý *///
+ 305   1              {
+ 306   2                      DrvE2p_I2CDelay_3us();
+ 307   2                      V_ucResult = V_ucResult << 1;
+ 308   2                      I2C_SCL_HIGHT();
+ 309   2                      
+ 310   2                      if (I2C_SDA_Status_HIGHT)
+ 311   2                      {
+ 312   3                              V_ucResult = V_ucResult|0x01;
+ 313   3                      }
+ 314   2                      DrvE2p_I2CDelay_3us();
+ 315   2                      I2C_SCL_LOW();
+ 316   2              }
+ 317   1              I2C_SDA_OUT();
+ 318   1              I2C_SDA_HIGHT();
+ 319   1              I2C_SCL_HIGHT();
+ 320   1              DrvE2p_I2CDelay_5us();  ///* ÑÓÊ±´óÓÚ4us *///
+ 321   1              I2C_SCL_LOW();
+ 322   1              
+ 323   1              return V_ucResult;      
+ 324   1      }
+ 325          ///**********************************************************************///
+ 326          ///* Brief:  ÏòE2Ð´1×Ö½ÚÊý¾Ý                                                    *///
+ 327          ///*                                                                    *///
+ 328          ///* Param:  v_data£ºÐèÒªÐ´µÄÊý¾Ý                                       *///
+ 329          ///*                                                                    *///
+ 330          ///* Return:                                                            *///
+ 331          ///* Note:                                                              *///
+ 332          ///**********************************************************************///
+ 333          static uchar8 DrvE2p_WriteOneByte(uchar8 v_ucData)
+ 334          {
+ 335   1              uchar8 V_ucOprResult = _SUCCESS;
+ 336   1              uchar8 V_ucCnt_i = 0;   
+ 337   1              
+ 338   1              I2C_SCL_OUT();
+ 339   1              I2C_SCL_LOW();
+ 340   1              I2C_SDA_OUT();
+ 341   1              
+ 342   1              for (V_ucCnt_i = 0; V_ucCnt_i < 8; V_ucCnt_i++)                 ///* Ð´8Î»Êý¾Ý *///
+ 343   1              {
+ 344   2                      if (v_ucData & 0x80)            
+ 345   2                      {
+ 346   3                              I2C_SDA_HIGHT();
+ 347   3                      }
+ 348   2                      else                    
+ 349   2                      {
+ 350   3                              I2C_SDA_LOW();
+ 351   3                      }
+ 352   2                      
+ 353   2                      I2C_SCL_HIGHT();
+ 354   2                      v_ucData = v_ucData << 1;
+ 355   2                      DrvE2p_I2CDelay_3us();
+ 356   2                      I2C_SCL_LOW();
+ 357   2              }
+ 358   1              DrvE2p_I2CDelay_2us();
+ 359   1              I2C_SDA_IN();
+ 360   1              I2C_SCL_HIGHT();
+ 361   1              
+ 362   1              DrvE2p_I2CDelay_2us();                                          ///* ÑÓÊ±´óÓÚ4us *///
+ 363   1              
+C51 COMPILER V9.54   IICDRV                                                                11/18/2021 18:53:13 PAGE 7   
+
+ 364   1              if (I2C_SDA_Status_HIGHT)       ///* ¼ì²âACK *///
+ 365   1              { 
+ 366   2                      V_ucOprResult = _FAILED;
+ 367   2              }
+ 368   1              I2C_SCL_LOW();
+ 369   1              return V_ucOprResult; 
+ 370   1      }
+ 371          ///**********************************************************************///
+ 372          ///* Brief:  ÏòE2Ð´len×Ö½ÚÊý¾Ý                                              *///
+ 373          ///*                                                                    *///
+ 374          ///* Param:  v_address£ºE2µØÖ·                                          *///
+ 375          ///* Param:  p_databuf£ºÊý¾ÝÊ×Ö¸Õë                                      *///
+ 376          ///* Param:  v_len£ºÊý¾Ý³¤¶È                                            *///
+ 377          ///*                                                                    *///
+ 378          ///* Return: _SUCCESS:Ð´³É¹¦£»FAILED£ºÐ´Ê§°Ü                            *///
+ 379          ///*                                                                    *///
+ 380          ///* Note:ÁÙÊ±º¯Êý ²»ÄÜ¿çÒ³                                             *///
+ 381          ///**********************************************************************///
+ 382          uchar8 DrvE2p_WRDataTemp(ushort16 v_usAddress, uchar8 *p_ucDatabuf, uchar8 v_ucLen)
+ 383          {
+ 384   1              ushort16 i;
+ 385   1              uchar8 *j;
+ 386   1              uchar8 Temp= 0;
+ 387   1              
+ 388   1              if ( (v_ucLen == 0) || (v_ucLen > DRV_E2P_Max_Data_LEN) )                                       ///* ÅÐ³¤¶ÈÊÇ·ñºÏ·¨ *///
+ 389   1              {       
+ 390   2                      return _FAILED;
+ 391   2              }
+ 392   1              if ( v_usAddress > 0x01ff )                                     
+ 393   1              {
+ 394   2                      return _FAILED;
+ 395   2              }
+ 396   1              if ( ( (v_usAddress + v_ucLen) <= 0x00ff) || (v_usAddress > 0x00ff) )   ///* ÅÐÐ´Êý¾ÝÊÇ·ñ¿çÒ³ *///
+ 397   1              {
+ 398   2                      DrvE2p_I2CStart();
+ 399   2                      
+ 400   2                      if      ((v_usAddress + v_ucLen) <= 0x00ff) { Temp = DRV_E2P_DEV_ADDR_WRITE; }          ///* Ð´ÔÚµÚ1´óÒ³ *///
+ 401   2                      if      (v_usAddress > 0x00ff)                     { Temp = DRV_E2P_DEV_ADDR_WRPAGE1; }         ///* Ð´ÔÚµÚ2´óÒ³ *///
+ 402   2                      
+ 403   2                      if      (DrvE2p_WriteOneByte(Temp) != _SUCCESS)                                                                         ///* Éè±¸µØÖ·(Ð´) *///
+ 404   2                      {
+ 405   3                              DrvE2p_I2CStop();return _FAILED;
+ 406   3                      }
+ 407   2                      
+ 408   2                      if  (DrvE2p_WriteOneByte( (uchar8) (v_usAddress) ) != _SUCCESS)                                 ///* Êý¾ÝµØÖ·LSB *///
+ 409   2                      {
+ 410   3                              DrvE2p_I2CStop();return _FAILED; 
+ 411   3                      }
+ 412   2                      j = p_ucDatabuf;
+ 413   2                      for (i = 0; i < v_ucLen; i++)                                                                                                   ///* Ð´Êý¾Ý *///
+ 414   2                      {
+ 415   3                              if (DrvE2p_WriteOneByte(*j) != _SUCCESS)
+ 416   3                              {
+ 417   4                                      DrvE2p_I2CStop();
+ 418   4                                      return _FAILED; 
+ 419   4                              }
+ 420   3                              j++;
+ 421   3                      }
+ 422   2                      DrvE2p_I2CStop(); 
+ 423   2                      DrvE2p_ChkBusBusy();
+ 424   2              }
+ 425   1              
+C51 COMPILER V9.54   IICDRV                                                                11/18/2021 18:53:13 PAGE 8   
+
+ 426   1              else                                                                    ///* ¿ç´óÒ³Ð´²»³É¹¦ *///
+ 427   1              {
+ 428   2                      return _FAILED;
+ 429   2              }
+ 430   1              
+ 431   1              return _SUCCESS;
+ 432   1      }
+ 433          ///**********************************************************************///
+ 434          ///* Brief:  ÏòE2Ð´len×Ö½ÚÊý¾Ý                                              *///
+ 435          ///*                                                                    *///
+ 436          ///* Param:  v_address£ºE2µØÖ·                                          *///
+ 437          ///* Param:  p_databuf£ºÊý¾ÝÊ×Ö¸Õë                                      *///
+ 438          ///* Param:  v_len£ºÊý¾Ý³¤¶È                                            *///
+ 439          ///*                                                                    *///
+ 440          ///* Return: _SUCCESS:Ð´³É¹¦£»FAILED£ºÐ´Ê§°Ü                            *///
+ 441          ///*                                                                    *///
+ 442          ///* Note:Ã¿Ò³×î¶àÐ´8×Ö½Ú     ²»Ö§³Ö¿ç´óÒ³Ð´Êý¾Ý                                         *///
+ 443          ///**********************************************************************///
+ 444          uchar8 DrvE2p_WriteData(ushort16 v_usAddress, uchar8 *p_ucDatabuf, uchar8 v_ucLen)
+ 445          {
+ 446   1      //      uchar8 V_ucFstPageLen;          ///* µÚÒ»Ò³ÒªÐ´µÄ×Ö½ÚÊý *///
+ 447   1      //      uchar8 V_ucTemp1,i,V_ucTemp2;
+ 448   1              
+ 449   1              ushort16 V_usEEAdr;
+ 450   1              uchar8  V_ucDataLen,V_ucCnti;
+ 451   1              
+ 452   1              V_usEEAdr = v_usAddress;        
+ 453   1              V_ucDataLen = DRV_E2P_Max_Page_LEN - (v_usAddress & 0x0007);    /* ÏÈËãµÚÒ»´ÎÒªÐ´µÄÊý¾Ý³¤¶È£¬µÚÒ»´ÎÐ´ÍêÕýºÃÊ
+             -ÇÕûÊýµØÖ· */        
+ 454   1              V_ucCnti = 0; 
+ 455   1              if( v_ucLen < V_ucDataLen )
+ 456   1              {
+ 457   2                      V_ucDataLen = v_ucLen;
+ 458   2              }
+ 459   1              
+ 460   1              do
+ 461   1              {
+ 462   2                      if( _FAILED == DrvE2p_WRDataTemp(V_usEEAdr, p_ucDatabuf+V_ucCnti, V_ucDataLen) )
+ 463   2                      {
+ 464   3                              return _FAILED;
+ 465   3                      }
+ 466   2                      
+ 467   2                      V_ucCnti = V_ucCnti + V_ucDataLen;                      // ËãÒ»ÏÂÆ«ÒÆÁ¿£¬Êý¾Ý¸ù¾ÝÕâ¸öÆ«ÒÆÁ¿À´
+ 468   2                      V_usEEAdr = v_usAddress + V_ucCnti;                     // ÖØÐÂ¼ÆËãÒ»ÏÂÏÂÒ»´ÎÒªÐ´µÄµØÖ·         
+ 469   2                      V_ucDataLen = v_ucLen - V_ucCnti;                       // ÖØÐÂËãÒ»ÏÂÏÂÒ»´ÎÒªÐ´µÄ³¤¶È
+ 470   2                      if( V_ucDataLen > DRV_E2P_Max_Page_LEN )        // Èç¹û³¤¶È´óÓÚ8£¬¾Í°´8×Ö½Ú£¬Èç¹ûÐ¡ÓÚ£¬Ð´ÍêÕâ´ÎÒÔºó¾Í½áÊøÁË
+ 471   2                      {
+ 472   3                              V_ucDataLen = DRV_E2P_Max_Page_LEN;
+ 473   3                      }
+ 474   2                      
+ 475   2              }while( V_ucDataLen );
+ 476   1              
+ 477   1              
+ 478   1      //      
+ 479   1      //     
+ 480   1      //      V_ucTemp1 = ( (uchar8) (v_usAddress & 0x0007) + v_ucLen) / (DRV_E2P_Max_Page_LEN);      // Ã¿Ò³8¸ö,¼ÆËãÒ»ÏÂ
+             -ÐèÒª¶àÉÙÒ³
+ 481   1      //      V_ucTemp2 = ( (uchar8) (v_usAddress & 0x000f) + v_ucLen) % (DRV_E2P_Max_Page_LEN);      // Ã¿Ò³8¸öÖ®ºóÊ£ÏÂµ
+             -Ä×Ö½ÚÊý
+ 482   1      //      
+ 483   1      //      if( V_ucTemp2 ) // Ê£ÓàµÄ×Ö½ÚÊý²»Îª0  Òª¶àÐ´Ò»Ò³
+ 484   1      //      {
+C51 COMPILER V9.54   IICDRV                                                                11/18/2021 18:53:13 PAGE 9   
+
+ 485   1      //              V_ucTemp1 += 1;
+ 486   1      //      }
+ 487   1      //      
+ 488   1      //      if ( V_ucTemp1 == 1 )                                                                                                                                   ///* Ö»Ð´Ò»Ò³£¬²»¿çÒ³ *///
+ 489   1      //      {
+ 490   1      //              if( _FAILED == DrvE2p_WRDataTemp(v_usAddress, p_ucDatabuf, v_ucLen) )
+ 491   1      //              {
+ 492   1      //                      return _FAILED;
+ 493   1      //              }
+ 494   1      //      }
+ 495   1      //      else
+ 496   1      //      {
+ 497   1      //              V_ucFstPageLen = (uchar8)(0x0008 - (v_usAddress & 0x0007)) ;
+ 498   1      //              if(_FAILED==DrvE2p_WRDataTemp(v_usAddress, p_ucDatabuf, V_ucFstPageLen))
+ 499   1      //              {
+ 500   1      //                      return _FAILED;
+ 501   1      //              }
+ 502   1      //                      
+ 503   1      //              for( i=1; i<(V_ucTemp1-1);i++ )
+ 504   1      //              {
+ 505   1      //                      
+ 506   1      //                      if(_FAILED==DrvE2p_WRDataTemp((v_usAddress & 0xfff0)+(DRV_E2P_Max_Page_LEN*i), p_ucDatabuf+V_ucFstPa
+             -geLen+DRV_E2P_Max_Page_LEN*(i-1), DRV_E2P_Max_Page_LEN))
+ 507   1      //                      {
+ 508   1      //                              return _FAILED;
+ 509   1      //                      }
+ 510   1      //              }
+ 511   1      //              
+ 512   1      //              if(i==(V_ucTemp1-1))
+ 513   1      //              {
+ 514   1      //                      if(_FAILED==DrvE2p_WRDataTemp((v_usAddress & 0xfff0)+(DRV_E2P_Max_Page_LEN*i), p_ucDatabuf+V_ucFstPa
+             -geLen+DRV_E2P_Max_Page_LEN*(i-1), v_ucLen-V_ucFstPageLen-DRV_E2P_Max_Page_LEN*(i-1)))
+ 515   1      //                      {
+ 516   1      //                              return _FAILED;
+ 517   1      //                      }
+ 518   1      //              }
+ 519   1      //                      
+ 520   1      //      }
+ 521   1              return _SUCCESS;
+ 522   1      }
+ 523          ///**********************************************************************///
+ 524          ///* Brief:  ´ÓE2¶Álen×Ö½ÚÊý¾Ý                                              *///
+ 525          ///*                                                                    *///
+ 526          ///* Return: _SUCCESS:¶Á³É¹¦£»FAILED£º¶ÁÊ§°Ü                            *///
+ 527          ///*                                                                    *///
+ 528          ///* Note:   ¶ÁÊ§°Ü²»¸üÐÂ                                               *///
+ 529          ///**********************************************************************///
+ 530          uchar8 DrvE2p_ReadData(ushort16 v_usAddress, uchar8 *p_ucDatabuf, uchar8 v_ucLen)
+ 531          {
+ 532   1              uchar8 V_ucOprResult = _SUCCESS;
+ 533   1              uchar8 V_ucCnt;
+ 534   1              uchar8 *P_ucTempData;
+ 535   1              
+ 536   1              if (v_ucLen == 0)                                       ///* ÅÐ³¤¶ÈÊÇ·ñºÏ·¨ *///
+ 537   1              {
+ 538   2                      return _FAILED;
+ 539   2              }
+ 540   1              
+ 541   1              if ( ( v_usAddress + v_ucLen ) > 0x01ff )       ///* ÅÐ×Ü³¤¶ÈÊÇ·ñ³¬³ö *///
+ 542   1              {       
+ 543   2                      return _FAILED;
+ 544   2              }
+C51 COMPILER V9.54   IICDRV                                                                11/18/2021 18:53:13 PAGE 10  
+
+ 545   1              
+ 546   1              V_ucCnt = (v_usAddress >> 8) & 0x00ff;
+ 547   1              
+ 548   1              V_ucCnt = V_ucCnt << 1;
+ 549   1              
+ 550   1              DrvE2p_I2CStart();
+ 551   1              
+ 552   1              if (DrvE2p_WriteOneByte( DRV_E2P_DEV_ADDR_WRITE + V_ucCnt ) != _SUCCESS)                        ///* Éè±¸µØÖ·£¨Ð´£© *///
+ 553   1              {  DrvE2p_I2CStop(); return _FAILED; }
+ 554   1              
+ 555   1              
+ 556   1              if (DrvE2p_WriteOneByte( (uchar8) (v_usAddress) )!= _SUCCESS)                   ///* Ð´Êý¾ÝµØÖ·LSB *///
+ 557   1              {  DrvE2p_I2CStop(); return _FAILED; }
+ 558   1              
+ 559   1              DrvE2p_I2CStart();              ///* ÖØÆôI2C *///
+ 560   1              
+ 561   1              if (DrvE2p_WriteOneByte(DRV_E2P_DEV_ADDR_READ + V_ucCnt) != _SUCCESS)                           ///* Éè±¸µØÖ·£¨¶Á£© *///
+ 562   1              {  DrvE2p_I2CStop(); return _FAILED; }
+ 563   1              
+ 564   1              P_ucTempData = p_ucDatabuf;
+ 565   1              
+ 566   1              for (V_ucCnt = 0; V_ucCnt < (v_ucLen-1); V_ucCnt++)                                             ///* ¶ÁÊý¾Ý *///
+ 567   1              {
+ 568   2                      P_ucTempData[V_ucCnt] = DrvE2p_ReadOneByteAck(); 
+ 569   2              }
+ 570   1              P_ucTempData[V_ucCnt]  = DrvE2p_ReadOneByteNoAck();                                                     ///* ¶ÁÍê×îºóÒ»×Ö½Ú»ØNoAck *///
+ 571   1              
+ 572   1              DrvE2p_I2CStop();
+ 573   1              
+ 574   1              return V_ucOprResult;
+ 575   1      }
+ 576          #pragma RESTORE
+C51 COMPILER V9.54   IICDRV                                                                11/18/2021 18:53:13 PAGE 11  
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+uint16_t . . . . . . . . . . . . . . .  TYPEDEF  -----  U_INT    -----  2
+IB_CON2. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00F3H  1
+DrvE2p_ReadOneByteNoAck. . . . . . . .  STATIC   CODE   PROC     0000H  -----
+  V_ucResult . . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0000H  1
+  V_ucCnt_i. . . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0001H  1
+COMM_BLE_STAT. . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+API_COMM_STATUS_OVERTIME . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+TB81 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00DBH  1
+P0 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0080H  1
+IB_CON3. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00F4H  1
+FP64 . . . . . . . . . . . . . . . . .  TYPEDEF  -----  FLOAT    -----  4
+TKCON. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A4H  1
+P1 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0090H  1
+IB_CON4. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00F5H  1
+PASLO. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E7H  1
+_DrvE2p_WriteData. . . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+  v_usAddress. . . . . . . . . . . . .  AUTO     XDATA  U_INT    0000H  2
+  p_ucDatabuf. . . . . . . . . . . . .  AUTO     XDATA  PTR      0002H  3
+  v_ucLen. . . . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0005H  1
+  V_usEEAdr. . . . . . . . . . . . . .  AUTO     XDATA  U_INT    0006H  2
+  V_ucDataLen. . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0008H  1
+  V_ucCnti . . . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0009H  1
+GStr_ENERGYDEC_Type. . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  26
+  ucaFw_EnergyDec. . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  13
+  ucaBk_EnergyDec. . . . . . . . . . .  MEMBER   -----  ARRAY    000DH  13
+P2 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A0H  1
+OSCLO. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00FEH  1
+IB_CON5. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00F6H  1
+GStr_EventRecordNum_Type . . . . . . .  TYPEDEF  -----  STRUCT   -----  26
+  ucEventTimes . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  24
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    0018H  2
+GStr_FLAG_Type . . . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  16
+  ucSystem . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0000H  1
+  ucMeterMode. . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0001H  1
+  ucPwOnState. . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0002H  1
+  ucRunState . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0003H  1
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    0004H  2
+  ucRunState2. . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0006H  1
+  ucRunState1. . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0007H  1
+  ucRunState3. . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0008H  1
+  ucDisp . . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0009H  1
+  ucFactoryKey . . . . . . . . . . . .  MEMBER   -----  U_CHAR   000AH  1
+  ucDispKey. . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   000BH  1
+  ucMoney. . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   000CH  1
+  ucPowerOnFlag. . . . . . . . . . . .  MEMBER   -----  U_CHAR   000DH  1
+  ucWrE2promSafeByte . . . . . . . . .  MEMBER   -----  U_CHAR   000EH  1
+  ucBLESTATFlag. . . . . . . . . . . .  MEMBER   -----  U_CHAR   000FH  1
+BOOLEAN. . . . . . . . . . . . . . . .  TYPEDEF  -----  U_CHAR   -----  1
+SM1_RXOV . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      009EH  1
+P3 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B0H  1
+AC . . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00D6H  1
+P4 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C0H  1
+SPCON. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A1H  1
+SBRTH. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   009CH  1
+P5 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E9H  1
+LIB_E2P_Price_BAK. . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+EA . . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00AFH  1
+C51 COMPILER V9.54   IICDRV                                                                11/18/2021 18:53:13 PAGE 12  
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+P6 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00EAH  1
+LIB_E2P_Display_Table. . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+GStr_DISPLAY_PARA_Type . . . . . . . .  TYPEDEF  -----  STRUCT   -----  129
+  ucFullDisp_Time. . . . . . . . . . .  MEMBER   -----  U_CHAR   0000H  1
+  ucDispDurTime. . . . . . . . . . . .  MEMBER   -----  U_CHAR   0001H  1
+  ucAutoDispNum. . . . . . . . . . . .  MEMBER   -----  U_CHAR   0002H  1
+  ucKeyDispNum . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0003H  1
+  usDisp_ParaCRC16 . . . . . . . . . .  MEMBER   -----  U_INT    0004H  2
+  ucAutoDisptable. . . . . . . . . . .  MEMBER   -----  ARRAY    0006H  30
+  ucKeyDisptable . . . . . . . . . . .  MEMBER   -----  ARRAY    0024H  30
+  usDisp_tableCRC16. . . . . . . . . .  MEMBER   -----  U_INT    0042H  2
+  ucBackLightTime. . . . . . . . . . .  MEMBER   -----  U_CHAR   0044H  1
+  ucRelayLEDTime . . . . . . . . . . .  MEMBER   -----  U_CHAR   0045H  1
+  ulDispUpdataTime . . . . . . . . . .  MEMBER   -----  U_LONG   0046H  4
+  usDispCnt. . . . . . . . . . . . . .  MEMBER   -----  U_INT    004AH  2
+  ulDisptimer. . . . . . . . . . . . .  MEMBER   -----  U_LONG   004CH  4
+  ucKeydelaytimer. . . . . . . . . . .  MEMBER   -----  U_CHAR   0050H  1
+  ucFirstKeyDisp . . . . . . . . . . .  MEMBER   -----  U_CHAR   0051H  1
+  ucDisp_0_flag. . . . . . . . . . . .  MEMBER   -----  U_CHAR   0052H  1
+  ucDisp_tongxin_Flag. . . . . . . . .  MEMBER   -----  U_CHAR   0053H  1
+  ucDisp_tongxin_Time. . . . . . . . .  MEMBER   -----  U_LONG   0054H  4
+  ucDispNum. . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0058H  1
+  ucLCDDrvDispBuf. . . . . . . . . . .  MEMBER   -----  ARRAY    0059H  40
+int32_t. . . . . . . . . . . . . . . .  TYPEDEF  -----  LONG     -----  4
+P7 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00EBH  1
+IB_DATA. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00EFH  1
+P8 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00ECH  1
+int16_t. . . . . . . . . . . . . . . .  TYPEDEF  -----  INT      -----  2
+SBRTL. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   009DH  1
+P9 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00EDH  1
+PBANKLO. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B7H  1
+GStr_COUNTER_Type. . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  9
+  ucFactoryMode_Cnt. . . . . . . . . .  MEMBER   -----  U_INT    0000H  2
+  ucKeyRelayOn_Cnt . . . . . . . . . .  MEMBER   -----  U_INT    0002H  2
+  ucRelayDelay_Cnt . . . . . . . . . .  MEMBER   -----  U_CHAR   0004H  1
+  ucHoldMoney_Cnt. . . . . . . . . . .  MEMBER   -----  U_CHAR   0005H  1
+  ucPasswordErr_Cnt. . . . . . . . . .  MEMBER   -----  ARRAY    0006H  3
+SPSTA. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A2H  1
+IEN0 . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A8H  1
+PWRCON1. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B3H  1
+ulong32. . . . . . . . . . . . . . . .  TYPEDEF  -----  U_LONG   -----  4
+EMUSR. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0095H  1
+IEN1 . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A9H  1
+PWRCON2. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B4H  1
+DPH1 . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0085H  1
+P0_0 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0080H  1
+ushort16 . . . . . . . . . . . . . . .  TYPEDEF  -----  U_INT    -----  2
+P1_0 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0090H  1
+P0_1 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0081H  1
+ADCH . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C3H  1
+BLE_DRV_OPERATION_INDEX. . . . . . . .  TYPEDEF  -----  U_CHAR   -----  1
+LIB_E2P_SOFTI_J. . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+P2_0 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00A0H  1
+P1_1 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0091H  1
+P0_2 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0082H  1
+IPH0 . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00BAH  1
+DPL1 . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0084H  1
+C51 COMPILER V9.54   IICDRV                                                                11/18/2021 18:53:13 PAGE 13  
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+size_t . . . . . . . . . . . . . . . .  TYPEDEF  -----  U_INT    -----  2
+LIB_E2P_FUN_CONFIG_BAK . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+GStr_MONITOR_Tpye. . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  59
+  ulTimer_ms . . . . . . . . . . . . .  MEMBER   -----  U_LONG   0000H  4
+  ulTimer_ms_old . . . . . . . . . . .  MEMBER   -----  U_LONG   0004H  4
+  ulTimerClrWDT. . . . . . . . . . . .  MEMBER   -----  U_LONG   0008H  4
+  ulTimerMin . . . . . . . . . . . . .  MEMBER   -----  U_LONG   000CH  4
+  ulTimer5ms . . . . . . . . . . . . .  MEMBER   -----  U_LONG   0010H  4
+  ucPowerOnTimer . . . . . . . . . . .  MEMBER   -----  U_CHAR   0014H  1
+  ulTimers . . . . . . . . . . . . . .  MEMBER   -----  U_LONG   0015H  4
+  ulUpDateUIPTime. . . . . . . . . . .  MEMBER   -----  U_LONG   0019H  4
+  ulSoftI_JTime. . . . . . . . . . . .  MEMBER   -----  U_LONG   001DH  4
+  usSoftI_JTimeCRC16 . . . . . . . . .  MEMBER   -----  U_INT    0021H  2
+  usPasswordErrTime. . . . . . . . . .  MEMBER   -----  ARRAY    0023H  8
+  ucCommSymbolTime . . . . . . . . . .  MEMBER   -----  U_CHAR   002BH  1
+  ucPowerLimitNum. . . . . . . . . . .  MEMBER   -----  U_CHAR   002CH  1
+  ulOverDemandCloseTime. . . . . . . .  MEMBER   -----  U_LONG   002DH  4
+  ulProgEventDelayTime . . . . . . . .  MEMBER   -----  U_LONG   0031H  4
+  ulReadRandom2DelayTime . . . . . . .  MEMBER   -----  U_LONG   0035H  4
+  ucBleAdvCnt. . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0039H  1
+  ucBleConnectCnt. . . . . . . . . . .  MEMBER   -----  U_CHAR   003AH  1
+P3_0 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00B0H  1
+P2_1 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00A1H  1
+P1_2 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0092H  1
+P0_3 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0083H  1
+IPH1 . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00BBH  1
+COMM_BLE_MAC . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+P4_0 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00C0H  1
+P3_1 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00B1H  1
+P2_2 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00A2H  1
+P1_3 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0093H  1
+P0_4 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0084H  1
+EXF0 . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E8H  1
+P4_1 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00C1H  1
+P3_2 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00B2H  1
+P2_3 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00A3H  1
+P1_4 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0094H  1
+P0_5 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0085H  1
+P4_2 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00C2H  1
+P3_3 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00B3H  1
+P2_4 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00A4H  1
+P1_5 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0095H  1
+P0_6 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0086H  1
+EXF2 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00CEH  1
+TKF0 . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A6H  1
+IPL0 . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B8H  1
+LIB_E2P_ENRGY_BAK. . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+P4_3 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00C3H  1
+P3_4 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00B4H  1
+P2_5 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00A5H  1
+P1_6 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0096H  1
+P0_7 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0087H  1
+REN1 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00DCH  1
+IPL1 . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B9H  1
+LIB_E2P_EventNum . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+long32 . . . . . . . . . . . . . . . .  TYPEDEF  -----  LONG     -----  4
+P4_4 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00C4H  1
+C51 COMPILER V9.54   IICDRV                                                                11/18/2021 18:53:13 PAGE 14  
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+P3_5 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00B5H  1
+P2_6 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00A6H  1
+P1_7 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0097H  1
+TK0H . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E2H  1
+SUSLO. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   008EH  1
+P4_5 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00C5H  1
+P3_6 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00B6H  1
+P2_7 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00A7H  1
+TK1H . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E4H  1
+P4_6 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00C6H  1
+P3_7 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00B7H  1
+TK2H . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E6H  1
+LIB_E2P_Money_BAK. . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+short16. . . . . . . . . . . . . . . .  TYPEDEF  -----  INT      -----  2
+P4_7 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00C7H  1
+RI . . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0098H  1
+E7816. . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00AAH  1
+CY . . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00D7H  1
+TK0L . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E1H  1
+API_COMM_STATUS_ERROR. . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+TI . . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0099H  1
+EADR . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0091H  1
+TK1L . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E3H  1
+P8CR . . . . . . . . . . . . . . . . .  EXTERN   XDATA  U_CHAR   -----  1
+TK2L . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E5H  1
+SADEN1 . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00DBH  1
+SM10_FE1 . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00DFH  1
+P9CR . . . . . . . . . . . . . . . . .  EXTERN   XDATA  U_CHAR   -----  1
+SADEN2 . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00FBH  1
+LIB_E2P_EMU_CALPARA. . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+GStr_ENERGY_PULSE_Type . . . . . . . .  TYPEDEF  -----  STRUCT   -----  8
+  ucPulseAdd . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0000H  1
+  ucPulseAddBusy . . . . . . . . . . .  MEMBER   -----  U_CHAR   0001H  1
+  ucPulseStatu . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0002H  1
+  ucPulseDecimal . . . . . . . . . . .  MEMBER   -----  U_CHAR   0003H  1
+  ucPulseDecSavePtr. . . . . . . . . .  MEMBER   -----  U_CHAR   0004H  1
+  ucPulseDecSaveNoFF . . . . . . . . .  MEMBER   -----  U_CHAR   0005H  1
+  ucaPulseRemain . . . . . . . . . . .  MEMBER   -----  ARRAY    0006H  2
+PS0L . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00BCH  1
+PT0L . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00B9H  1
+SADDR1 . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00DAH  1
+LIB_E2P_INDEX_MAX. . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+LIB_E2P_Display_Para . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+SM12_TXCOL1. . . . . . . . . . . . . .  ABSBIT   -----  BIT      00DDH  1
+PT1L . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00BBH  1
+SADDR2 . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00FAH  1
+RCAP2H . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00CBH  1
+COMM_BLE_MOD . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+PT2L . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00BDH  1
+SP . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0081H  1
+DrvE2p_I2CDelay_2us. . . . . . . . . .  STATIC   CODE   PROC     0000H  -----
+DrvE2p_I2CDelay_3us. . . . . . . . . .  STATIC   CODE   PROC     0000H  -----
+  i. . . . . . . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0000H  1
+INT32S . . . . . . . . . . . . . . . .  TYPEDEF  -----  LONG     -----  4
+OV . . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00D2H  1
+LIB_E2P_EventNumPiont. . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+GStr_METER_IFO_Type. . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  27
+C51 COMPILER V9.54   IICDRV                                                                11/18/2021 18:53:13 PAGE 15  
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+  ucaCommAddr. . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  6
+  ucaMeterID . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0006H  6
+  ucaUserID. . . . . . . . . . . . . .  MEMBER   -----  ARRAY    000CH  6
+  ucVoltageTrans . . . . . . . . . . .  MEMBER   -----  ARRAY    0012H  3
+  ucCurrentTrans . . . . . . . . . . .  MEMBER   -----  ARRAY    0015H  3
+  ucBpsVal . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0018H  1
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    0019H  2
+RCAP2L . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00CAH  1
+DrvE2p_I2CDelay_5us. . . . . . . . . .  STATIC   CODE   PROC     0000H  -----
+  i. . . . . . . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0000H  1
+INT32U . . . . . . . . . . . . . . . .  TYPEDEF  -----  U_LONG   -----  4
+INT16S . . . . . . . . . . . . . . . .  TYPEDEF  -----  INT      -----  2
+INT16U . . . . . . . . . . . . . . . .  TYPEDEF  -----  U_INT    -----  2
+PX4L . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00B8H  1
+C_T2 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00C9H  1
+SFINE2 . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00DEH  1
+GStr_BLE_GROUP_Type. . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  26
+  ucBleMAC . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  6
+  ucBleName. . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0006H  12
+  ucBleKey . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0012H  3
+  usAdvTime. . . . . . . . . . . . . .  MEMBER   -----  U_INT    0015H  2
+  ucBleTPL . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0017H  1
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    0018H  2
+COMM_BLE_MFV . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+GStr_EventNumPiont_Type. . . . . . . .  TYPEDEF  -----  STRUCT   -----  8
+  uc_Num . . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  6
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    0006H  2
+IRCON1 . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00ADH  1
+P8SS . . . . . . . . . . . . . . . . .  EXTERN   XDATA  U_CHAR   -----  1
+IRCON2 . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00AFH  1
+GStr_Comm_MAP. . . . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  14
+  ucaDataId. . . . . . . . . . . . . .  MEMBER   -----  U_LONG   0000H  4
+  ucaRamAdd. . . . . . . . . . . . . .  MEMBER   -----  PTR      0004H  3
+  IsWrite. . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0007H  1
+  ucaE2pIndex. . . . . . . . . . . . .  MEMBER   -----  U_INT    0008H  2
+  ucaE2offset. . . . . . . . . . . . .  MEMBER   -----  U_CHAR   000AH  1
+  ucaDataLen . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   000BH  1
+  IsBCD. . . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   000CH  1
+  EEIsHEX. . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   000DH  1
+API_COMM_STATUS_IDLE . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+P9SS . . . . . . . . . . . . . . . . .  EXTERN   XDATA  U_CHAR   -----  1
+EXCON1 . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00ABH  1
+SBUF . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0099H  1
+EXCON2 . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00ACH  1
+PCON . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0087H  1
+B32_B08. . . . . . . . . . . . . . . .  * TAG *  -----  UNION    -----  4
+  B08. . . . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  4
+  B16. . . . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  4
+  B32. . . . . . . . . . . . . . . . .  MEMBER   -----  U_LONG   0000H  4
+AUXC . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00F1H  1
+COMM_BLE_TPL . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+GStr_UART_COMM_Type. . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  423
+  ucCommChStatus . . . . . . . . . . .  MEMBER   -----  U_CHAR   0000H  1
+  ucCommRevStep. . . . . . . . . . . .  MEMBER   -----  U_CHAR   0001H  1
+  ucCommRevLen . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0002H  1
+  ucCommSndLen . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0003H  1
+  ucCommSndCnt . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0004H  1
+C51 COMPILER V9.54   IICDRV                                                                11/18/2021 18:53:13 PAGE 16  
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+  ucCommAddrType . . . . . . . . . . .  MEMBER   -----  U_CHAR   0005H  1
+  ucCommError. . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0006H  1
+  ulCommTimeInit . . . . . . . . . . .  MEMBER   -----  U_LONG   0007H  4
+  ulCommRcvByteOverTime. . . . . . . .  MEMBER   -----  U_LONG   000BH  4
+  ulCommSndByteOverTime. . . . . . . .  MEMBER   -----  U_LONG   000FH  4
+  ulCommRspOverTime. . . . . . . . . .  MEMBER   -----  U_LONG   0013H  4
+  ucaCommRXBuff. . . . . . . . . . . .  MEMBER   -----  ARRAY    0017H  200
+  ucaCommTXBuff. . . . . . . . . . . .  MEMBER   -----  ARRAY    00DFH  200
+GStr_ENERGY_Type . . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  10
+  ucaFw_Energy . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  4
+  ucaBk_Energy . . . . . . . . . . . .  MEMBER   -----  ARRAY    0004H  4
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    0008H  2
+GU_B32_B08_Type. . . . . . . . . . . .  TYPEDEF  -----  UNION    -----  4
+  B08. . . . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  4
+  B16. . . . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  4
+  B32. . . . . . . . . . . . . . . . .  MEMBER   -----  U_LONG   0000H  4
+SCON . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0098H  1
+TK0BASEH . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D4H  1
+TMOD . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0089H  1
+TCON . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0088H  1
+IENX . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00AAH  1
+IB_OFFSET. . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00EEH  1
+_DrvE2p_WRDataTemp . . . . . . . . . .  STATIC   CODE   PROC     0000H  -----
+  v_usAddress. . . . . . . . . . . . .  AUTO     XDATA  U_INT    0000H  2
+  p_ucDatabuf. . . . . . . . . . . . .  AUTO     XDATA  PTR      0002H  3
+  v_ucLen. . . . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0005H  1
+  i. . . . . . . . . . . . . . . . . .  AUTO     XDATA  U_INT    0006H  2
+  j. . . . . . . . . . . . . . . . . .  AUTO     XDATA  PTR      0008H  3
+  Temp . . . . . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   000BH  1
+TK1BASEH . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D6H  1
+SBRT1H . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00DCH  1
+TK2BASEH . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00DFH  1
+SBRT2H . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00FCH  1
+RSTSTAT. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B1H  1
+LIB_E2P_Password . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+TK0BASEL . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D3H  1
+LIB_E2P_BLE_PARA . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+LIB_E2P_RUN_STATE. . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+TK1BASEL . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D5H  1
+SBRT1L . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00DDH  1
+COMM_BLE_TTP . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+EMU_EPADR_Type . . . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  5
+  ucEmuAddr. . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0000H  1
+  ulEmuRegData . . . . . . . . . . . .  MEMBER   -----  U_LONG   0001H  4
+TK2BASEL . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D7H  1
+SBRT2L . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00FDH  1
+API_COMM_STATUS_SEND . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+SM0_FE . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      009FH  1
+CLKCON . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B2H  1
+API_COMM_STATUS_RECV_OK. . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+SM2_TXCOL. . . . . . . . . . . . . . .  ABSBIT   -----  BIT      009DH  1
+_DrvE2p_WriteOneByte . . . . . . . . .  STATIC   CODE   PROC     0000H  -----
+  v_ucData . . . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0000H  1
+  V_ucOprResult. . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0001H  1
+  V_ucCnt_i. . . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0002H  1
+DrvE2p_ReadOneByteAck. . . . . . . . .  STATIC   CODE   PROC     0000H  -----
+  V_ucResult . . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0000H  1
+C51 COMPILER V9.54   IICDRV                                                                11/18/2021 18:53:13 PAGE 17  
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+  V_ucCnt_i. . . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0001H  1
+LDOCON . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B5H  1
+B. . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00F0H  1
+API_COMM_STATUS_RECV . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+EMU_CALPARA_Type . . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  22
+  ulaCalPara . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  20
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    0014H  2
+CP_RL2 . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00C8H  1
+LIB_E2P_EMU_UIPKms . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+GStr_UIP_GROUP_Type. . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  68
+  ulVoltage. . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  16
+  ulCurrent. . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0010H  16
+  ulPower. . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0020H  16
+  ulFactory. . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0030H  16
+  ulFrequency. . . . . . . . . . . . .  MEMBER   -----  U_LONG   0040H  4
+DrvE2p_I2CStart. . . . . . . . . . . .  STATIC   CODE   PROC     0000H  -----
+ENUM_API_COMM_STATUS . . . . . . . . .  TYPEDEF  -----  U_CHAR   -----  1
+ACC. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E0H  1
+ES0. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00ACH  1
+ET0. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00A9H  1
+ET1. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00ABH  1
+TF0. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      008DH  1
+ET2. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00ADH  1
+TF1. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      008FH  1
+RI1. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00D8H  1
+RB8. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      009AH  1
+TF2. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00CFH  1
+TH0. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   008CH  1
+INSCON . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0086H  1
+TH1. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   008DH  1
+uchar8 . . . . . . . . . . . . . . . .  TYPEDEF  -----  U_CHAR   -----  1
+TI1. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00D9H  1
+TB8. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      009BH  1
+TH2. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00CDH  1
+LIB_E2P_EMU_CALPARA_BAK. . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+uint8_t. . . . . . . . . . . . . . . .  TYPEDEF  -----  U_CHAR   -----  1
+P. . . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00D0H  1
+GStr_UIP_DISPLAY_Type. . . . . . . . .  TYPEDEF  -----  STRUCT   -----  135
+  ucVoltage. . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  4
+  ucVoltageA . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0004H  4
+  ucVoltageB . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0008H  4
+  ucVoltageC . . . . . . . . . . . . .  MEMBER   -----  ARRAY    000CH  4
+  ucCOMMVoltage. . . . . . . . . . . .  MEMBER   -----  ARRAY    0010H  4
+  ucCOMMVoltageA . . . . . . . . . . .  MEMBER   -----  ARRAY    0014H  4
+  ucCOMMVoltageB . . . . . . . . . . .  MEMBER   -----  ARRAY    0018H  4
+  ucCOMMVoltageC . . . . . . . . . . .  MEMBER   -----  ARRAY    001CH  4
+  ucCurrent. . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0020H  4
+  ucCurrentA . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0024H  4
+  ucCurrentB . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0028H  4
+  ucCurrentC . . . . . . . . . . . . .  MEMBER   -----  ARRAY    002CH  4
+  ucCOMMCurrent. . . . . . . . . . . .  MEMBER   -----  ARRAY    0030H  4
+  ucCOMMCurrentA . . . . . . . . . . .  MEMBER   -----  ARRAY    0034H  4
+  ucCOMMCurrentB . . . . . . . . . . .  MEMBER   -----  ARRAY    0038H  4
+  ucCOMMCurrentC . . . . . . . . . . .  MEMBER   -----  ARRAY    003CH  4
+  ucPower. . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0040H  4
+  ucPowerA . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0044H  4
+  ucPowerB . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0048H  4
+C51 COMPILER V9.54   IICDRV                                                                11/18/2021 18:53:13 PAGE 18  
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+  ucPowerC . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    004CH  4
+  ucCOMMPower. . . . . . . . . . . . .  MEMBER   -----  ARRAY    0050H  4
+  ucCOMMPowerA . . . . . . . . . . . .  MEMBER   -----  ARRAY    0054H  4
+  ucCOMMPowerB . . . . . . . . . . . .  MEMBER   -----  ARRAY    0058H  4
+  ucCOMMPowerC . . . . . . . . . . . .  MEMBER   -----  ARRAY    005CH  4
+  ucFactory. . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0060H  4
+  ucFactoryA . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0064H  4
+  ucFactoryB . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0068H  4
+  ucFactoryC . . . . . . . . . . . . .  MEMBER   -----  ARRAY    006CH  4
+  ucCOMMFactory. . . . . . . . . . . .  MEMBER   -----  ARRAY    0070H  4
+  ucCOMMFactoryA . . . . . . . . . . .  MEMBER   -----  ARRAY    0074H  4
+  ucCOMMFactoryB . . . . . . . . . . .  MEMBER   -----  ARRAY    0078H  4
+  ucCOMMFactoryC . . . . . . . . . . .  MEMBER   -----  ARRAY    007CH  4
+  ucFrequency. . . . . . . . . . . . .  MEMBER   -----  ARRAY    0080H  4
+  ucMeterConst . . . . . . . . . . . .  MEMBER   -----  ARRAY    0084H  3
+TL0. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   008AH  1
+EX4. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00A8H  1
+TL1. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   008BH  1
+FLASHCON . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A7H  1
+LIB_E2P_Money_Para . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+TL2. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00CCH  1
+LIB_E2P_ENERGY_DECPULSE_BK . . . . . .  E_CONST  -----  U_CHAR   -----  1
+LIB_E2P_AvailTimer . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+RS0. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00D3H  1
+ADCDH. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C5H  1
+LIB_E2P_Price. . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+GStr_AVAIL_Type. . . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  41
+  us_IDAvailTimer. . . . . . . . . . .  MEMBER   -----  U_INT    0000H  2
+  ucBackMonFlag. . . . . . . . . . . .  MEMBER   -----  U_CHAR   0002H  1
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    0003H  2
+  ulAutRemainingTime . . . . . . . . .  MEMBER   -----  U_LONG   0005H  4
+  ucRechangeMoney. . . . . . . . . . .  MEMBER   -----  ARRAY    0009H  4
+  ucBuybeforeMoney . . . . . . . . . .  MEMBER   -----  ARRAY    000DH  4
+  ucbeforeFwEnergy . . . . . . . . . .  MEMBER   -----  ARRAY    0011H  4
+  ucbeforeBkEnergy . . . . . . . . . .  MEMBER   -----  ARRAY    0015H  4
+  ucE2Key. . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0019H  16
+GU_BoolWordVariable. . . . . . . . . .  TYPEDEF  -----  UNION    -----  2
+  BYTE . . . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  2
+  BIT. . . . . . . . . . . . . . . . .  MEMBER   -----  STRUCT   0000H  2
+TR0. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      008CH  1
+RS1. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00D4H  1
+PWMCON . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   009FH  1
+TR1. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      008EH  1
+char8. . . . . . . . . . . . . . . . .  TYPEDEF  -----  CHAR     -----  1
+TR2. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00CAH  1
+int8_t . . . . . . . . . . . . . . . .  TYPEDEF  -----  CHAR     -----  1
+ADCDL. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C4H  1
+ADT. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C2H  1
+LIB_E2P_INDEX. . . . . . . . . . . . .  TYPEDEF  -----  U_CHAR   -----  1
+GStr_PRICE_Type. . . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  14
+  ucaPrice . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  4
+  ucaPurchaseMoneyAll. . . . . . . . .  MEMBER   -----  ARRAY    0004H  4
+  ucPurchaseTimes. . . . . . . . . . .  MEMBER   -----  ARRAY    0008H  4
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    000CH  2
+DPH. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0083H  1
+DrvE2p_I2CStop . . . . . . . . . . . .  STATIC   CODE   PROC     0000H  -----
+  V_Couter . . . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0000H  1
+C51 COMPILER V9.54   IICDRV                                                                11/18/2021 18:53:13 PAGE 19  
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+DrvE2p_ChkBusBusy. . . . . . . . . . .  STATIC   CODE   PROC     0000H  -----
+  v_ucCnt. . . . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0000H  1
+  v_ucCst. . . . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0001H  1
+DPL. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0082H  1
+SBUF1. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D9H  1
+DrvI2C_Init. . . . . . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+COMM_BLE_EADV. . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+LIB_E2P_FUN_CONFIG . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+EXEN2. . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00CBH  1
+SBUF2. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00F9H  1
+EMU_COMM_CAL_TAB_Type. . . . . . . . .  TYPEDEF  -----  STRUCT   -----  2
+  ucCommDI1. . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0000H  1
+  ucEmuAddr. . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0001H  1
+LIB_E2P_ENERGY_DECPULSE_FW . . . . . .  E_CONST  -----  U_CHAR   -----  1
+SM11_RXOV1 . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00DEH  1
+PADCL. . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00BEH  1
+REN. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      009CH  1
+SCON1. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D8H  1
+STATUS . . . . . . . . . . . . . . . .  TYPEDEF  -----  U_CHAR   -----  1
+LCDCON1. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D1H  1
+ADCON. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C1H  1
+SCON2. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00F8H  1
+TCON1. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   008FH  1
+LIB_E2P_EventValidPiont. . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+LIB_E2P_ENRGY. . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+LCDCON2. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D2H  1
+EDTAH. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0092H  1
+T2MOD. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C9H  1
+T2CON. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C8H  1
+EMU_UIPKms_Type. . . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  14
+  ulaKmsuip. . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  12
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    000CH  2
+GStr_FUN_CONFIG_Type . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  16
+  ucFunCurrentVal. . . . . . . . . . .  MEMBER   -----  U_CHAR   0000H  1
+  ucFunMeterConst. . . . . . . . . . .  MEMBER   -----  U_CHAR   0001H  1
+  ucRes. . . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0002H  12
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    000EH  2
+GStr_EventParaData . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  5
+  V_usEventID. . . . . . . . . . . . .  MEMBER   -----  U_INT    0000H  2
+  V_usEventAddr. . . . . . . . . . . .  MEMBER   -----  U_INT    0002H  2
+  V_ucEventLenth . . . . . . . . . . .  MEMBER   -----  U_CHAR   0004H  1
+LIB_E2P_Money. . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+EDTAL. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0094H  1
+GStr_EEPROM_MAP. . . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  8
+  ucE2pAddressIndex. . . . . . . . . .  MEMBER   -----  U_INT    0000H  2
+  usE2pAddress . . . . . . . . . . . .  MEMBER   -----  U_INT    0002H  2
+  ucE2pSize. . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0004H  1
+  ucE2pLen . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0005H  1
+  ucIsCRC. . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0006H  1
+  ucIsBak. . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0007H  1
+EDTAM. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0093H  1
+TK0DIFH. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00BCH  1
+SADEN. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   009BH  1
+wchar_t. . . . . . . . . . . . . . . .  TYPEDEF  -----  CHAR     -----  1
+LIB_E2P_METER_INFO . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+TK1DIFH. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00BEH  1
+PBANK. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B6H  1
+C51 COMPILER V9.54   IICDRV                                                                11/18/2021 18:53:13 PAGE 20  
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+GStr_EventValidPiont_Type. . . . . . .  TYPEDEF  -----  STRUCT   -----  8
+  uc_Point . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  6
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    0006H  2
+TK2DIFH. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A5H  1
+EADTP. . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00AEH  1
+SADDR. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   009AH  1
+TK0DIFL. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00CFH  1
+_DrvE2p_ReadData . . . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+  v_usAddress. . . . . . . . . . . . .  AUTO     XDATA  U_INT    0000H  2
+  p_ucDatabuf. . . . . . . . . . . . .  AUTO     XDATA  PTR      0002H  3
+  v_ucLen. . . . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0005H  1
+  V_ucOprResult. . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0006H  1
+  V_ucCnt. . . . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0007H  1
+  P_ucTempData . . . . . . . . . . . .  AUTO     XDATA  PTR      0008H  3
+LIB_E2P_ENERGY_DECPULSE_WS . . . . . .  E_CONST  -----  U_CHAR   -----  1
+GStr_MONEY_Type. . . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  14
+  ucaRemainMoney . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  6
+  ucaTickMoney . . . . . . . . . . . .  MEMBER   -----  ARRAY    0006H  6
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    000CH  2
+TK1DIFL. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00BDH  1
+TK2DIFL. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00BFH  1
+P7816L . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00BAH  1
+LPDCON1. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C6H  1
+LIB_E2P_EMU_UIPKms_BAK . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+LPDCON2. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C7H  1
+MAX_BLE_INDEX. . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+LIB_E2P_SecretKey. . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+F0 . . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00D5H  1
+IRDAT. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00AEH  1
+F1 . . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00D1H  1
+EMUIE. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0096H  1
+SFINE. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   009EH  1
+XPAGE. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00F7H  1
+Gstr_VirtualEsam . . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  64
+  ucTempKey. . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  16
+  ucDisKey . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0010H  16
+  ucComplexKey . . . . . . . . . . . .  MEMBER   -----  ARRAY    0020H  16
+  ucRs485RandNum . . . . . . . . . . .  MEMBER   -----  ARRAY    0030H  8
+  ucRs485RandNum2. . . . . . . . . . .  MEMBER   -----  ARRAY    0038H  8
+GStr_MONEY_PARA_Type . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  25
+  ucaAlarmMoneyL1. . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  4
+  ucaAlarmMoneyL2. . . . . . . . . . .  MEMBER   -----  ARRAY    0004H  4
+  ucaMaxMoneyLimit . . . . . . . . . .  MEMBER   -----  ARRAY    0008H  4
+  ucaTickMoneyLimit. . . . . . . . . .  MEMBER   -----  ARRAY    000CH  4
+  ucaAllowcloseMoney . . . . . . . . .  MEMBER   -----  ARRAY    0010H  4
+  ucaOverLoadVal . . . . . . . . . . .  MEMBER   -----  ARRAY    0014H  3
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    0017H  2
+INT8S. . . . . . . . . . . . . . . . .  TYPEDEF  -----  CHAR     -----  1
+EMUIF. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0097H  1
+API_COMM_STATUS_FRAME_OK . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+INT8U. . . . . . . . . . . . . . . . .  TYPEDEF  -----  U_CHAR   -----  1
+PSW. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D0H  1
+FP32 . . . . . . . . . . . . . . . . .  TYPEDEF  -----  FLOAT    -----  4
+uint32_t . . . . . . . . . . . . . . .  TYPEDEF  -----  U_LONG   -----  4
+API_COMM_STATUS_FRAME. . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+RB81 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00DAH  1
+SPDAT. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A3H  1
+C51 COMPILER V9.54   IICDRV                                                                11/18/2021 18:53:13 PAGE 21  
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+IB_CON1. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00F2H  1
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   1683    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =     45    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

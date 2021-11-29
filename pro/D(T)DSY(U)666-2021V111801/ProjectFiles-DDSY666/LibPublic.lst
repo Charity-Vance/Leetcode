@@ -1,0 +1,2096 @@
+C51 COMPILER V9.54   LIBPUBLIC                                                             11/18/2021 18:53:12 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE LIBPUBLIC
+OBJECT MODULE PLACED IN .\LibPublic.obj
+COMPILER INVOKED BY: C:\Program Files (x86)\Keil_v5 FMSH\C51\BIN\C51.EXE ..\SourceFiles\PUB\LibPublic.c LARGE OBJECTADVA
+                    -NCED OPTIMIZE(8,SPEED) BROWSE DEFINE(DDSY666) DEBUG SYMBOLS PRINT(.\LibPublic.lst) OBJECT(.\LibPublic.obj)
+
+line level    source
+
+   1           
+   2          ///*******************************************************************************************************
+             -///
+   3          ///* Copyright：  (c)Copyright 2016,浙江正泰仪器仪表有限责任公司,智能电表研发一部  
+             -                      *///
+   4          ///*                            All rights reserved.                                                     *
+             -///
+   5          ///* FileName:    LibPublic.c                                                                            *
+             -///
+   6          ///* Brief:       通用函数库文件                                                                   
+             -      */// 
+   7          ///* Author:      作者                                                                                  
+             - *///
+   8          ///* Version:     版本                                                                                  
+             - *///
+   9          ///* Date:        日期                                                                                  
+             - *///
+  10          ///*                                                                                                     *
+             -///
+  11          ///* note:修改历史记录列表，每条修改记录应包括修改日期、修改者及修            
+             -                           *///
+  12          ///* 1.  Author:                                                                                         *
+             -///
+  13          ///*     Version:                                                                                        *
+             -///
+  14          ///*     Date :                                                                                          *
+             -///
+  15          ///* 2.  Author:                                                                                         *
+             -///
+  16          ///*     Version:                                                                                        *
+             -///
+  17          ///*     Date:                                                                                           *
+             -///
+  18          ///*                                                                                                     *
+             -///
+  19          ///*  addtogroup:Template                                                                                *
+             -///
+  20          ///*******************************************************************************************************
+             -///
+  21          
+  22          ///*-------------------------------- 文件功能说明 --------------------------------------------------
+             ------*///
+  23          ///*                                                                                                     *
+             -///
+  24          ///*  该文件所有函数的前缀为LibPub_                                                            
+             -          *///
+  25          ///*  文件主函数和对外函数需放在文件的首部，并且主函数需要放在第一个位置;
+             -                                *///
+  26          ///*  函数注释采用标准模板，函数内部注释采用//;                                        
+             -                  *///
+  27          ///*  对于注释较多的部分，可以增加一个注释符，然后详细说明放在文件的尾部;
+             -                                *///
+  28          ///*                                                                                                     *
+             -///
+C51 COMPILER V9.54   LIBPUBLIC                                                             11/18/2021 18:53:12 PAGE 2   
+
+  29          ///*-----------------------------------------------------------------------------------------------------*
+             -///
+  30          
+  31          
+  32          ///* 注释格式均采用三斜杠加星号的方式，注释与注释符之间用空格隔开 *///
+  33          ///* 代码控制均采用tab制表符（设置成占4个空格）或者直接敲4个空格  *///
+  34          ///*--------------------------------- 头文件包含区 -------------------------------------------------
+             ------*///
+  35          //#include "..\SourceFiles\PUB\TypeDefine.h"
+  36          //#include "..\SourceFiles\PUB\LibPublic.h"
+  37          #include "..\SourceFiles\PUB\Include.h"
+  38          
+  39          ///*--------------------------------- 变量声明区 ----------------------------------------------------
+             -----*///
+  40          
+  41          const ushort16 code fcstab[256] = {
+  42          0x0000, 0x1189, 0x2312, 0x329b, 0x4624, 0x57ad, 0x6536, 0x74bf,
+  43          0x8c48, 0x9dc1, 0xaf5a, 0xbed3, 0xca6c, 0xdbe5, 0xe97e, 0xf8f7,
+  44          0x1081, 0x0108, 0x3393, 0x221a, 0x56a5, 0x472c, 0x75b7, 0x643e,
+  45          0x9cc9, 0x8d40, 0xbfdb, 0xae52, 0xdaed, 0xcb64, 0xf9ff, 0xe876,
+  46          0x2102, 0x308b, 0x0210, 0x1399, 0x6726, 0x76af, 0x4434, 0x55bd,
+  47          0xad4a, 0xbcc3, 0x8e58, 0x9fd1, 0xeb6e, 0xfae7, 0xc87c, 0xd9f5,
+  48          0x3183, 0x200a, 0x1291, 0x0318, 0x77a7, 0x662e, 0x54b5, 0x453c,
+  49          0xbdcb, 0xac42, 0x9ed9, 0x8f50, 0xfbef, 0xea66, 0xd8fd, 0xc974,
+  50          0x4204, 0x538d, 0x6116, 0x709f, 0x0420, 0x15a9, 0x2732, 0x36bb,
+  51          0xce4c, 0xdfc5, 0xed5e, 0xfcd7, 0x8868, 0x99e1, 0xab7a, 0xbaf3,
+  52          0x5285, 0x430c, 0x7197, 0x601e, 0x14a1, 0x0528, 0x37b3, 0x263a,
+  53          0xdecd, 0xcf44, 0xfddf, 0xec56, 0x98e9, 0x8960, 0xbbfb, 0xaa72,
+  54          0x6306, 0x728f, 0x4014, 0x519d, 0x2522, 0x34ab, 0x0630, 0x17b9,
+  55          0xef4e, 0xfec7, 0xcc5c, 0xddd5, 0xa96a, 0xb8e3, 0x8a78, 0x9bf1,
+  56          0x7387, 0x620e, 0x5095, 0x411c, 0x35a3, 0x242a, 0x16b1, 0x0738,
+  57          0xffcf, 0xee46, 0xdcdd, 0xcd54, 0xb9eb, 0xa862, 0x9af9, 0x8b70,
+  58          0x8408, 0x9581, 0xa71a, 0xb693, 0xc22c, 0xd3a5, 0xe13e, 0xf0b7,
+  59          0x0840, 0x19c9, 0x2b52, 0x3adb, 0x4e64, 0x5fed, 0x6d76, 0x7cff,
+  60          0x9489, 0x8500, 0xb79b, 0xa612, 0xd2ad, 0xc324, 0xf1bf, 0xe036,
+  61          0x18c1, 0x0948, 0x3bd3, 0x2a5a, 0x5ee5, 0x4f6c, 0x7df7, 0x6c7e,
+  62          0xa50a, 0xb483, 0x8618, 0x9791, 0xe32e, 0xf2a7, 0xc03c, 0xd1b5,
+  63          0x2942, 0x38cb, 0x0a50, 0x1bd9, 0x6f66, 0x7eef, 0x4c74, 0x5dfd,
+  64          0xb58b, 0xa402, 0x9699, 0x8710, 0xf3af, 0xe226, 0xd0bd, 0xc134,
+  65          0x39c3, 0x284a, 0x1ad1, 0x0b58, 0x7fe7, 0x6e6e, 0x5cf5, 0x4d7c,
+  66          0xc60c, 0xd785, 0xe51e, 0xf497, 0x8028, 0x91a1, 0xa33a, 0xb2b3,
+  67          0x4a44, 0x5bcd, 0x6956, 0x78df, 0x0c60, 0x1de9, 0x2f72, 0x3efb,
+  68          0xd68d, 0xc704, 0xf59f, 0xe416, 0x90a9, 0x8120, 0xb3bb, 0xa232,
+  69          0x5ac5, 0x4b4c, 0x79d7, 0x685e, 0x1ce1, 0x0d68, 0x3ff3, 0x2e7a,
+  70          0xe70e, 0xf687, 0xc41c, 0xd595, 0xa12a, 0xb0a3, 0x8238, 0x93b1,
+  71          0x6b46, 0x7acf, 0x4854, 0x59dd, 0x2d62, 0x3ceb, 0x0e70, 0x1ff9,
+  72          0xf78f, 0xe606, 0xd49d, 0xc514, 0xb1ab, 0xa022, 0x92b9, 0x8330,
+  73          0x7bc7, 0x6a4e, 0x58d5, 0x495c, 0x3de3, 0x2c6a, 0x1ef1, 0x0f78
+  74          };
+  75          
+  76          ///*--------------------------------- 函数声明区 ----------------------------------------------------
+             -----*///
+  77          ushort16 LibPub_CRC16_CCITT(uchar8 *cp, ushort16 len);
+  78          void LibPub_MemCopyBytes(uchar8 *pSourceData, uchar8 *pTargetData, uchar8 len);
+  79          void LibPub_MemExchangeBytes(uchar8 *pSourceData, uchar8 *pTargetData, uchar8 len);
+  80          uchar8 LibPub_ZeroCheck( uchar8 *cp, uchar8 len);
+  81          uchar8 LibPub_0xFFCheckInt( uchar8 *cp, uchar8 len);
+  82          uchar8 LibPub_CrcCheck( uchar8 *cp, uchar8 len, ushort16 cmpcrc);
+  83          ulong32 LibPub_GetTimerBeat(void);
+  84          ulong32 LibPub_GetTimerBeatInt0(void);
+  85          ulong32 LibPub_GetTimerBeatInt1(void);
+  86          uchar8 LibPub_GetDiffTime( ulong32 timer, ulong32 basetimer, ulong32 duration );
+C51 COMPILER V9.54   LIBPUBLIC                                                             11/18/2021 18:53:12 PAGE 3   
+
+  87          void LibPub_MemSetBytes( uchar8 *p_ucdatahead, uchar8 v_ucVal, ushort16 v_usLen );
+  88          uchar8 LibPub_CalSum(uchar8 *pData, uchar8 v_ucLen);
+  89          uchar8 LibPub_IsBCD(uchar8 *p_ucData, uchar8 v_ucLen );
+  90          uchar8 LibPub_1Hex_2_1BCD( uchar8 hexdata);
+  91          uchar8 LibPub_1BCD_2_1HEX( uchar8 v_ucBcdData);
+  92          void LibPub_NBtyesBcdAdd(uchar8 *p_ucBcdA, uchar8 *p_ucBcdB, uchar8 v_ucLen);
+  93          void LibPub_NBytesBCDSub(uchar8 *p_ucBufA, uchar8 *p_ucBufB, uchar8 v_ucLen);
+  94          
+  95          uchar8  LibPub_WriteDataToE2prom( ushort16 v_usAddrIndex, uchar8 v_ucOffset, uchar8 *ptr_ucData );
+  96          uchar8  LibPub_ReadDataFromE2prom(ushort16 v_usAddrIndex, uchar8 v_ucOffset, uchar8 *ptr_ucData);
+  97          uchar8  LibPub_CheckE2promPara(ushort16 address, ushort16 addressbak, ushort16 *ptr_data, ushort16 len, uch
+             -ar8 isCRC);
+  98          void LibPub_Inverse( uchar8 *p_ucData, uchar8 DataLen );
+  99          uchar8  LibPub_CheckPassword( uchar8 *p_ucPsw);
+ 100          uchar8   LibPub_CompareData(uchar8 *P_ucData1, uchar8 *P_ucData2, uchar8 v_ucDataLength, uchar8 v_ucCmpMode
+             -);
+ 101          
+ 102          ushort16 LibPub_Buffer2ToUshort16( uchar8 *p_ucBytesBuffer );
+ 103          ulong32  LibPub_Buffer4ToUlong32( uchar8 *p_ucBytesBuffer );
+ 104          void LibPub_Ushort16ToBuffer2(uchar8 *p_ucBytesBuffer,ushort16 v_usShort16Buffer);
+ 105          void LibPub_Ulong32ToBuffer4(uchar8 *p_ucBytesBuffer, ulong32 v_ulDoubleWordBuffer);
+ 106          ulong32 LibPub_DECtoHEXBytes(uchar8 *P_ucSourceData,uchar8 V_ucDataLength);
+ 107          void LibPub_HEXtoBCDBytes(ulong32 V_ulSourceData,uchar8 *P_ucResultData,uchar8 V_ucLen);
+ 108          void LibPub_HEXtoAscii(uchar8 *p_ucSourceData, uchar8 *p_ucResultData, uchar8 v_ucLen );
+ 109          
+ 110          void LibPub_Delay2us(void);
+ 111          void LibPub_Delay5us(void);
+ 112          void LibPub_Delay10us(void);
+ 113          void LibPub_DelayNms(ushort16 v_uiNums);
+ 114          void LibPub_Delay10xus(ushort16 v_uiNums);
+ 115          ///*--------------------------------- 函数区 ----------------------------------------------------------
+             ---*///
+ 116          
+ 117          ///* 有形参的函数格式:*///
+ 118          ///**********************************************************************///
+ 119          ///* Brief:  函数功能简要描述                                           *///
+ 120          ///*                                                                    *///
+ 121          ///* Param:  入口参数说明，一个参数占一行                               *///
+ 122          ///*                                                                    *///
+ 123          ///* Return: 函数返回值的说明                                           *///
+ 124          ///*                                                                    *///
+ 125          ///* Note:   修改及其他说明                                             *///
+ 126          ///**********************************************************************///
+ 127          
+ 128          
+ 129          ///* 无形参的函数格式: *///
+ 130          ///**********************************************************************///
+ 131          ///* Brief:  检查RAM数据和E2数据正确性，只有带CRC和CEC+BAK的数据才检查  *///
+ 132          ///*                                                                    *///
+ 133          ///* Param:  address:E2地址                                             *///
+ 134          ///* Param:  addressbak:E2备份地址                                      *///
+ 135          ///* Param:  *ptr_data:要校验的数据头指针                               *///
+ 136          ///* Param:  len:数据长度，不含crc2字节                                 *///
+ 137          ///* Param:  isbackup:是否带备份标志                                    *///
+ 138          ///*                                                                    *///
+ 139          ///* Return: 校验正确则返回TRUE,错误则返回FALSE                         *///
+ 140          ///*                                                                    *///
+ 141          ///* Note:   修改及其他说明                                             *///
+ 142          ///**********************************************************************///
+ 143          //uchar8        LibPub_CheckE2promPara(ushort16 address, ushort16 addressbak, ushort16 *ptr_data, ushort16 len, u
+             -char8 isCRC)
+ 144          //{
+C51 COMPILER V9.54   LIBPUBLIC                                                             11/18/2021 18:53:12 PAGE 4   
+
+ 145          //      uchar8  V_ucResult = TRUE;
+ 146          //      
+ 147          //      ///* 先算一下RAM中的CRC是不是正确 正确则直接返回，不需要再校验E2 *///
+ 148          //      if ( CRC_EN == isCRC )
+ 149          //      {
+ 150          //              
+ 151          //      }
+ 152          //      
+ 153          //      ///* 如果第1出错误，则从第二处恢复，恢复后写第1处 *///
+ 154          //      if ( address != addressbak )    ///* 地址不相等则代表需要备份 *///
+ 155          //      {
+ 156          //              ;
+ 157          //      }
+ 158          //      return V_ucResult;
+ 159          //}
+ 160          /////**********************************************************************///
+ 161          /////* Brief:  向E2中写数据，应用层就使用该函数                                                    *///
+ 162          /////*                                                                    *///
+ 163          /////* Param:  v_usAddrIndex:E2地址索引                                   *///
+ 164          /////* Param:  *ptr_ucData:要校验的数据头指针                               *///
+ 165          /////*                                                                    *///
+ 166          /////* Return: 正确则返回_SUCCESS,错误则返回FAILED                              *///
+ 167          /////*                                                                    *///
+ 168          /////* Note:   修改及其他说明                                             *///
+ 169          /////**********************************************************************///
+ 170          uchar8  LibPub_WriteDataToE2prom( ushort16 v_usAddrIndex, uchar8 v_ucOffset, uchar8 *ptr_ucData )
+ 171          {
+ 172   1              uchar8          V_ucResult = _FAILED; 
+ 173   1              uchar8          V_ucIndex;
+ 174   1              ushort16        V_usCRC16 = 0;
+ 175   1              
+ 176   1              if ( v_usAddrIndex < LIB_E2P_INDEX_MAX )
+ 177   1              {
+ 178   2                      for ( V_ucIndex=0; V_ucIndex<LIB_E2P_INDEX_MAX;  V_ucIndex++ )
+ 179   2                      {
+ 180   3                              if ( EEPROM_MAP_TAB[V_ucIndex].ucE2pAddressIndex == v_usAddrIndex )
+ 181   3                              { 
+ 182   4                                      if ( _TRUE == EEPROM_MAP_TAB[v_usAddrIndex].ucIsCRC )
+ 183   4                                      {
+ 184   5                                              V_usCRC16 = LibPub_CRC16_CCITT(ptr_ucData, EEPROM_MAP_TAB[v_usAddrIndex].ucE2pLen-2);
+ 185   5                                              ptr_ucData[EEPROM_MAP_TAB[v_usAddrIndex].ucE2pLen-2] = (uchar8)(V_usCRC16>>8);
+ 186   5                                              ptr_ucData[EEPROM_MAP_TAB[v_usAddrIndex].ucE2pLen-1] = (uchar8)(V_usCRC16 &0x00ff); 
+ 187   5                                      }
+ 188   4                                      
+ 189   4                                      if ( _SUCCESS == DrvE2p_WriteData( EEPROM_MAP_TAB[v_usAddrIndex].usE2pAddress+v_ucOffset,  ptr_ucData,
+             - EEPROM_MAP_TAB[v_usAddrIndex].ucE2pLen) )
+ 190   4                                      {
+ 191   5                                              V_ucResult = _SUCCESS;
+ 192   5                                              if ( _TRUE == EEPROM_MAP_TAB[v_usAddrIndex].ucIsBak )
+ 193   5                                              {
+ 194   6                                                      if ( _SUCCESS == DrvE2p_WriteData( EEPROM_MAP_TAB[v_usAddrIndex+1].usE2pAddress+v_ucOffset,  ptr_ucD
+             -ata, EEPROM_MAP_TAB[v_usAddrIndex+1].ucE2pLen) )
+ 195   6                                                      {
+ 196   7      //                                                      DrvE2p_WriteData( EEPROM_MAP_TAB[v_usAddrIndex+2].usE2pAddress+v_ucOffset,  ptr_ucData, EEPROM_MA
+             -P_TAB[v_usAddrIndex+2].ucE2pLen) ;
+ 197   7                                                          ///*只备份一处
+ 198   7                                                      }
+ 199   6                                                      else
+ 200   6                                                      {
+ 201   7                                                              V_ucResult = _FAILED;
+ 202   7                                                      }
+ 203   6                                              }
+C51 COMPILER V9.54   LIBPUBLIC                                                             11/18/2021 18:53:12 PAGE 5   
+
+ 204   5                                      }
+ 205   4                                      break;
+ 206   4                              }
+ 207   3                      }
+ 208   2              }  
+ 209   1              
+ 210   1              return V_ucResult;
+ 211   1      }
+ 212          /////**********************************************************************///
+ 213          /////* Brief:  从E2中读数据，应用层就使用该函数                                                     *///
+ 214          /////*                                                                    *///
+ 215          /////* Param:  v_usAddrIndex:E2地址索引                                   *///
+ 216          /////* Param:  v_ucOffset:偏移量，                                                 *///
+ 217          /////* Param:  *ptr_ucData:要校验的数据头指针                              *///
+ 218          /////*                                                                    *///
+ 219          /////* Return: 正确则返回_SUCCESS,错误则返回FAILED                               *///
+ 220          /////*                                                                    *///
+ 221          /////* Note:   修改及其他说明                                              *///
+ 222          /////**********************************************************************///
+ 223          uchar8  LibPub_ReadDataFromE2prom(ushort16 v_usAddrIndex, uchar8 v_ucOffset, uchar8 *ptr_ucData)
+ 224          {
+ 225   1              uchar8          V_ucResult = _FAILED;
+ 226   1              uchar8          V_ucIndex = 0,V_ucCnt = 0;
+ 227   1              uchar8          V_ucaE2pBuff[64];
+ 228   1              ushort16        V_usCRC16 = 0;
+ 229   1              
+ 230   1              if ( v_usAddrIndex < LIB_E2P_INDEX_MAX )
+ 231   1              {
+ 232   2                      for ( V_ucIndex=0; V_ucIndex<LIB_E2P_INDEX_MAX;  V_ucIndex++ )
+ 233   2                      {
+ 234   3                              if ( EEPROM_MAP_TAB[V_ucIndex].ucE2pAddressIndex == v_usAddrIndex )
+ 235   3                              {
+ 236   4                                      for ( V_ucCnt = 0; V_ucCnt < 3;  V_ucCnt++ )    ///* 总共读3次 *///
+ 237   4                                      {
+ 238   5                                              if ( _FAILED == DrvE2p_ReadData( EEPROM_MAP_TAB[v_usAddrIndex].usE2pAddress+v_ucOffset,  V_ucaE2pBuff
+             -, EEPROM_MAP_TAB[v_usAddrIndex].ucE2pLen) )
+ 239   5                                              {
+ 240   6                                                      if ( _TRUE == EEPROM_MAP_TAB[v_usAddrIndex].ucIsBak )
+ 241   6                                                      {
+ 242   7                                                              if ( _FAILED == DrvE2p_ReadData( EEPROM_MAP_TAB[v_usAddrIndex+1].usE2pAddress+v_ucOffset,  V_ucaE2p
+             -Buff, EEPROM_MAP_TAB[v_usAddrIndex+1].ucE2pLen) )
+ 243   7                                                              {
+ 244   8      //                                                              if ( _FAILED == DrvE2p_ReadData( EEPROM_MAP_TAB[v_usAddrIndex+2].usE2pAddress+v_ucOffset,  V_uca
+             -E2pBuff, EEPROM_MAP_TAB[v_usAddrIndex+2].ucE2pLen) )
+ 245   8                                                                      {
+ 246   9                                                                              continue;
+ 247   9                                                                      }
+ 248   8                                                              }
+ 249   7                                                              else
+ 250   7                                                              {
+ 251   8                                                                      break; 
+ 252   8                                                              }
+ 253   7                                                      } 
+ 254   6                                              }
+ 255   5                                              else
+ 256   5                                              {
+ 257   6                                                      break; 
+ 258   6                                              } 
+ 259   5                                      }///* end for ( V_ucCnt = 0; V_ucCnt < 3;  V_ucCnt++ ) *///
+ 260   4                                      if ( V_ucCnt >= 3 )     ///* 如果3次都没有读成功，则直接返回错误 *///
+ 261   4                                      {
+ 262   5                                              return _FAILED;
+C51 COMPILER V9.54   LIBPUBLIC                                                             11/18/2021 18:53:12 PAGE 6   
+
+ 263   5                                      } 
+ 264   4                                      
+ 265   4                                      ///* 如果有CRC,就比较一下crc是否正确 *///
+ 266   4                                      if ( _TRUE == EEPROM_MAP_TAB[v_usAddrIndex].ucIsCRC ) 
+ 267   4                                      {
+ 268   5                                              V_usCRC16  = (ushort16)V_ucaE2pBuff[EEPROM_MAP_TAB[v_usAddrIndex].ucE2pLen-1];
+ 269   5                                              V_usCRC16 |= (ushort16)(V_ucaE2pBuff[EEPROM_MAP_TAB[v_usAddrIndex].ucE2pLen-2] << 8); 
+ 270   5                                              
+ 271   5                                              if ( V_usCRC16 != LibPub_CRC16_CCITT( V_ucaE2pBuff, EEPROM_MAP_TAB[v_usAddrIndex].ucE2pLen-2 ) ) ///*
+             -  只判断crc是否正确，不判断是否
+ 272   5                                              {
+ 273   6                                                      return _FAILED;
+ 274   6                                              }
+ 275   5                                      }
+ 276   4                                      ///* 准备一下数据 *///
+ 277   4                                      LibPub_MemCopyBytes(V_ucaE2pBuff, ptr_ucData, EEPROM_MAP_TAB[v_usAddrIndex].ucE2pLen);
+ 278   4                                      
+ 279   4                                      V_ucResult = _SUCCESS;
+ 280   4                                      
+ 281   4                                      break;  ///* break for( V_ucIndex=0; V_ucIndex<LIB_E2P_INDEX_MAX;  V_ucIndex++ ) *///
+ 282   4                              }
+ 283   3                      }///* end of for( V_ucIndex=0; V_ucIndex<LIB_E2P_INDEX_MAX;  V_ucIndex++ ) *///
+ 284   2              }
+ 285   1                      
+ 286   1              return V_ucResult;
+ 287   1      }
+ 288          ///**********************************************************************///
+ 289          ///*                                                                    *///
+ 290          ///* @brief    CRC16校验处理函数                                        *///
+ 291          ///*                                                                    *///
+ 292          ///* @param    fcs :校验数据原始值                                      *///
+ 293          ///* @param    cp :校验数据缓存的开始地址                               *///
+ 294          ///* @param    len :校验数据的总长度                                    *///
+ 295          ///* @param    result :校验数据结果选择，TRUE则输出校验结果             *///
+ 296          ///*                                                                    *///
+ 297          ///* @return   返回校验值，高位在前                                     *///
+ 298          ///*                                                                    *///
+ 299          ///* @note     多项式：G(x) =x16+ x12+ x5+ 1                            *///
+ 300          ///*                                                                    *///
+ 301          ///**********************************************************************/// 
+ 302          ushort16 LibPub_CRC16_CCITT(uchar8 *cp, ushort16 len)
+ 303          {
+ 304   1              ushort16 usVfcs=0x0000;
+ 305   1              
+ 306   1              while (len--)
+ 307   1              {
+ 308   2                      usVfcs = (uint16_t)((usVfcs >> 8) ^ fcstab[(usVfcs ^ *cp++) & 0xff]);
+ 309   2              }
+ 310   1              
+ 311   1              return usVfcs;
+ 312   1      }
+ 313          ///**********************************************************************///
+ 314          ///* Brief:  按字节拷贝数据                                             *///
+ 315          ///*                                                                    *///
+ 316          ///* Param:  pSourceData：原始数据                                      */// 
+ 317          ///* Param:  pResultData：目标数据                                      */// 
+ 318          ///*                                                                    *///
+ 319          ///* Param:  len：数据长度                                              */// 
+ 320          ///*                                                                    *///
+ 321          ///* Return:                                                            *///
+ 322          ///* Note:                                                              *///
+ 323          ///**********************************************************************///
+C51 COMPILER V9.54   LIBPUBLIC                                                             11/18/2021 18:53:12 PAGE 7   
+
+ 324          void LibPub_MemCopyBytes(uchar8 *pSourceData, uchar8 *pTargetData, uchar8 len)
+ 325          {
+ 326   1              uchar8 i;
+ 327   1              
+ 328   1              for ( i=0; i<len; i++ )
+ 329   1              {
+ 330   2                      *(pTargetData+i) = *(pSourceData+i);
+ 331   2              }
+ 332   1      }
+ 333          
+ 334          /////**********************************************************************///
+ 335          /////* Brief:  校验crc是否正确                                            *///
+ 336          /////*                                                                    *///
+ 337          /////* Param:  *cp：要校验数据的头指针                                    */// 
+ 338          /////* Param:  len：数据长度                                              */// 
+ 339          /////*                                                                    *///
+ 340          /////* Return: TRUE:校验成功； FALSE:校验失败                             *///
+ 341          /////*                                                                    *///
+ 342          /////* Note:                                                              *///
+ 343          /////**********************************************************************///
+ 344          uchar8 LibPub_CrcCheck( uchar8 *cp, uchar8 len, ushort16 cmpcrc)
+ 345          {
+ 346   1              ushort16 V_usResult;
+ 347   1              
+ 348   1              if ( LibPub_ZeroCheck(cp, len) == _TRUE ) return _FALSE;        ///* 如果都是0，就不需要再试了，认
+             -为数据是错误的 *///
+ 349   1              
+ 350   1              V_usResult = LibPub_CRC16_CCITT( cp, len);
+ 351   1              
+ 352   1              if ( V_usResult != cmpcrc )  return _FALSE;
+ 353   1              
+ 354   1              return _TRUE;
+ 355   1      }
+ 356          
+ 357          /////**********************************************************************///
+ 358          /////* Brief:  数据是否为0检查                                            *///
+ 359          /////*                                                                    *///
+ 360          /////* Param:  *cp：要校验数据的头指针                                    */// 
+ 361          /////* Param:  len：数据长度                                              */// 
+ 362          /////*                                                                    *///
+ 363          /////* Return: TRUE:数据为0； FALSE:数据不为0                             *///
+ 364          /////*                                                                    *///
+ 365          /////* Note:                                                              *///
+ 366          /////**********************************************************************///
+ 367          uchar8 LibPub_ZeroCheck( uchar8 *cp, uchar8 len)
+ 368          {
+ 369   1              uchar8 i;
+ 370   1              
+ 371   1              for ( i=0; i<len; i++ )
+ 372   1              {
+ 373   2                      if ( *(cp+i) != 0) return _FALSE;
+ 374   2              }
+ 375   1              return _TRUE;
+ 376   1      }
+ 377          
+ 378          ///**********************************************************************///
+ 379          ///* Brief:  数据是否为全F检查                                            *///
+ 380          ///*                                                                    *///
+ 381          ///* Param:  *cp：要校验数据的头指针                                    */// 
+ 382          ///* Param:  len：数据长度                                              */// 
+ 383          ///*                                                                    *///
+ 384          ///* Return: TRUE:数据为0； FALSE:数据不为0                             *///
+C51 COMPILER V9.54   LIBPUBLIC                                                             11/18/2021 18:53:12 PAGE 8   
+
+ 385          ///*                                                                    *///
+ 386          ///* Note: 此函数用于中断ApiDLT645_UARTReceiveDataJudge判断目标设备地址是否为全F *///
+ 387          ///**********************************************************************///
+ 388          uchar8 LibPub_0xFFCheckInt( uchar8 *cp, uchar8 len)
+ 389          {
+ 390   1              uchar8 i;
+ 391   1              
+ 392   1              for ( i=0; i<len; i++ )
+ 393   1              {
+ 394   2                      if ( *(cp+i) != 0xFF) return _FALSE;
+ 395   2              }
+ 396   1              return _TRUE;
+ 397   1      }
+ 398          
+ 399          ///**********************************************************************///
+ 400          ///* Brief:  1字节hex转换成1字节BCD                                      *///
+ 401          ///*                                                                    *///
+ 402          ///* Param:  hexdata:需要转换的数据                                      */// 
+ 403          ///*                                                                    *///
+ 404          ///* Return: 返回转换后的结果                                            *///
+ 405          ///*                                                                    *///
+ 406          ///* Note:   如果hex大于99，则返回00，                                   *///
+ 407          ///**********************************************************************///
+ 408          uchar8 LibPub_1Hex_2_1BCD( uchar8 hexdata)
+ 409          {
+ 410   1              if ( hexdata > 99 ) return 0;
+ 411   1              
+ 412   1              return ( ((hexdata/10)<<4) + hexdata%10 );
+ 413   1      }
+ 414          ///**********************************************************************///
+ 415          ///* Brief:  1字节BCD转换成1字节hex                                      *///
+ 416          ///*                                                                    *///
+ 417          ///* Param:  v_ucBcdData:需要转换的数据                                  */// 
+ 418          ///*                                                                    *///
+ 419          ///* Return: 返回转换后的结果                                            *///
+ 420          ///*                                                                    *///
+ 421          ///* Note:    传过来的数据理论上必须是BCD码，这里不判数据是否合理          *///
+ 422          ///**********************************************************************///
+ 423          uchar8 LibPub_1BCD_2_1HEX( uchar8 v_ucBcdData)
+ 424          {
+ 425   1              return ( ( (v_ucBcdData>>4)*10 ) + (v_ucBcdData & 0x0f) );
+ 426   1      }
+ 427          
+ 428          ///**********************************************************************///
+ 429          ///* Brief:  1字节BCD加法                                                *///
+ 430          ///*                                                                    *///
+ 431          ///* Param:  v_ucBcdA:被加数                                            */// 
+ 432          ///* Param:  v_ucBcdB:  加数                                            */// 
+ 433          ///* Param:  *p_ucCarry:进位                                            */// 
+ 434          ///*                                                                    *///
+ 435          ///* Return: 返回加完后的结果                                            *///
+ 436          ///*                                                                    *///
+ 437          ///* Note:   如果hex大于99，则返回00，                                   *///
+ 438          ///**********************************************************************///
+ 439          uchar8 LibPub_1BtyeBcdAdd(uchar8 v_ucBcdA, uchar8 v_ucBcdB, uchar8 *p_ucCarry)
+ 440          {
+ 441   1              uchar8  V_ucResult;      
+ 442   1              
+ 443   1              V_ucResult = LibPub_1BCD_2_1HEX(v_ucBcdA) + LibPub_1BCD_2_1HEX(v_ucBcdB) ;
+ 444   1              V_ucResult += *p_ucCarry;
+ 445   1              *p_ucCarry = 0;
+ 446   1              
+C51 COMPILER V9.54   LIBPUBLIC                                                             11/18/2021 18:53:12 PAGE 9   
+
+ 447   1              if ( V_ucResult >= 100 )
+ 448   1              {
+ 449   2                      *p_ucCarry = 1;
+ 450   2                      V_ucResult = V_ucResult-100;
+ 451   2              }
+ 452   1                
+ 453   1              return (LibPub_1Hex_2_1BCD(V_ucResult));
+ 454   1              
+ 455   1      }
+ 456          ///**********************************************************************///
+ 457          ///* Brief:  多字节BCD加法                                               *///
+ 458          ///*                                                                    *///
+ 459          ///* Param:  *p_ucBcdA:被加数                                            *///
+ 460          ///* Param:  *p_ucBcdB:被加数                                            */// 
+ 461          ///* Param:  v_ucLen:数据长度                                            */// 
+ 462          ///*                                                                    *///
+ 463          ///* Return: 无                                                         *///
+ 464          ///*                                                                    *///
+ 465          ///* Note:   加法从最低位开始加，进位到最高位                             *///
+ 466          ///**********************************************************************///
+ 467          void LibPub_NBtyesBcdAdd(uchar8 *p_ucBcdA, uchar8 *p_ucBcdB, uchar8 v_ucLen)
+ 468          {
+ 469   1              uchar8  V_ucCarry = 0; 
+ 470   1              uchar8  V_ucCnti;
+ 471   1              
+ 472   1              for ( V_ucCnti = 0; V_ucCnti < v_ucLen; V_ucCnti++ )
+ 473   1              {
+ 474   2                      p_ucBcdA[v_ucLen-V_ucCnti-1] = LibPub_1BtyeBcdAdd(p_ucBcdA[v_ucLen-V_ucCnti-1], p_ucBcdB[v_ucLen-V_ucCnt
+             -i-1], &V_ucCarry );
+ 475   2              }
+ 476   1              
+ 477   1      }
+ 478          ///**********************************************************************///
+ 479          ///* Brief:  获取系统节拍                                               *///
+ 480          ///*                                                                    *///
+ 481          ///* Return: 返回定时计数                                               *///
+ 482          ///*                                                                    *///
+ 483          ///* Note:   主要用于计算时间差，如超时                                 *///
+ 484          ///**********************************************************************///
+ 485          ulong32 LibPub_GetTimerBeat(void)
+ 486          {
+ 487   1              ulong32 V_ulTimeOld,V_ulTimeNew;
+ 488   1              
+ 489   1              do
+ 490   1              {
+ 491   2                      V_ulTimeOld = GStr_Monitor.ulTimer_ms_old;
+ 492   2                      V_ulTimeNew = GStr_Monitor.ulTimer_ms;
+ 493   2                      
+ 494   2                      if ( V_ulTimeNew == 0 )
+ 495   2                      {
+ 496   3                              if ( (V_ulTimeOld==0xFFFFFFFF) || (V_ulTimeOld==0) )
+ 497   3                              {
+ 498   4                                      return V_ulTimeOld;
+ 499   4                              }
+ 500   3                              continue;
+ 501   3                      }
+ 502   2              }while ( V_ulTimeNew != (V_ulTimeOld+1) );
+ 503   1              
+ 504   1              return V_ulTimeOld;
+ 505   1      }
+ 506          ///**********************************************************************///
+ 507          ///* Brief:  获取系统节拍                                                *///
+C51 COMPILER V9.54   LIBPUBLIC                                                             11/18/2021 18:53:12 PAGE 10  
+
+ 508          ///*                                                                    *///
+ 509          ///* Return: 返回定时计数                                                *///
+ 510          ///*                                                                    *///
+ 511          ///* Note:   用于串口中断调用，其他情况调用 LibPub_GetTimerBeat              *///
+ 512          ///**********************************************************************///
+ 513          ulong32 LibPub_GetTimerBeatInt0(void)
+ 514          {
+ 515   1              ulong32 V_ulTimeOld,V_ulTimeNew;
+ 516   1              
+ 517   1              do
+ 518   1              {
+ 519   2                      V_ulTimeOld = GStr_Monitor.ulTimer_ms_old;
+ 520   2                      V_ulTimeNew = GStr_Monitor.ulTimer_ms;
+ 521   2                      
+ 522   2                      if ( V_ulTimeNew == 0 )
+ 523   2                      {
+ 524   3                              if ( (V_ulTimeOld==0xFFFFFFFF) || (V_ulTimeOld==0) )
+ 525   3                              {
+ 526   4                                      return V_ulTimeOld;
+ 527   4                              }
+ 528   3                              continue;
+ 529   3                      }
+ 530   2              }while ( V_ulTimeNew != (V_ulTimeOld+1) );
+ 531   1              
+ 532   1              return V_ulTimeOld;
+ 533   1      }
+ 534          ///**********************************************************************///
+ 535          ///* Brief:  获取系统节拍                                                *///
+ 536          ///*                                                                    *///
+ 537          ///* Return: 返回定时计数                                                *///
+ 538          ///*                                                                    *///
+ 539          ///* Note:   用于串口中断调用，其他情况调用 LibPub_GetTimerBeat              *///
+ 540          ///**********************************************************************///
+ 541          ulong32 LibPub_GetTimerBeatInt1(void)
+ 542          {
+ 543   1              ulong32 V_ulTimeOld,V_ulTimeNew;
+ 544   1              
+ 545   1              do
+ 546   1              {
+ 547   2                      V_ulTimeOld = GStr_Monitor.ulTimer_ms_old;
+ 548   2                      V_ulTimeNew = GStr_Monitor.ulTimer_ms;
+ 549   2                      
+ 550   2                      if ( V_ulTimeNew == 0 )
+ 551   2                      {
+ 552   3                              if ( (V_ulTimeOld==0xFFFFFFFF) || (V_ulTimeOld==0) )
+ 553   3                              {
+ 554   4                                      return V_ulTimeOld;
+ 555   4                              }
+ 556   3                              continue;
+ 557   3                      }
+ 558   2              }while ( V_ulTimeNew != (V_ulTimeOld+1) );
+ 559   1              
+ 560   1              return V_ulTimeOld;
+ 561   1      }
+ 562          ///**********************************************************************///
+ 563          ///* Brief:  获取时间差跟指定数值比较大小                               *///
+ 564          ///*                                                                    *///
+ 565          ///* Param:  timer:给定时间                                             */// 
+ 566          ///* Param:  basetimer:给定时间，通常是LibPub_GetTimerBeat()            */// 
+ 567          ///* Param:  duration:指定间隔                                          */// 
+ 568          ///*                                                                    *///
+ 569          ///* Return: TRUE：时间差大于指定间隔，FALSE:时间差小于指定间隔         *///
+C51 COMPILER V9.54   LIBPUBLIC                                                             11/18/2021 18:53:12 PAGE 11  
+
+ 570          ///*                                                                    *///
+ 571          ///* Note:   主要用于计算时间差，如超时                                 *///
+ 572          ///**********************************************************************///
+ 573          uchar8 LibPub_GetDiffTime( ulong32 timer, ulong32 basetimer, ulong32 duration )
+ 574          {
+ 575   1              if (basetimer < timer)
+ 576   1              {
+ 577   2                      basetimer = basetimer + (0xffffffff - timer);
+ 578   2              }
+ 579   1              else
+ 580   1              {
+ 581   2                      basetimer = basetimer - timer;
+ 582   2              }
+ 583   1              
+ 584   1              if ( basetimer >= duration )
+ 585   1              {
+ 586   2                      return (_TRUE);
+ 587   2              }
+ 588   1       
+ 589   1              return (_FALSE); 
+ 590   1      }
+ 591          ///**********************************************************************///
+ 592          ///* Brief:  指定变量数据设置指定值                                     *///
+ 593          ///*                                                                    *///
+ 594          ///* Param:  p_datahead:变量首指针                                      */// 
+ 595          ///* Param:  val:设定值                                                 */// 
+ 596          ///* Param:  len:数据长度                                               */// 
+ 597          ///*                                                                    *///
+ 598          ///* Return: 返回定时计数                                               *///
+ 599          ///*                                                                    *///
+ 600          ///* Note:                                                              *///
+ 601          ///**********************************************************************///
+ 602          void LibPub_MemSetBytes( uchar8 *p_ucdatahead, uchar8 v_ucVal, ushort16 v_usLen )
+ 603          {
+ 604   1              ushort16 V_ucCnt_i;
+ 605   1              
+ 606   1              for ( V_ucCnt_i = 0; V_ucCnt_i < v_usLen; V_ucCnt_i++ )
+ 607   1              {
+ 608   2                      *(p_ucdatahead + V_ucCnt_i) = v_ucVal;
+ 609   2              }
+ 610   1      }
+ 611          
+ 612          ///**********************************************************************///
+ 613          ///* Brief:  计算制定数据长度的累加和                                     *///
+ 614          ///*                                                                    *///
+ 615          ///* Param:  pData:数据首地址                                            */// 
+ 616          ///* Param:  v_ucLen：数据长度                                           *///  
+ 617          ///*                                                                    *///
+ 618          ///* Return: 返回累加和                                                  *///
+ 619          ///*                                                                    *///
+ 620          ///* Note:                                                              *///
+ 621          ///**********************************************************************///
+ 622          uchar8 LibPub_CalSum(uchar8 *pData, uchar8 v_ucLen)
+ 623          {
+ 624   1              uchar8 i,V_ucSum = 0;
+ 625   1              
+ 626   1              for ( i=0; i<v_ucLen; i++ )
+ 627   1              {
+ 628   2                      V_ucSum += pData[i];
+ 629   2              }
+ 630   1              
+ 631   1              return V_ucSum;
+C51 COMPILER V9.54   LIBPUBLIC                                                             11/18/2021 18:53:12 PAGE 12  
+
+ 632   1      }
+ 633          ///**********************************************************************///
+ 634          ///* Brief:  原始数据倒向后赋给目标数据                                   *///
+ 635          ///*                                                                    *///
+ 636          ///* Param:  pSourceData：原始数据                                      */// 
+ 637          ///* Param:  pResultData：目标数据                                      *///  
+ 638          ///* Param:  len：数据长度                                              */// 
+ 639          ///*                                                                    *///
+ 640          ///* Return:                                                            *///
+ 641          ///* Note:                                                              *///
+ 642          ///**********************************************************************///
+ 643          void LibPub_MemExchangeBytes(uchar8 *pSourceData, uchar8 *pTargetData, uchar8 len)
+ 644          {
+ 645   1              uchar8 V_ucCnt;
+ 646   1              
+ 647   1              for ( V_ucCnt=0; V_ucCnt<len; V_ucCnt++ )
+ 648   1              {
+ 649   2                      *(pTargetData+V_ucCnt) = *(pSourceData+len-1-V_ucCnt);
+ 650   2              }
+ 651   1      }
+ 652          /////**********************************************************************///
+ 653          /////* Brief:  判断指定长度数据是否为BCD                                    *///
+ 654          /////*                                                                    *///
+ 655          /////* Param:  p_ucData：数据指针                                          *///  
+ 656          /////* Param:  v_ucLen：数据长度                                           */// 
+ 657          /////*                                                                    *///
+ 658          /////* Return: 判断结果，是回TRUE,不是回FALSE                              *///
+ 659          /////* Note:                                                              *///
+ 660          /////**********************************************************************///
+ 661          uchar8 LibPub_IsBCD(uchar8 *p_ucData, uchar8 v_ucLen )
+ 662          {
+ 663   1              uchar8 V_ucCnt;
+ 664   1              
+ 665   1              for ( V_ucCnt=0; V_ucCnt<v_ucLen; V_ucCnt++ )
+ 666   1              {
+ 667   2                      if ( ( (p_ucData[V_ucCnt] & 0x0F) > 0x09 )|| ((p_ucData[V_ucCnt] & 0xF0) > 0x90 ) )
+ 668   2                      {
+ 669   3                              return _FAILED;
+ 670   3                      }
+ 671   2              }
+ 672   1              
+ 673   1              return _SUCCESS;
+ 674   1      }
+ 675          /////**********************************************************************///
+ 676          /////* Brief:  数据倒向                                                   *///
+ 677          /////*                                                                    *///
+ 678          /////* Param:  p_ucData：数据指针                                          *///  
+ 679          /////* Param:  v_ucLen：数据长度                                           */// 
+ 680          /////*                                                                    */// 
+ 681          /////* Note:                                                              *///
+ 682          /////**********************************************************************///
+ 683          void LibPub_Inverse( uchar8 *p_ucData, uchar8 DataLen )
+ 684          {
+ 685   1              uchar8 V_ucCnt, V_ucTemp08;
+ 686   1              
+ 687   1              for( V_ucCnt=0; V_ucCnt<DataLen/2; V_ucCnt++ )
+ 688   1              {
+ 689   2                      V_ucTemp08 = p_ucData[V_ucCnt];
+ 690   2                      p_ucData[V_ucCnt] = p_ucData[DataLen-1-V_ucCnt];
+ 691   2                      p_ucData[DataLen-1-V_ucCnt] = V_ucTemp08;//交换数据
+ 692   2              }
+ 693   1      }
+C51 COMPILER V9.54   LIBPUBLIC                                                             11/18/2021 18:53:12 PAGE 13  
+
+ 694          ///**********************************************************************///
+ 695          ///* Brief:  判断密码                                                   *///
+ 696          ///*                                                                    *///
+ 697          ///* Param:  p_ucData：数据指针                                          *///  
+ 698          ///* Param:  v_ucLen：数据长度                                           */// 
+ 699          ///*                                                                    */// 
+ 700          ///* Return: 判断结果，是回TRUE,不是回FALSE                              *///
+ 701          ///* Note:                                                              *///
+ 702          ///**********************************************************************///
+ 703          uchar8  LibPub_CheckPassword( uchar8 *p_ucPsw)
+ 704          {
+ 705   1              uchar8 V_ucTemp,V_ucCnt_i,V_ucTempBuff[11];
+ 706   1              if(GStr_Counter.ucPasswordErr_Cnt[*p_ucPsw]>=3)
+ 707   1              {
+ 708   2                              GStr_Counter.ucPasswordErr_Cnt[*p_ucPsw]=3;
+ 709   2                              return _FAILED;
+ 710   2              }
+ 711   1              
+ 712   1              if(_FAILED==LibPub_ReadDataFromE2prom( LIB_E2P_Password, 0, V_ucTempBuff ))
+ 713   1              {
+ 714   2                      return _FAILED;
+ 715   2              }
+ 716   1              
+ 717   1              if( *p_ucPsw == 0x00 ) 
+ 718   1              { 
+ 719   2                      V_ucTemp = 0;             ///*00级密码 偏移为0  
+ 720   2              }
+ 721   1              else if( *p_ucPsw == 0x01 ) 
+ 722   1              { 
+ 723   2                      V_ucTemp = 3; 
+ 724   2              }
+ 725   1              else if( *p_ucPsw == 0x02 ) 
+ 726   1              {
+ 727   2                      V_ucTemp = 6; 
+ 728   2              }       
+ 729   1              else
+ 730   1              {
+ 731   2                      return _FAILED;
+ 732   2              }
+ 733   1      
+ 734   1              for( V_ucCnt_i=0; V_ucCnt_i<3; V_ucCnt_i++ )
+ 735   1              {
+ 736   2                      if ( p_ucPsw[V_ucCnt_i+1] != V_ucTempBuff[V_ucTemp+V_ucCnt_i] )
+ 737   2                      {
+ 738   3                                      GStr_Counter.ucPasswordErr_Cnt[*p_ucPsw]++;
+ 739   3                                if(GStr_Counter.ucPasswordErr_Cnt[*p_ucPsw]>=3)
+ 740   3                                      {               
+ 741   4                                                      GStr_Monitor.usPasswordErrTime[*p_ucPsw]=1440;///24小时。已分钟为单位
+ 742   4                                      }
+ 743   3                                      return _FAILED;
+ 744   3                      }
+ 745   2              }
+ 746   1              
+ 747   1              GStr_Counter.ucPasswordErr_Cnt[*p_ucPsw]=0;
+ 748   1              return _SUCCESS;
+ 749   1      }
+ 750          ///**********************************************************************///
+ 751          ///* Brief:  延时2us                                                                              *///
+ 752          ///*                                                                    *///
+ 753          ///* Return: 无                                                         *///
+ 754          ///*                                                                    *///
+ 755          ///* Note:     大约2.2us                                                *///
+C51 COMPILER V9.54   LIBPUBLIC                                                             11/18/2021 18:53:12 PAGE 14  
+
+ 756          ///**********************************************************************///
+ 757          void LibPub_Delay2us(void)
+ 758          {
+ 759   1              return;
+ 760   1      }
+ 761          
+ 762          
+ 763          ///**********************************************************************///
+ 764          ///* Brief:  延时5us                                                                              *///
+ 765          ///*                                                                    *///
+ 766          ///* Return: 无                                                         *///
+ 767          ///*                                                                    *///
+ 768          ///* Note:     等于1大约5us                                           *///
+ 769          ///**********************************************************************///
+ 770          void LibPub_Delay5us(void)
+ 771          {
+ 772   1              uchar8 V_ucVnt = 1; 
+ 773   1              
+ 774   1              while ( V_ucVnt-- )
+ 775   1              {
+ 776   2                      ;
+ 777   2              }
+ 778   1      }
+ 779          
+ 780          ///**********************************************************************///
+ 781          ///* Brief:  延时10us                                                                             *///
+ 782          ///*                                                                    *///
+ 783          ///* Return: 无                                                         *///
+ 784          ///*                                                                    *///
+ 785          ///* Note:  大约10us                                                    *///
+ 786          ///**********************************************************************///
+ 787          void LibPub_Delay10us(void)
+ 788          {
+ 789   1      //      uchar8 V_ucCnt ;
+ 790   1              
+ 791   1      //      for( V_ucCnt=0;V_ucCnt<3;V_ucCnt++ )
+ 792   1              {
+ 793   2                      LibPub_Delay2us();
+ 794   2                      LibPub_Delay2us();
+ 795   2                      LibPub_Delay5us();
+ 796   2              }
+ 797   1      }
+ 798          
+ 799          ///**********************************************************************///
+ 800          ///* Brief:  延时1ms                                                                              *///
+ 801          ///*                                                                    *///
+ 802          ///* Param:  v_uiNums: 延时时间，最大两字节                              *///  
+ 803          ///*                                                                    *///
+ 804          ///* Return: 无                                                         *///
+ 805          ///*                                                                    *///
+ 806          ///* Note:   误差较小，基本可以忽略,数值越小越精准
+ 807          ///*         1-1；2-2；4-3.9；8-7.9；10-9.8；50-48；100-96.8；500-488
+ 808          ///**********************************************************************///
+ 809          void LibPub_DelayNms(ushort16 v_uiNums)
+ 810          {
+ 811   1              ulong32 V_ulCnt;
+ 812   1              
+ 813   1              for( V_ulCnt=0; V_ulCnt<(v_uiNums*19); V_ulCnt++ )
+ 814   1              {
+ 815   2                      LibPub_Delay10us();
+ 816   2              }
+ 817   1      }
+C51 COMPILER V9.54   LIBPUBLIC                                                             11/18/2021 18:53:12 PAGE 15  
+
+ 818          
+ 819          ///**********************************************************************///
+ 820          ///* Brief:  延时10倍us                                                                                  *///
+ 821          ///*                                                                    *///
+ 822          ///* Param:  v_uiNums: 延时时间，最大两字节                              *///  
+ 823          ///*                                                                    *///
+ 824          ///* Return: 无                                                         *///
+ 825          ///*                                                                    *///
+ 826          ///* Note:  如果超过1ms建议使用ms延时，参数为50时大约为650us延时          *///
+ 827          ///**********************************************************************///
+ 828          #if ( METER_TYPE != METER_TYPE_DTSY666 )
+ 829          void LibPub_Delay10xus(ushort16 v_uiNums)
+ 830          {
+ 831   1              ushort16 V_ulCnt;
+ 832   1              
+ 833   1              for( V_ulCnt=0; V_ulCnt<(v_uiNums); V_ulCnt++ )
+ 834   1              {
+ 835   2                      LibPub_Delay10us();
+ 836   2              }
+ 837   1      }
+ 838          #endif
+ 839          
+ 840          ///**********************************************************************///
+ 841          ///* Brief:  比较一组数据的大小，从最后一个数组成员开始                                                                                */
+             -//
+ 842          ///*                                                                    *///
+ 843          ///* Param:                              *///  
+ 844          ///*                                                                    *///
+ 845          ///* Return:                                                        *///
+ 846          ///*                                                                    *///
+ 847          ///* Note:          *///
+ 848          ///**********************************************************************///
+ 849          
+ 850          uchar8   LibPub_CompareData(uchar8 *P_ucData1, uchar8 *P_ucData2, uchar8 v_ucDataLength, uchar8 v_ucCmpMode
+             -)
+ 851          {
+ 852   1              uchar8 V_ucCnt_i;
+ 853   1              
+ 854   1          for( V_ucCnt_i = 0;  V_ucCnt_i < v_ucDataLength; V_ucCnt_i++ )
+ 855   1              {               
+ 856   2                      if( CMP_MODE_HIGHT == v_ucCmpMode )
+ 857   2                      {
+ 858   3                              if( P_ucData1[V_ucCnt_i] > P_ucData2[V_ucCnt_i] )
+ 859   3                              {
+ 860   4                                      return C_GreaterThan;
+ 861   4                              }
+ 862   3                              else if(  P_ucData1[V_ucCnt_i] < P_ucData2[V_ucCnt_i] )
+ 863   3                              {
+ 864   4                                      return C_LessThan;
+ 865   4                              }
+ 866   3                      }
+ 867   2                      else
+ 868   2                      {
+ 869   3                              if( P_ucData1[v_ucDataLength-1-V_ucCnt_i] > P_ucData2[v_ucDataLength-1-V_ucCnt_i] )
+ 870   3                              {
+ 871   4                                      return C_GreaterThan;
+ 872   4                              }
+ 873   3                              else if(  P_ucData1[v_ucDataLength-1-V_ucCnt_i] < P_ucData2[v_ucDataLength-1-V_ucCnt_i]  )
+ 874   3                              {
+ 875   4                                      return C_LessThan;
+ 876   4                              }
+ 877   3                      }        
+C51 COMPILER V9.54   LIBPUBLIC                                                             11/18/2021 18:53:12 PAGE 16  
+
+ 878   2              }
+ 879   1              
+ 880   1              return C_Equal; 
+ 881   1      }
+ 882          
+ 883          
+ 884          ///**********************************************************************///
+ 885          ///* Brief: 2字节转short整型                                                                       *///
+ 886          ///*                                                                    *///
+ 887          ///* Param: p_ucBytesBuffer：2字节数据指针                               *///  
+ 888          ///*                                                                    *///
+ 889          ///* Return:转换后的数据                                                 *///
+ 890          ///*                                                                    *///
+ 891          ///* Note:                                                              *///
+ 892          ///**********************************************************************///
+ 893          ushort16 LibPub_Buffer2ToUshort16( uchar8 *p_ucBytesBuffer )
+ 894          {
+ 895   1              ushort16 v_usShort16Buffer;
+ 896   1              
+ 897   1              #if(STORAGE_MODE==SMALL_MODE)
+                  {
+                              v_usShort16Buffer  = p_ucBytesBuffer[1];
+                              v_usShort16Buffer <<= 8;
+                              v_usShort16Buffer |= p_ucBytesBuffer[0];
+                      }
+                      #else
+ 904   1              {
+ 905   2                      v_usShort16Buffer  = p_ucBytesBuffer[0];
+ 906   2                      v_usShort16Buffer <<= 8;
+ 907   2                      v_usShort16Buffer |= p_ucBytesBuffer[1];
+ 908   2              }
+ 909   1              #endif
+ 910   1              
+ 911   1              return v_usShort16Buffer;
+ 912   1      }
+ 913          
+ 914          
+ 915          ///**********************************************************************///
+ 916          ///* Brief: 1个short转2字节uart8                                                                    *///
+ 917          ///*                                                                    *///
+ 918          ///* Param: p_ucBytesBuffer：2字节数据指针                               *///  
+ 919          ///* Param: v_usShort16Buffer：short整型待转数据                         *///  
+ 920          ///*                                                                    *///
+ 921          ///* Return:                                                            *///
+ 922          ///*                                                                    *///
+ 923          ///* Note:                                                              *///
+ 924          ///**********************************************************************///
+ 925          #if( METER_TYPE == METER_TYPE_DTSY666 )
+              void LibPub_Ushort16ToBuffer2(uchar8 *p_ucBytesBuffer,ushort16 v_usShort16Buffer)
+              {
+                  ushort16 V_usTempData;
+                      
+                  V_usTempData = v_usShort16Buffer;
+                      
+                      #if(STORAGE_MODE==SMALL_MODE)
+                  {
+                              p_ucBytesBuffer[0] = (uchar8)V_usTempData;
+                              V_usTempData >>= 8;
+                              p_ucBytesBuffer[1] = (uchar8)V_usTempData;
+                      #else
+                 {
+                              p_ucBytesBuffer[1] = (uchar8)V_usTempData;
+C51 COMPILER V9.54   LIBPUBLIC                                                             11/18/2021 18:53:12 PAGE 17  
+
+                              V_usTempData >>= 8;
+                              p_ucBytesBuffer[0] = (uchar8)V_usTempData;
+                 }
+                      #endif
+                      
+              }
+              #endif
+ 947          ///**********************************************************************///
+ 948          ///* Brief: 1个long转4字节uart8                                                                     *///
+ 949          ///*                                                                    *///
+ 950          ///* Param: p_ucBytesBuffer：4字节数据指针                               *///  
+ 951          ///* Param: v_ulDoubleWordBuffer：4字节整型数据                          *///  
+ 952          ///*                                                                    *///
+ 953          ///* Return:                                                            *///
+ 954          ///*                                                                    *///
+ 955          ///* Note:                                                              *///
+ 956          ///**********************************************************************///
+ 957          ///**********************************************************************************************///
+ 958          #if( METER_TYPE == METER_TYPE_DTSY666 )
+              void LibPub_Ulong32ToBuffer4(uchar8 *p_ucBytesBuffer, ulong32 v_ulDoubleWordBuffer)
+              {
+                      ulong32 V_ulTempData=0;
+                      uchar8  V_ucCnti;
+               
+                      V_ulTempData = v_ulDoubleWordBuffer;
+                      
+                      for( V_ucCnti=0; V_ucCnti<4; V_ucCnti++ )
+                      {
+                              #if(STORAGE_MODE==SMALL_MODE)
+                              {
+                                      p_ucBytesBuffer[V_ucCnti] = (uchar8)V_ulTempData;
+                              }
+                              #else
+                              {
+                                      p_ucBytesBuffer[3-V_ucCnti] = (uchar8)V_ulTempData;
+                              }
+                              #endif
+                              
+                              V_ulTempData >>= 8;
+                      } 
+              } 
+              #endif
+ 982          /*------------------------------------------------------------------------------------------------------*/
+ 983          /**
+ 984           *  @brief    4字节uart8      转1个long
+ 985           *
+ 986           *  @param    p_ucBytesBuffer : 4字节数据指针
+ 987           *
+ 988           *  @return   转换后的数据
+ 989           *
+ 990           *  @note     xx
+ 991           *
+ 992           */
+ 993          /*------------------------------------------------------------------------------------------------------*/
+ 994          ///**********************************************************************************************///
+ 995          ulong32  LibPub_Buffer4ToUlong32( uchar8 *p_ucBytesBuffer )
+ 996          {
+ 997   1              ulong32 V_ulResult = 0;
+ 998   1              uchar8 V_ucCnti;
+ 999   1              
+1000   1              for( V_ucCnti=0; V_ucCnti<4; V_ucCnti++ )
+1001   1              {
+C51 COMPILER V9.54   LIBPUBLIC                                                             11/18/2021 18:53:12 PAGE 18  
+
+1002   2                      V_ulResult <<= 8;
+1003   2                      #if(STORAGE_MODE==SMALL_MODE)
+                              {
+                                      V_ulResult |= p_ucBytesBuffer[3-V_ucCnti];
+                              }
+                              #else
+1008   2                      {
+1009   3                              V_ulResult |= p_ucBytesBuffer[  V_ucCnti];
+1010   3                      }
+1011   2              #endif
+1012   2              }
+1013   1          
+1014   1              return V_ulResult;      
+1015   1      }
+1016          /*------------------------------------------------------------------------------------------------------*/
+1017          /**
+1018           *  @brief    多字节BCD减法,
+1019           *
+1020           *  @param    p_ucBufA : 被减数,同时存储转换结果
+1021           *  @param    p_ucBufB : 减数
+1022           *  @param    ucLen : 长度
+1023           *
+1024           *  @return   none
+1025           *
+1026           *  @note     注意：调用函数之前要确保被减数比减数大并且是低地址是高位，高�
+             -�址是低位
+1027           *
+1028           */
+1029          /*------------------------------------------------------------------------------------------------------*/
+1030          void LibPub_NBytesBCDSub(uchar8 *p_ucBufA, uchar8 *p_ucBufB, uchar8 v_ucLen)
+1031          {
+1032   1              uchar8 V_ucCnt_i,V_ucCnt_j,V_ucCnt_k;
+1033   1              uchar8 V_ucBfCarry=0; // 进位标志
+1034   1              
+1035   1              for( V_ucCnt_i = (v_ucLen-1); V_ucCnt_i<v_ucLen; V_ucCnt_i-- )
+1036   1              {
+1037   2                      V_ucCnt_j = p_ucBufB[V_ucCnt_i] + V_ucBfCarry;
+1038   2                      V_ucCnt_k = 0;
+1039   2                      
+1040   2                      if( V_ucCnt_j < p_ucBufB[V_ucCnt_i] )
+1041   2                      {
+1042   3                              V_ucCnt_k = 1;
+1043   3                      }
+1044   2                      
+1045   2                      V_ucBfCarry = 0;
+1046   2                      if( (p_ucBufA[V_ucCnt_i]&0x0f) < (V_ucCnt_j&0x0f) )
+1047   2                      {
+1048   3                              if( p_ucBufA[V_ucCnt_i] < V_ucCnt_j )
+1049   3                              {
+1050   4                                      p_ucBufA[V_ucCnt_i] = 0x9a - V_ucCnt_j + p_ucBufA[V_ucCnt_i];                   //0xa0-6;
+1051   4                              V_ucBfCarry = 1;
+1052   4                      }
+1053   3                              else
+1054   3                              {
+1055   4                                      p_ucBufA[V_ucCnt_i] = p_ucBufA[V_ucCnt_i] - V_ucCnt_j - 6;
+1056   4                              }
+1057   3                      }
+1058   2                      else
+1059   2                      {
+1060   3                              if( p_ucBufA[V_ucCnt_i] < V_ucCnt_j )
+1061   3                              {
+1062   4                                      p_ucBufA[V_ucCnt_i] = 0xa0 - V_ucCnt_j + p_ucBufA[V_ucCnt_i];
+C51 COMPILER V9.54   LIBPUBLIC                                                             11/18/2021 18:53:12 PAGE 19  
+
+1063   4                          V_ucBfCarry = 1;
+1064   4                      }
+1065   3                              else
+1066   3                                      p_ucBufA[V_ucCnt_i] = p_ucBufA[V_ucCnt_i] - V_ucCnt_j;
+1067   3                      }
+1068   2                      if( V_ucCnt_k )
+1069   2                      {
+1070   3                              V_ucBfCarry = 1;                //由于V_ucCnt_k=1时，不会产生借位
+1071   3                      }
+1072   2              }
+1073   1              
+1074   1              return;
+1075   1      }
+1076          
+1077          
+1078          ///**********************************************************************///
+1079          ///* Brief: 多字节bcd转hex   返回值为4字节无符号长整型不能超过数据范围                                         
+             -             *///
+1080          ///*                                                                    *///
+1081          ///* Param:                              *///  
+1082          ///*                                                                    *///
+1083          ///* Return:                                                        *///
+1084          ///*                                                                    *///
+1085          ///* Note:          *///
+1086          ///**********************************************************************///
+1087          ///**********************************************************************************************///
+1088          ulong32 LibPub_DECtoHEXBytes(uchar8 *P_ucSourceData,uchar8 V_ucDataLength)
+1089          {
+1090   1              uchar8  V_ucFlagTemp = 1;
+1091   1              ulong32 V_ulTemp = 1;
+1092   1          ulong32 V_ulDataTemp = 0;
+1093   1              uchar8  V_ucTurnTemp = 0;
+1094   1              
+1095   1              if((V_ucDataLength>0)&&(V_ucDataLength<5))
+1096   1              {
+1097   2                      for(V_ucTurnTemp = V_ucDataLength;V_ucTurnTemp >0;V_ucTurnTemp-- )
+1098   2                      {
+1099   3                              V_ulDataTemp += ((*(P_ucSourceData+V_ucTurnTemp-1)&0x0f)%10)*V_ulTemp;
+1100   3                              V_ulTemp*=10;
+1101   3                              V_ulDataTemp += ((*(P_ucSourceData+V_ucTurnTemp-1)&0xf0)>>4)*V_ulTemp;                  
+1102   3                              V_ulTemp *= 10;
+1103   3                      }
+1104   2              }
+1105   1              return(V_ulDataTemp);
+1106   1      }
+1107          
+1108          ///**********************************************************************///
+1109          ///* Brief: 多字节bcd转hex   返回值为4字节无符号长整型不能超过数据范围                                         
+             -             *///
+1110          ///*                                                                    *///
+1111          ///* Param:                              *///  
+1112          ///*                                                                    *///
+1113          ///* Return:                                                        *///
+1114          ///*                                                                    *///
+1115          ///* Note:          *///
+1116          ///**********************************************************************///
+1117          ///**********************************************************************************************///
+1118          void LibPub_HEXtoBCDBytes(ulong32 V_ulSourceData,uchar8 *P_ucResultData,uchar8 V_ucLen)
+1119          {
+1120   1              uchar8   V_ucTurnTemp ;
+1121   1              ulong32  V_ulDataTemp;
+1122   1              
+C51 COMPILER V9.54   LIBPUBLIC                                                             11/18/2021 18:53:12 PAGE 20  
+
+1123   1              V_ulDataTemp = V_ulSourceData;  
+1124   1                      
+1125   1              for( V_ucTurnTemp =V_ucLen ; V_ucTurnTemp>0; V_ucTurnTemp-- )
+1126   1              {   
+1127   2                      *(P_ucResultData+V_ucTurnTemp-1) =(uchar8)(V_ulDataTemp%10);
+1128   2                      V_ulDataTemp = V_ulDataTemp/10;
+1129   2                      *(P_ucResultData+V_ucTurnTemp-1) |=((uchar8)(V_ulDataTemp%10) << 4);            
+1130   2                      V_ulDataTemp = V_ulDataTemp/10;
+1131   2              } 
+1132   1      }
+1133          
+1134          ///**********************************************************************///
+1135          ///* Brief: 比较多字节数组大小，取最大值或者最小值                                                       *///
+1136          ///*                                                                    *///
+1137          ///* Param:    P_ucSourceData需要比较的数组 需放在一起
+1138          ///  P_ucResultData 最大的数组或者最小的数组        V_ucLen 数组的长度  V_Num 数组个数
+1139          ///   V_Mode  取最大值还是最小值 C_MAX  C_MIN  v_ucCmpMode大小端比较
+1140          
+1141          ///*                                                                    *///
+1142          ///* Return:                                                        *///
+1143          ///*                                                                    *///
+1144          ///* Note:          *///
+1145          ///**********************************************************************///
+1146          ///**********************************************************************************************///
+1147          uchar8 LibPub_CompareNBufs(uchar8 *P_ucSourceData,uchar8 *P_ucResultData,uchar8 V_ucLen,uchar8 V_Num,uchar
+             -8 V_Mode,uchar8 v_ucCmpMode)
+1148          {
+1149   1      //      uchar8   *p_ucBufData;
+1150   1              uchar8 i;
+1151   1      //      ulong32  v_ulDataTemp;
+1152   1              
+1153   1              if(V_Num<=1)
+1154   1              {
+1155   2                      return _FAILED;
+1156   2              }
+1157   1      //      LibPub_MemCopyBytes(P_ucSourceData,p_ucBufData, V_ucLen*V_Num);
+1158   1      
+1159   1          LibPub_MemCopyBytes((P_ucSourceData+(V_Num-1)*V_ucLen),P_ucResultData, V_ucLen);///刚开始要比较�
+             -��最后一个数组为最大的
+1160   1      
+1161   1              
+1162   1              for(i=V_Num;i>1;i--)
+1163   1              {
+1164   2                      if(V_Mode==C_MAX)
+1165   2                      {
+1166   3                              if(C_GreaterThan!=LibPub_CompareData(P_ucResultData,  (P_ucSourceData+(i-2)*V_ucLen), V_ucLen, v_ucCmpM
+             -ode))
+1167   3                              {
+1168   4                                       LibPub_MemCopyBytes((P_ucSourceData+(i-2)*V_ucLen),P_ucResultData, V_ucLen);
+1169   4                              }
+1170   3                      }
+1171   2                      else
+1172   2                      {
+1173   3                              if(C_LessThan!=LibPub_CompareData(P_ucResultData,  (P_ucSourceData+(i-2)*V_ucLen), V_ucLen, v_ucCmpMode
+             -))
+1174   3                              {
+1175   4                                       LibPub_MemCopyBytes((P_ucSourceData+(i-2)*V_ucLen),P_ucResultData, V_ucLen);
+1176   4                              }
+1177   3                      }
+1178   2              }
+1179   1              return _SUCCESS;
+1180   1      }
+C51 COMPILER V9.54   LIBPUBLIC                                                             11/18/2021 18:53:12 PAGE 21  
+
+1181          
+1182          
+1183          void LibPub_HEXtoAscii(uchar8 *p_ucSourceData, uchar8 *p_ucResultData, uchar8 v_ucLen )
+1184          {
+1185   1              uchar8 V_ucCnti,V_ucCntj ; 
+1186   1              uchar8 V_ucAscTemp[2];
+1187   1              
+1188   1              for( V_ucCnti = 0; V_ucCnti < v_ucLen; V_ucCnti++ )
+1189   1              {    
+1190   2                      V_ucAscTemp[0] = ( (p_ucSourceData[V_ucCnti] >> 4 ) & 0x0f );
+1191   2                      V_ucAscTemp[1] = (  p_ucSourceData[V_ucCnti] & 0x0f );
+1192   2                      
+1193   2                      for( V_ucCntj = 0; V_ucCntj < 2; V_ucCntj++ )
+1194   2                      {
+1195   3                              if( V_ucAscTemp[V_ucCntj] < 10 )
+1196   3                              {
+1197   4                                      V_ucAscTemp[V_ucCntj] = V_ucAscTemp[V_ucCntj] + 0x30;
+1198   4                              }
+1199   3                              else if( V_ucAscTemp[V_ucCntj] < 16 )
+1200   3                              {
+1201   4                                      V_ucAscTemp[V_ucCntj] = V_ucAscTemp[V_ucCntj] + 0x37;
+1202   4                              }
+1203   3                      }
+1204   2                      
+1205   2                      LibPub_MemCopyBytes( V_ucAscTemp,  p_ucResultData+V_ucCnti*2, 2 );
+1206   2              } 
+1207   1      }
+1208          /////*--------------------------------- 注释详解区 --------------------------------------------------
+             --------*///
+1209          
+1210          /////* 注释1: 一些复杂的功能可以在这里注释，主要是注释上面函数的功能，如有
+             -需要可以每一个函数配一个注释详解区*///
+1211          
+1212          /////* 注释2: *///
+1213          
+1214          /////*----------------------------------------------------------------------------------------------------
+             ---*///
+1215          
+C51 COMPILER V9.54   LIBPUBLIC                                                             11/18/2021 18:53:12 PAGE 22  
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+uint16_t . . . . . . . . . . . . . . .  TYPEDEF  -----  U_INT    -----  2
+IB_CON2. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00F3H  1
+_LibPub_1BtyeBcdAdd. . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+  v_ucBcdA . . . . . . . . . . . . . .  * REG *  DATA   U_CHAR   0004H  1
+  v_ucBcdB . . . . . . . . . . . . . .  * REG *  DATA   U_CHAR   0005H  1
+  p_ucCarry. . . . . . . . . . . . . .  * REG *  DATA   PTR      0001H  3
+  V_ucResult . . . . . . . . . . . . .  * REG *  DATA   U_CHAR   0007H  1
+COMM_BLE_STAT. . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+API_COMM_STATUS_OVERTIME . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+TB81 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00DBH  1
+P0 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0080H  1
+IB_CON3. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00F4H  1
+FP64 . . . . . . . . . . . . . . . . .  TYPEDEF  -----  FLOAT    -----  4
+TKCON. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A4H  1
+P1 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0090H  1
+IB_CON4. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00F5H  1
+PASLO. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E7H  1
+_DrvE2p_WriteData. . . . . . . . . . .  EXTERN   CODE   PROC     -----  -----
+GStr_ENERGYDEC_Type. . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  26
+  ucaFw_EnergyDec. . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  13
+  ucaBk_EnergyDec. . . . . . . . . . .  MEMBER   -----  ARRAY    000DH  13
+P2 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A0H  1
+OSCLO. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00FEH  1
+IB_CON5. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00F6H  1
+_LibPub_Inverse. . . . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+  p_ucData . . . . . . . . . . . . . .  AUTO     XDATA  PTR      0000H  3
+  DataLen. . . . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0003H  1
+  V_ucCnt. . . . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0004H  1
+  V_ucTemp08 . . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0005H  1
+GStr_EventRecordNum_Type . . . . . . .  TYPEDEF  -----  STRUCT   -----  26
+  ucEventTimes . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  24
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    0018H  2
+GStr_FLAG_Type . . . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  16
+  ucSystem . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0000H  1
+  ucMeterMode. . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0001H  1
+  ucPwOnState. . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0002H  1
+  ucRunState . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0003H  1
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    0004H  2
+  ucRunState2. . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0006H  1
+  ucRunState1. . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0007H  1
+  ucRunState3. . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0008H  1
+  ucDisp . . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0009H  1
+  ucFactoryKey . . . . . . . . . . . .  MEMBER   -----  U_CHAR   000AH  1
+  ucDispKey. . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   000BH  1
+  ucMoney. . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   000CH  1
+  ucPowerOnFlag. . . . . . . . . . . .  MEMBER   -----  U_CHAR   000DH  1
+  ucWrE2promSafeByte . . . . . . . . .  MEMBER   -----  U_CHAR   000EH  1
+  ucBLESTATFlag. . . . . . . . . . . .  MEMBER   -----  U_CHAR   000FH  1
+BOOLEAN. . . . . . . . . . . . . . . .  TYPEDEF  -----  U_CHAR   -----  1
+SM1_RXOV . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      009EH  1
+P3 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B0H  1
+AC . . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00D6H  1
+P4 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C0H  1
+SPCON. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A1H  1
+SBRTH. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   009CH  1
+P5 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E9H  1
+LIB_E2P_Price_BAK. . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+C51 COMPILER V9.54   LIBPUBLIC                                                             11/18/2021 18:53:12 PAGE 23  
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+EA . . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00AFH  1
+P6 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00EAH  1
+LIB_E2P_Display_Table. . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+GStr_DISPLAY_PARA_Type . . . . . . . .  TYPEDEF  -----  STRUCT   -----  129
+  ucFullDisp_Time. . . . . . . . . . .  MEMBER   -----  U_CHAR   0000H  1
+  ucDispDurTime. . . . . . . . . . . .  MEMBER   -----  U_CHAR   0001H  1
+  ucAutoDispNum. . . . . . . . . . . .  MEMBER   -----  U_CHAR   0002H  1
+  ucKeyDispNum . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0003H  1
+  usDisp_ParaCRC16 . . . . . . . . . .  MEMBER   -----  U_INT    0004H  2
+  ucAutoDisptable. . . . . . . . . . .  MEMBER   -----  ARRAY    0006H  30
+  ucKeyDisptable . . . . . . . . . . .  MEMBER   -----  ARRAY    0024H  30
+  usDisp_tableCRC16. . . . . . . . . .  MEMBER   -----  U_INT    0042H  2
+  ucBackLightTime. . . . . . . . . . .  MEMBER   -----  U_CHAR   0044H  1
+  ucRelayLEDTime . . . . . . . . . . .  MEMBER   -----  U_CHAR   0045H  1
+  ulDispUpdataTime . . . . . . . . . .  MEMBER   -----  U_LONG   0046H  4
+  usDispCnt. . . . . . . . . . . . . .  MEMBER   -----  U_INT    004AH  2
+  ulDisptimer. . . . . . . . . . . . .  MEMBER   -----  U_LONG   004CH  4
+  ucKeydelaytimer. . . . . . . . . . .  MEMBER   -----  U_CHAR   0050H  1
+  ucFirstKeyDisp . . . . . . . . . . .  MEMBER   -----  U_CHAR   0051H  1
+  ucDisp_0_flag. . . . . . . . . . . .  MEMBER   -----  U_CHAR   0052H  1
+  ucDisp_tongxin_Flag. . . . . . . . .  MEMBER   -----  U_CHAR   0053H  1
+  ucDisp_tongxin_Time. . . . . . . . .  MEMBER   -----  U_LONG   0054H  4
+  ucDispNum. . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0058H  1
+  ucLCDDrvDispBuf. . . . . . . . . . .  MEMBER   -----  ARRAY    0059H  40
+int32_t. . . . . . . . . . . . . . . .  TYPEDEF  -----  LONG     -----  4
+P7 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00EBH  1
+IB_DATA. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00EFH  1
+P8 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00ECH  1
+int16_t. . . . . . . . . . . . . . . .  TYPEDEF  -----  INT      -----  2
+SBRTL. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   009DH  1
+P9 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00EDH  1
+PBANKLO. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B7H  1
+GStr_COUNTER_Type. . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  9
+  ucFactoryMode_Cnt. . . . . . . . . .  MEMBER   -----  U_INT    0000H  2
+  ucKeyRelayOn_Cnt . . . . . . . . . .  MEMBER   -----  U_INT    0002H  2
+  ucRelayDelay_Cnt . . . . . . . . . .  MEMBER   -----  U_CHAR   0004H  1
+  ucHoldMoney_Cnt. . . . . . . . . . .  MEMBER   -----  U_CHAR   0005H  1
+  ucPasswordErr_Cnt. . . . . . . . . .  MEMBER   -----  ARRAY    0006H  3
+SPSTA. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A2H  1
+IEN0 . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A8H  1
+PWRCON1. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B3H  1
+ulong32. . . . . . . . . . . . . . . .  TYPEDEF  -----  U_LONG   -----  4
+EMUSR. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0095H  1
+IEN1 . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A9H  1
+PWRCON2. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B4H  1
+DPH1 . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0085H  1
+P0_0 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0080H  1
+_LibPub_NBtyesBcdAdd . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+  p_ucBcdA . . . . . . . . . . . . . .  AUTO     XDATA  PTR      0000H  3
+  p_ucBcdB . . . . . . . . . . . . . .  AUTO     XDATA  PTR      0003H  3
+  v_ucLen. . . . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0006H  1
+  V_ucCarry. . . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0007H  1
+  V_ucCnti . . . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0008H  1
+ushort16 . . . . . . . . . . . . . . .  TYPEDEF  -----  U_INT    -----  2
+P1_0 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0090H  1
+P0_1 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0081H  1
+ADCH . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C3H  1
+C51 COMPILER V9.54   LIBPUBLIC                                                             11/18/2021 18:53:12 PAGE 24  
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+BLE_DRV_OPERATION_INDEX. . . . . . . .  TYPEDEF  -----  U_CHAR   -----  1
+LIB_E2P_SOFTI_J. . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+P2_0 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00A0H  1
+P1_1 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0091H  1
+P0_2 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0082H  1
+IPH0 . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00BAH  1
+DPL1 . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0084H  1
+size_t . . . . . . . . . . . . . . . .  TYPEDEF  -----  U_INT    -----  2
+LIB_E2P_FUN_CONFIG_BAK . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+GStr_MONITOR_Tpye. . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  59
+  ulTimer_ms . . . . . . . . . . . . .  MEMBER   -----  U_LONG   0000H  4
+  ulTimer_ms_old . . . . . . . . . . .  MEMBER   -----  U_LONG   0004H  4
+  ulTimerClrWDT. . . . . . . . . . . .  MEMBER   -----  U_LONG   0008H  4
+  ulTimerMin . . . . . . . . . . . . .  MEMBER   -----  U_LONG   000CH  4
+  ulTimer5ms . . . . . . . . . . . . .  MEMBER   -----  U_LONG   0010H  4
+  ucPowerOnTimer . . . . . . . . . . .  MEMBER   -----  U_CHAR   0014H  1
+  ulTimers . . . . . . . . . . . . . .  MEMBER   -----  U_LONG   0015H  4
+  ulUpDateUIPTime. . . . . . . . . . .  MEMBER   -----  U_LONG   0019H  4
+  ulSoftI_JTime. . . . . . . . . . . .  MEMBER   -----  U_LONG   001DH  4
+  usSoftI_JTimeCRC16 . . . . . . . . .  MEMBER   -----  U_INT    0021H  2
+  usPasswordErrTime. . . . . . . . . .  MEMBER   -----  ARRAY    0023H  8
+  ucCommSymbolTime . . . . . . . . . .  MEMBER   -----  U_CHAR   002BH  1
+  ucPowerLimitNum. . . . . . . . . . .  MEMBER   -----  U_CHAR   002CH  1
+  ulOverDemandCloseTime. . . . . . . .  MEMBER   -----  U_LONG   002DH  4
+  ulProgEventDelayTime . . . . . . . .  MEMBER   -----  U_LONG   0031H  4
+  ulReadRandom2DelayTime . . . . . . .  MEMBER   -----  U_LONG   0035H  4
+  ucBleAdvCnt. . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0039H  1
+  ucBleConnectCnt. . . . . . . . . . .  MEMBER   -----  U_CHAR   003AH  1
+P3_0 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00B0H  1
+P2_1 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00A1H  1
+P1_2 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0092H  1
+P0_3 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0083H  1
+IPH1 . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00BBH  1
+COMM_BLE_MAC . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+P4_0 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00C0H  1
+P3_1 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00B1H  1
+P2_2 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00A2H  1
+P1_3 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0093H  1
+P0_4 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0084H  1
+EXF0 . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E8H  1
+P4_1 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00C1H  1
+P3_2 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00B2H  1
+P2_3 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00A3H  1
+P1_4 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0094H  1
+P0_5 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0085H  1
+P4_2 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00C2H  1
+P3_3 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00B3H  1
+P2_4 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00A4H  1
+P1_5 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0095H  1
+P0_6 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0086H  1
+EXF2 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00CEH  1
+TKF0 . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A6H  1
+IPL0 . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B8H  1
+LIB_E2P_ENRGY_BAK. . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+P4_3 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00C3H  1
+P3_4 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00B4H  1
+P2_5 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00A5H  1
+C51 COMPILER V9.54   LIBPUBLIC                                                             11/18/2021 18:53:12 PAGE 25  
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+P1_6 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0096H  1
+P0_7 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0087H  1
+REN1 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00DCH  1
+IPL1 . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B9H  1
+LIB_E2P_EventNum . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+long32 . . . . . . . . . . . . . . . .  TYPEDEF  -----  LONG     -----  4
+P4_4 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00C4H  1
+P3_5 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00B5H  1
+P2_6 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00A6H  1
+P1_7 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0097H  1
+TK0H . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E2H  1
+SUSLO. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   008EH  1
+P4_5 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00C5H  1
+P3_6 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00B6H  1
+P2_7 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00A7H  1
+TK1H . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E4H  1
+P4_6 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00C6H  1
+P3_7 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00B7H  1
+TK2H . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E6H  1
+LIB_E2P_Money_BAK. . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+short16. . . . . . . . . . . . . . . .  TYPEDEF  -----  INT      -----  2
+P4_7 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00C7H  1
+RI . . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0098H  1
+E7816. . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00AAH  1
+CY . . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00D7H  1
+TK0L . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E1H  1
+API_COMM_STATUS_ERROR. . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+_LibPub_CrcCheck . . . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+  cp . . . . . . . . . . . . . . . . .  AUTO     XDATA  PTR      0000H  3
+  len. . . . . . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0003H  1
+  cmpcrc . . . . . . . . . . . . . . .  AUTO     XDATA  U_INT    0004H  2
+  V_usResult . . . . . . . . . . . . .  * REG *  DATA   U_INT    0006H  2
+TI . . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0099H  1
+EADR . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0091H  1
+TK1L . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E3H  1
+TK2L . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E5H  1
+SADEN1 . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00DBH  1
+SM10_FE1 . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00DFH  1
+SADEN2 . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00FBH  1
+LIB_E2P_EMU_CALPARA. . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+GStr_ENERGY_PULSE_Type . . . . . . . .  TYPEDEF  -----  STRUCT   -----  8
+  ucPulseAdd . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0000H  1
+  ucPulseAddBusy . . . . . . . . . . .  MEMBER   -----  U_CHAR   0001H  1
+  ucPulseStatu . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0002H  1
+  ucPulseDecimal . . . . . . . . . . .  MEMBER   -----  U_CHAR   0003H  1
+  ucPulseDecSavePtr. . . . . . . . . .  MEMBER   -----  U_CHAR   0004H  1
+  ucPulseDecSaveNoFF . . . . . . . . .  MEMBER   -----  U_CHAR   0005H  1
+  ucaPulseRemain . . . . . . . . . . .  MEMBER   -----  ARRAY    0006H  2
+PS0L . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00BCH  1
+PT0L . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00B9H  1
+SADDR1 . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00DAH  1
+LIB_E2P_INDEX_MAX. . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+LIB_E2P_Display_Para . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+SM12_TXCOL1. . . . . . . . . . . . . .  ABSBIT   -----  BIT      00DDH  1
+PT1L . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00BBH  1
+SADDR2 . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00FAH  1
+RCAP2H . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00CBH  1
+C51 COMPILER V9.54   LIBPUBLIC                                                             11/18/2021 18:53:12 PAGE 26  
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+COMM_BLE_MOD . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+PT2L . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00BDH  1
+SP . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0081H  1
+LibPub_GetTimerBeatInt0. . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+  V_ulTimeOld. . . . . . . . . . . . .  AUTO     XDATA  U_LONG   0000H  4
+  V_ulTimeNew. . . . . . . . . . . . .  AUTO     XDATA  U_LONG   0004H  4
+INT32S . . . . . . . . . . . . . . . .  TYPEDEF  -----  LONG     -----  4
+OV . . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00D2H  1
+LIB_E2P_EventNumPiont. . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+LibPub_GetTimerBeatInt1. . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+  V_ulTimeOld. . . . . . . . . . . . .  AUTO     XDATA  U_LONG   0000H  4
+  V_ulTimeNew. . . . . . . . . . . . .  AUTO     XDATA  U_LONG   0004H  4
+_LibPub_ZeroCheck. . . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+  cp . . . . . . . . . . . . . . . . .  AUTO     XDATA  PTR      0000H  3
+  len. . . . . . . . . . . . . . . . .  * REG *  DATA   U_CHAR   0005H  1
+  i. . . . . . . . . . . . . . . . . .  * REG *  DATA   U_CHAR   0007H  1
+GStr_METER_IFO_Type. . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  27
+  ucaCommAddr. . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  6
+  ucaMeterID . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0006H  6
+  ucaUserID. . . . . . . . . . . . . .  MEMBER   -----  ARRAY    000CH  6
+  ucVoltageTrans . . . . . . . . . . .  MEMBER   -----  ARRAY    0012H  3
+  ucCurrentTrans . . . . . . . . . . .  MEMBER   -----  ARRAY    0015H  3
+  ucBpsVal . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0018H  1
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    0019H  2
+RCAP2L . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00CAH  1
+_LibPub_1BCD_2_1HEX. . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+  v_ucBcdData. . . . . . . . . . . . .  * REG *  DATA   U_CHAR   0007H  1
+INT32U . . . . . . . . . . . . . . . .  TYPEDEF  -----  U_LONG   -----  4
+INT16S . . . . . . . . . . . . . . . .  TYPEDEF  -----  INT      -----  2
+_LibPub_IsBCD. . . . . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+  p_ucData . . . . . . . . . . . . . .  AUTO     XDATA  PTR      0000H  3
+  v_ucLen. . . . . . . . . . . . . . .  * REG *  DATA   U_CHAR   0005H  1
+  V_ucCnt. . . . . . . . . . . . . . .  * REG *  DATA   U_CHAR   0007H  1
+INT16U . . . . . . . . . . . . . . . .  TYPEDEF  -----  U_INT    -----  2
+PX4L . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00B8H  1
+C_T2 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00C9H  1
+SFINE2 . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00DEH  1
+_LibPub_WriteDataToE2prom. . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+  v_usAddrIndex. . . . . . . . . . . .  AUTO     XDATA  U_INT    0000H  2
+  v_ucOffset . . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0002H  1
+  ptr_ucData . . . . . . . . . . . . .  AUTO     XDATA  PTR      0003H  3
+  V_ucResult . . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0006H  1
+  V_ucIndex. . . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0007H  1
+  V_usCRC16. . . . . . . . . . . . . .  AUTO     XDATA  U_INT    0008H  2
+GStr_BLE_GROUP_Type. . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  26
+  ucBleMAC . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  6
+  ucBleName. . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0006H  12
+  ucBleKey . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0012H  3
+  usAdvTime. . . . . . . . . . . . . .  MEMBER   -----  U_INT    0015H  2
+  ucBleTPL . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0017H  1
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    0018H  2
+COMM_BLE_MFV . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+GStr_EventNumPiont_Type. . . . . . . .  TYPEDEF  -----  STRUCT   -----  8
+  uc_Num . . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  6
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    0006H  2
+IRCON1 . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00ADH  1
+IRCON2 . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00AFH  1
+C51 COMPILER V9.54   LIBPUBLIC                                                             11/18/2021 18:53:12 PAGE 27  
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+GStr_Comm_MAP. . . . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  14
+  ucaDataId. . . . . . . . . . . . . .  MEMBER   -----  U_LONG   0000H  4
+  ucaRamAdd. . . . . . . . . . . . . .  MEMBER   -----  PTR      0004H  3
+  IsWrite. . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0007H  1
+  ucaE2pIndex. . . . . . . . . . . . .  MEMBER   -----  U_INT    0008H  2
+  ucaE2offset. . . . . . . . . . . . .  MEMBER   -----  U_CHAR   000AH  1
+  ucaDataLen . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   000BH  1
+  IsBCD. . . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   000CH  1
+  EEIsHEX. . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   000DH  1
+API_COMM_STATUS_IDLE . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+LibPub_Delay2us. . . . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+EXCON1 . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00ABH  1
+SBUF . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0099H  1
+EXCON2 . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00ACH  1
+PCON . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0087H  1
+B32_B08. . . . . . . . . . . . . . . .  * TAG *  -----  UNION    -----  4
+  B08. . . . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  4
+  B16. . . . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  4
+  B32. . . . . . . . . . . . . . . . .  MEMBER   -----  U_LONG   0000H  4
+AUXC . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00F1H  1
+COMM_BLE_TPL . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+LibPub_Delay5us. . . . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+  V_ucVnt. . . . . . . . . . . . . . .  * REG *  DATA   U_CHAR   0007H  1
+GStr_UART_COMM_Type. . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  423
+  ucCommChStatus . . . . . . . . . . .  MEMBER   -----  U_CHAR   0000H  1
+  ucCommRevStep. . . . . . . . . . . .  MEMBER   -----  U_CHAR   0001H  1
+  ucCommRevLen . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0002H  1
+  ucCommSndLen . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0003H  1
+  ucCommSndCnt . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0004H  1
+  ucCommAddrType . . . . . . . . . . .  MEMBER   -----  U_CHAR   0005H  1
+  ucCommError. . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0006H  1
+  ulCommTimeInit . . . . . . . . . . .  MEMBER   -----  U_LONG   0007H  4
+  ulCommRcvByteOverTime. . . . . . . .  MEMBER   -----  U_LONG   000BH  4
+  ulCommSndByteOverTime. . . . . . . .  MEMBER   -----  U_LONG   000FH  4
+  ulCommRspOverTime. . . . . . . . . .  MEMBER   -----  U_LONG   0013H  4
+  ucaCommRXBuff. . . . . . . . . . . .  MEMBER   -----  ARRAY    0017H  200
+  ucaCommTXBuff. . . . . . . . . . . .  MEMBER   -----  ARRAY    00DFH  200
+GStr_ENERGY_Type . . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  10
+  ucaFw_Energy . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  4
+  ucaBk_Energy . . . . . . . . . . . .  MEMBER   -----  ARRAY    0004H  4
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    0008H  2
+GU_B32_B08_Type. . . . . . . . . . . .  TYPEDEF  -----  UNION    -----  4
+  B08. . . . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  4
+  B16. . . . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  4
+  B32. . . . . . . . . . . . . . . . .  MEMBER   -----  U_LONG   0000H  4
+SCON . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0098H  1
+TK0BASEH . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D4H  1
+TMOD . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0089H  1
+TCON . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0088H  1
+IENX . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00AAH  1
+IB_OFFSET. . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00EEH  1
+TK1BASEH . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D6H  1
+SBRT1H . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00DCH  1
+TK2BASEH . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00DFH  1
+SBRT2H . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00FCH  1
+RSTSTAT. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B1H  1
+LIB_E2P_Password . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+C51 COMPILER V9.54   LIBPUBLIC                                                             11/18/2021 18:53:12 PAGE 28  
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+TK0BASEL . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D3H  1
+LIB_E2P_BLE_PARA . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+LIB_E2P_RUN_STATE. . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+TK1BASEL . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D5H  1
+SBRT1L . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00DDH  1
+COMM_BLE_TTP . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+EMU_EPADR_Type . . . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  5
+  ucEmuAddr. . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0000H  1
+  ulEmuRegData . . . . . . . . . . . .  MEMBER   -----  U_LONG   0001H  4
+TK2BASEL . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D7H  1
+SBRT2L . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00FDH  1
+API_COMM_STATUS_SEND . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+_LibPub_CRC16_CCITT. . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+  cp . . . . . . . . . . . . . . . . .  AUTO     XDATA  PTR      0000H  3
+  len. . . . . . . . . . . . . . . . .  AUTO     XDATA  U_INT    0003H  2
+  usVfcs . . . . . . . . . . . . . . .  AUTO     XDATA  U_INT    0005H  2
+SM0_FE . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      009FH  1
+CLKCON . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B2H  1
+API_COMM_STATUS_RECV_OK. . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+SM2_TXCOL. . . . . . . . . . . . . . .  ABSBIT   -----  BIT      009DH  1
+LDOCON . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B5H  1
+B. . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00F0H  1
+API_COMM_STATUS_RECV . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+EEPROM_MAP_TAB . . . . . . . . . . . .  EXTERN   XDATA  ARRAY    -----  -----
+_LibPub_HEXtoBCDBytes. . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+  V_ulSourceData . . . . . . . . . . .  AUTO     DATA   U_LONG   0004H  4
+  P_ucResultData . . . . . . . . . . .  AUTO     XDATA  PTR      0004H  3
+  V_ucLen. . . . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0007H  1
+  V_ucTurnTemp . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0008H  1
+  V_ulDataTemp . . . . . . . . . . . .  AUTO     XDATA  U_LONG   0009H  4
+EMU_CALPARA_Type . . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  22
+  ulaCalPara . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  20
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    0014H  2
+_LibPub_DelayNms . . . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+  v_uiNums . . . . . . . . . . . . . .  AUTO     XDATA  U_INT    0000H  2
+  V_ulCnt. . . . . . . . . . . . . . .  AUTO     XDATA  U_LONG   0002H  4
+CP_RL2 . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00C8H  1
+LIB_E2P_EMU_UIPKms . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+_LibPub_DECtoHEXBytes. . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+  P_ucSourceData . . . . . . . . . . .  AUTO     XDATA  PTR      0000H  3
+  V_ucDataLength . . . . . . . . . . .  * REG *  DATA   U_CHAR   0003H  1
+  V_ucFlagTemp . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0003H  1
+  V_ulTemp . . . . . . . . . . . . . .  AUTO     XDATA  U_LONG   0004H  4
+  V_ulDataTemp . . . . . . . . . . . .  AUTO     XDATA  U_LONG   0008H  4
+  V_ucTurnTemp . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   000CH  1
+GStr_UIP_GROUP_Type. . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  68
+  ulVoltage. . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  16
+  ulCurrent. . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0010H  16
+  ulPower. . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0020H  16
+  ulFactory. . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0030H  16
+  ulFrequency. . . . . . . . . . . . .  MEMBER   -----  U_LONG   0040H  4
+ENUM_API_COMM_STATUS . . . . . . . . .  TYPEDEF  -----  U_CHAR   -----  1
+LibPub_GetTimerBeat. . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+  V_ulTimeOld. . . . . . . . . . . . .  AUTO     XDATA  U_LONG   0000H  4
+  V_ulTimeNew. . . . . . . . . . . . .  AUTO     XDATA  U_LONG   0004H  4
+GStr_Counter . . . . . . . . . . . . .  EXTERN   XDATA  STRUCT   -----  9
+ACC. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E0H  1
+C51 COMPILER V9.54   LIBPUBLIC                                                             11/18/2021 18:53:12 PAGE 29  
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+ES0. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00ACH  1
+ET0. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00A9H  1
+ET1. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00ABH  1
+TF0. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      008DH  1
+ET2. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00ADH  1
+TF1. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      008FH  1
+RI1. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00D8H  1
+RB8. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      009AH  1
+TF2. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00CFH  1
+TH0. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   008CH  1
+INSCON . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0086H  1
+TH1. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   008DH  1
+uchar8 . . . . . . . . . . . . . . . .  TYPEDEF  -----  U_CHAR   -----  1
+TI1. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00D9H  1
+TB8. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      009BH  1
+TH2. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00CDH  1
+LIB_E2P_EMU_CALPARA_BAK. . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+_LibPub_CompareNBufs . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+  P_ucSourceData . . . . . . . . . . .  AUTO     XDATA  PTR      0000H  3
+  P_ucResultData . . . . . . . . . . .  AUTO     XDATA  PTR      0003H  3
+  V_ucLen. . . . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0006H  1
+  V_Num. . . . . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0007H  1
+  V_Mode . . . . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0008H  1
+  v_ucCmpMode. . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0009H  1
+  i. . . . . . . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   000AH  1
+GStr_Monitor . . . . . . . . . . . . .  EXTERN   XDATA  STRUCT   -----  59
+uint8_t. . . . . . . . . . . . . . . .  TYPEDEF  -----  U_CHAR   -----  1
+P. . . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00D0H  1
+GStr_UIP_DISPLAY_Type. . . . . . . . .  TYPEDEF  -----  STRUCT   -----  135
+  ucVoltage. . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  4
+  ucVoltageA . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0004H  4
+  ucVoltageB . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0008H  4
+  ucVoltageC . . . . . . . . . . . . .  MEMBER   -----  ARRAY    000CH  4
+  ucCOMMVoltage. . . . . . . . . . . .  MEMBER   -----  ARRAY    0010H  4
+  ucCOMMVoltageA . . . . . . . . . . .  MEMBER   -----  ARRAY    0014H  4
+  ucCOMMVoltageB . . . . . . . . . . .  MEMBER   -----  ARRAY    0018H  4
+  ucCOMMVoltageC . . . . . . . . . . .  MEMBER   -----  ARRAY    001CH  4
+  ucCurrent. . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0020H  4
+  ucCurrentA . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0024H  4
+  ucCurrentB . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0028H  4
+  ucCurrentC . . . . . . . . . . . . .  MEMBER   -----  ARRAY    002CH  4
+  ucCOMMCurrent. . . . . . . . . . . .  MEMBER   -----  ARRAY    0030H  4
+  ucCOMMCurrentA . . . . . . . . . . .  MEMBER   -----  ARRAY    0034H  4
+  ucCOMMCurrentB . . . . . . . . . . .  MEMBER   -----  ARRAY    0038H  4
+  ucCOMMCurrentC . . . . . . . . . . .  MEMBER   -----  ARRAY    003CH  4
+  ucPower. . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0040H  4
+  ucPowerA . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0044H  4
+  ucPowerB . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0048H  4
+  ucPowerC . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    004CH  4
+  ucCOMMPower. . . . . . . . . . . . .  MEMBER   -----  ARRAY    0050H  4
+  ucCOMMPowerA . . . . . . . . . . . .  MEMBER   -----  ARRAY    0054H  4
+  ucCOMMPowerB . . . . . . . . . . . .  MEMBER   -----  ARRAY    0058H  4
+  ucCOMMPowerC . . . . . . . . . . . .  MEMBER   -----  ARRAY    005CH  4
+  ucFactory. . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0060H  4
+  ucFactoryA . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0064H  4
+  ucFactoryB . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0068H  4
+  ucFactoryC . . . . . . . . . . . . .  MEMBER   -----  ARRAY    006CH  4
+C51 COMPILER V9.54   LIBPUBLIC                                                             11/18/2021 18:53:12 PAGE 30  
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+  ucCOMMFactory. . . . . . . . . . . .  MEMBER   -----  ARRAY    0070H  4
+  ucCOMMFactoryA . . . . . . . . . . .  MEMBER   -----  ARRAY    0074H  4
+  ucCOMMFactoryB . . . . . . . . . . .  MEMBER   -----  ARRAY    0078H  4
+  ucCOMMFactoryC . . . . . . . . . . .  MEMBER   -----  ARRAY    007CH  4
+  ucFrequency. . . . . . . . . . . . .  MEMBER   -----  ARRAY    0080H  4
+  ucMeterConst . . . . . . . . . . . .  MEMBER   -----  ARRAY    0084H  3
+TL0. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   008AH  1
+_LibPub_GetDiffTime. . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+  timer. . . . . . . . . . . . . . . .  AUTO     XDATA  U_LONG   0000H  4
+  basetimer. . . . . . . . . . . . . .  AUTO     XDATA  U_LONG   0004H  4
+  duration . . . . . . . . . . . . . .  AUTO     XDATA  U_LONG   0008H  4
+EX4. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00A8H  1
+TL1. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   008BH  1
+FLASHCON . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A7H  1
+LIB_E2P_Money_Para . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+TL2. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00CCH  1
+LIB_E2P_ENERGY_DECPULSE_BK . . . . . .  E_CONST  -----  U_CHAR   -----  1
+LIB_E2P_AvailTimer . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+RS0. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00D3H  1
+ADCDH. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C5H  1
+LIB_E2P_Price. . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+GStr_AVAIL_Type. . . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  41
+  us_IDAvailTimer. . . . . . . . . . .  MEMBER   -----  U_INT    0000H  2
+  ucBackMonFlag. . . . . . . . . . . .  MEMBER   -----  U_CHAR   0002H  1
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    0003H  2
+  ulAutRemainingTime . . . . . . . . .  MEMBER   -----  U_LONG   0005H  4
+  ucRechangeMoney. . . . . . . . . . .  MEMBER   -----  ARRAY    0009H  4
+  ucBuybeforeMoney . . . . . . . . . .  MEMBER   -----  ARRAY    000DH  4
+  ucbeforeFwEnergy . . . . . . . . . .  MEMBER   -----  ARRAY    0011H  4
+  ucbeforeBkEnergy . . . . . . . . . .  MEMBER   -----  ARRAY    0015H  4
+  ucE2Key. . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0019H  16
+GU_BoolWordVariable. . . . . . . . . .  TYPEDEF  -----  UNION    -----  2
+  BYTE . . . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  2
+  BIT. . . . . . . . . . . . . . . . .  MEMBER   -----  STRUCT   0000H  2
+TR0. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      008CH  1
+RS1. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00D4H  1
+PWMCON . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   009FH  1
+TR1. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      008EH  1
+_LibPub_Delay10xus . . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+  v_uiNums . . . . . . . . . . . . . .  * REG *  DATA   U_INT    0004H  2
+  V_ulCnt. . . . . . . . . . . . . . .  * REG *  DATA   U_INT    0002H  2
+char8. . . . . . . . . . . . . . . . .  TYPEDEF  -----  CHAR     -----  1
+TR2. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00CAH  1
+_LibPub_HEXtoAscii . . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+  p_ucSourceData . . . . . . . . . . .  AUTO     XDATA  PTR      0000H  3
+  p_ucResultData . . . . . . . . . . .  AUTO     XDATA  PTR      0003H  3
+  v_ucLen. . . . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0006H  1
+  V_ucCnti . . . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0007H  1
+  V_ucCntj . . . . . . . . . . . . . .  * REG *  DATA   U_CHAR   0007H  1
+  V_ucAscTemp. . . . . . . . . . . . .  AUTO     XDATA  ARRAY    0008H  2
+int8_t . . . . . . . . . . . . . . . .  TYPEDEF  -----  CHAR     -----  1
+ADCDL. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C4H  1
+ADT. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C2H  1
+LIB_E2P_INDEX. . . . . . . . . . . . .  TYPEDEF  -----  U_CHAR   -----  1
+_LibPub_CheckPassword. . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+  p_ucPsw. . . . . . . . . . . . . . .  AUTO     XDATA  PTR      0000H  3
+  V_ucTemp . . . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0003H  1
+C51 COMPILER V9.54   LIBPUBLIC                                                             11/18/2021 18:53:12 PAGE 31  
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+  V_ucCnt_i. . . . . . . . . . . . . .  * REG *  DATA   U_CHAR   0007H  1
+  V_ucTempBuff . . . . . . . . . . . .  AUTO     XDATA  ARRAY    0004H  11
+GStr_PRICE_Type. . . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  14
+  ucaPrice . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  4
+  ucaPurchaseMoneyAll. . . . . . . . .  MEMBER   -----  ARRAY    0004H  4
+  ucPurchaseTimes. . . . . . . . . . .  MEMBER   -----  ARRAY    0008H  4
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    000CH  2
+DPH. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0083H  1
+LibPub_Delay10us . . . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+DPL. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0082H  1
+SBUF1. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D9H  1
+COMM_BLE_EADV. . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+LIB_E2P_FUN_CONFIG . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+EXEN2. . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00CBH  1
+SBUF2. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00F9H  1
+EMU_COMM_CAL_TAB_Type. . . . . . . . .  TYPEDEF  -----  STRUCT   -----  2
+  ucCommDI1. . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0000H  1
+  ucEmuAddr. . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0001H  1
+LIB_E2P_ENERGY_DECPULSE_FW . . . . . .  E_CONST  -----  U_CHAR   -----  1
+SM11_RXOV1 . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00DEH  1
+PADCL. . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00BEH  1
+REN. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      009CH  1
+SCON1. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D8H  1
+_LibPub_0xFFCheckInt . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+  cp . . . . . . . . . . . . . . . . .  AUTO     XDATA  PTR      0000H  3
+  len. . . . . . . . . . . . . . . . .  * REG *  DATA   U_CHAR   0005H  1
+  i. . . . . . . . . . . . . . . . . .  * REG *  DATA   U_CHAR   0007H  1
+STATUS . . . . . . . . . . . . . . . .  TYPEDEF  -----  U_CHAR   -----  1
+LCDCON1. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D1H  1
+ADCON. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C1H  1
+SCON2. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00F8H  1
+TCON1. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   008FH  1
+LIB_E2P_EventValidPiont. . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+LIB_E2P_ENRGY. . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+_LibPub_Buffer4ToUlong32 . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+  p_ucBytesBuffer. . . . . . . . . . .  AUTO     XDATA  PTR      0000H  3
+  V_ulResult . . . . . . . . . . . . .  AUTO     XDATA  U_LONG   0003H  4
+  V_ucCnti . . . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0007H  1
+_LibPub_1Hex_2_1BCD. . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+  hexdata. . . . . . . . . . . . . . .  * REG *  DATA   U_CHAR   0007H  1
+LCDCON2. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D2H  1
+EDTAH. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0092H  1
+T2MOD. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C9H  1
+T2CON. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C8H  1
+_LibPub_Buffer2ToUshort16. . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+  p_ucBytesBuffer. . . . . . . . . . .  * REG *  DATA   PTR      0001H  3
+  v_usShort16Buffer. . . . . . . . . .  AUTO     XDATA  U_INT    0000H  2
+EMU_UIPKms_Type. . . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  14
+  ulaKmsuip. . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  12
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    000CH  2
+_LibPub_CompareData. . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+  P_ucData1. . . . . . . . . . . . . .  AUTO     XDATA  PTR      0000H  3
+  P_ucData2. . . . . . . . . . . . . .  AUTO     XDATA  PTR      0003H  3
+  v_ucDataLength . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0006H  1
+  v_ucCmpMode. . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0007H  1
+  V_ucCnt_i. . . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0008H  1
+_LibPub_CalSum . . . . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+C51 COMPILER V9.54   LIBPUBLIC                                                             11/18/2021 18:53:12 PAGE 32  
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+  pData. . . . . . . . . . . . . . . .  AUTO     XDATA  PTR      0000H  3
+  v_ucLen. . . . . . . . . . . . . . .  * REG *  DATA   U_CHAR   0005H  1
+  i. . . . . . . . . . . . . . . . . .  * REG *  DATA   U_CHAR   0006H  1
+  V_ucSum. . . . . . . . . . . . . . .  * REG *  DATA   U_CHAR   0007H  1
+GStr_FUN_CONFIG_Type . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  16
+  ucFunCurrentVal. . . . . . . . . . .  MEMBER   -----  U_CHAR   0000H  1
+  ucFunMeterConst. . . . . . . . . . .  MEMBER   -----  U_CHAR   0001H  1
+  ucRes. . . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0002H  12
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    000EH  2
+GStr_EventParaData . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  5
+  V_usEventID. . . . . . . . . . . . .  MEMBER   -----  U_INT    0000H  2
+  V_usEventAddr. . . . . . . . . . . .  MEMBER   -----  U_INT    0002H  2
+  V_ucEventLenth . . . . . . . . . . .  MEMBER   -----  U_CHAR   0004H  1
+LIB_E2P_Money. . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+_LibPub_MemCopyBytes . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+  pSourceData. . . . . . . . . . . . .  AUTO     XDATA  PTR      0000H  3
+  pTargetData. . . . . . . . . . . . .  AUTO     XDATA  PTR      0003H  3
+  len. . . . . . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0006H  1
+  i. . . . . . . . . . . . . . . . . .  * REG *  DATA   U_CHAR   0007H  1
+EDTAL. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0094H  1
+GStr_EEPROM_MAP. . . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  8
+  ucE2pAddressIndex. . . . . . . . . .  MEMBER   -----  U_INT    0000H  2
+  usE2pAddress . . . . . . . . . . . .  MEMBER   -----  U_INT    0002H  2
+  ucE2pSize. . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0004H  1
+  ucE2pLen . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0005H  1
+  ucIsCRC. . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0006H  1
+  ucIsBak. . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0007H  1
+EDTAM. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0093H  1
+TK0DIFH. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00BCH  1
+SADEN. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   009BH  1
+wchar_t. . . . . . . . . . . . . . . .  TYPEDEF  -----  CHAR     -----  1
+LIB_E2P_METER_INFO . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+_LibPub_ReadDataFromE2prom . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+  v_usAddrIndex. . . . . . . . . . . .  AUTO     XDATA  U_INT    0000H  2
+  v_ucOffset . . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0002H  1
+  ptr_ucData . . . . . . . . . . . . .  AUTO     XDATA  PTR      0003H  3
+  V_ucResult . . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0006H  1
+  V_ucIndex. . . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0007H  1
+  V_ucCnt. . . . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0008H  1
+  V_ucaE2pBuff . . . . . . . . . . . .  AUTO     XDATA  ARRAY    0009H  64
+  V_usCRC16. . . . . . . . . . . . . .  AUTO     XDATA  U_INT    0049H  2
+TK1DIFH. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00BEH  1
+PBANK. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B6H  1
+GStr_EventValidPiont_Type. . . . . . .  TYPEDEF  -----  STRUCT   -----  8
+  uc_Point . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  6
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    0006H  2
+TK2DIFH. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A5H  1
+EADTP. . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00AEH  1
+SADDR. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   009AH  1
+TK0DIFL. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00CFH  1
+_DrvE2p_ReadData . . . . . . . . . . .  EXTERN   CODE   PROC     -----  -----
+LIB_E2P_ENERGY_DECPULSE_WS . . . . . .  E_CONST  -----  U_CHAR   -----  1
+_LibPub_NBytesBCDSub . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+  p_ucBufA . . . . . . . . . . . . . .  AUTO     XDATA  PTR      0000H  3
+  p_ucBufB . . . . . . . . . . . . . .  AUTO     XDATA  PTR      0003H  3
+  v_ucLen. . . . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0006H  1
+  V_ucCnt_i. . . . . . . . . . . . . .  * REG *  DATA   U_CHAR   0007H  1
+C51 COMPILER V9.54   LIBPUBLIC                                                             11/18/2021 18:53:12 PAGE 33  
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+  V_ucCnt_j. . . . . . . . . . . . . .  * REG *  DATA   U_CHAR   0005H  1
+  V_ucCnt_k. . . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0007H  1
+  V_ucBfCarry. . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0008H  1
+GStr_MONEY_Type. . . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  14
+  ucaRemainMoney . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  6
+  ucaTickMoney . . . . . . . . . . . .  MEMBER   -----  ARRAY    0006H  6
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    000CH  2
+TK1DIFL. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00BDH  1
+TK2DIFL. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00BFH  1
+P7816L . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00BAH  1
+LPDCON1. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C6H  1
+LIB_E2P_EMU_UIPKms_BAK . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+LPDCON2. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C7H  1
+MAX_BLE_INDEX. . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+LIB_E2P_SecretKey. . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+F0 . . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00D5H  1
+IRDAT. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00AEH  1
+fcstab . . . . . . . . . . . . . . . .  PUBLIC   CODE   ARRAY    0000H  512
+_LibPub_MemExchangeBytes . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+  pSourceData. . . . . . . . . . . . .  AUTO     XDATA  PTR      0000H  3
+  pTargetData. . . . . . . . . . . . .  AUTO     XDATA  PTR      0003H  3
+  len. . . . . . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0006H  1
+  V_ucCnt. . . . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0007H  1
+F1 . . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00D1H  1
+EMUIE. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0096H  1
+SFINE. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   009EH  1
+XPAGE. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00F7H  1
+Gstr_VirtualEsam . . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  64
+  ucTempKey. . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  16
+  ucDisKey . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0010H  16
+  ucComplexKey . . . . . . . . . . . .  MEMBER   -----  ARRAY    0020H  16
+  ucRs485RandNum . . . . . . . . . . .  MEMBER   -----  ARRAY    0030H  8
+  ucRs485RandNum2. . . . . . . . . . .  MEMBER   -----  ARRAY    0038H  8
+GStr_MONEY_PARA_Type . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  25
+  ucaAlarmMoneyL1. . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  4
+  ucaAlarmMoneyL2. . . . . . . . . . .  MEMBER   -----  ARRAY    0004H  4
+  ucaMaxMoneyLimit . . . . . . . . . .  MEMBER   -----  ARRAY    0008H  4
+  ucaTickMoneyLimit. . . . . . . . . .  MEMBER   -----  ARRAY    000CH  4
+  ucaAllowcloseMoney . . . . . . . . .  MEMBER   -----  ARRAY    0010H  4
+  ucaOverLoadVal . . . . . . . . . . .  MEMBER   -----  ARRAY    0014H  3
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    0017H  2
+INT8S. . . . . . . . . . . . . . . . .  TYPEDEF  -----  CHAR     -----  1
+EMUIF. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0097H  1
+API_COMM_STATUS_FRAME_OK . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+INT8U. . . . . . . . . . . . . . . . .  TYPEDEF  -----  U_CHAR   -----  1
+PSW. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D0H  1
+_LibPub_MemSetBytes. . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+  p_ucdatahead . . . . . . . . . . . .  AUTO     XDATA  PTR      0000H  3
+  v_ucVal. . . . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0003H  1
+  v_usLen. . . . . . . . . . . . . . .  AUTO     XDATA  U_INT    0004H  2
+  V_ucCnt_i. . . . . . . . . . . . . .  * REG *  DATA   U_INT    0006H  2
+FP32 . . . . . . . . . . . . . . . . .  TYPEDEF  -----  FLOAT    -----  4
+uint32_t . . . . . . . . . . . . . . .  TYPEDEF  -----  U_LONG   -----  4
+API_COMM_STATUS_FRAME. . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+RB81 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00DAH  1
+SPDAT. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A3H  1
+IB_CON1. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00F2H  1
+
+C51 COMPILER V9.54   LIBPUBLIC                                                             11/18/2021 18:53:12 PAGE 34  
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   5281    ----
+   CONSTANT SIZE    =    512    ----
+   XDATA SIZE       =   ----     278
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

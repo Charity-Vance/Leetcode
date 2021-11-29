@@ -1,0 +1,1926 @@
+C51 COMPILER V9.54   APPEMUATT7036                                                         11/18/2021 18:53:11 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE APPEMUATT7036
+OBJECT MODULE PLACED IN .\AppEMUAtt7036.obj
+COMPILER INVOKED BY: C:\Program Files (x86)\Keil_v5 FMSH\C51\BIN\C51.EXE ..\SourceFiles\APP\AppEMUAtt7036.c LARGE OBJECT
+                    -ADVANCED OPTIMIZE(8,SPEED) BROWSE DEFINE(DDSY666) DEBUG SYMBOLS PRINT(.\AppEMUAtt7036.lst) OBJECT(.\AppEMUAtt7036.obj)
+
+line level    source
+
+   1          /*******************************************************************************************************
+   2          **** Copyright£º  (c)Copyright 2019,Õã½­ÕýÌ©ÒÇÆ÷ÒÇ±íÓÐÏÞÔðÈÎ¹«Ë¾,µçÄÜ±íÓ¦ÓÃÑÐ·¢                       
+   3          ****                            All rights reserved.                                                 
+   4          **** FileName:    AppEMUAtt7036.c                                                                         
+             - 
+   5          **** Brief:       7036¼ÆÁ¿Ð¾Æ¬ÎÄ¼þ                                                                    
+   6          **** Author:      peter.he@chint.com                                                                 
+   7          **** Version:     V1.0                                                                               
+   8          **** Date:        2016-7-14                                                                          
+   9          ****                                                                                                 
+  10          **** note:ÐÞ¸ÄÀúÊ·¼ÇÂ¼ÁÐ±í£¬Ã¿ÌõÐÞ¸Ä¼ÇÂ¼Ó¦°üÀ¨ÐÞ¸ÄÈÕÆÚ¡¢ÐÞ¸ÄÕß                                          
+  11          **** 1.  Author:                                                                                     
+  12          ****     Version:                                                                                    
+  13          ****     Date :                                                                                      
+  14          **** 2.  Author:                                                                                     
+  15          ****     Version:                                                                                       
+  16          ****     Date:
+  17          ****                                                                                        
+  18          ****  addtogroup:Library                                                             
+  19          **********************************************************************************************************
+             -/
+  20          
+  21          /*--------------------------------- ÎÄ¼þ¹¦ÄÜËµÃ÷ -------------------------------------------------------*/
+  22          /*
+  23           *  ¸ÃÎÄ¼þËùÓÐº¯ÊýµÄÇ°×ºÎªApiEMU_
+  24           *  ÎÄ¼þÖ÷º¯ÊýºÍ¶ÔÍâº¯ÊýÐè·ÅÔÚÎÄ¼þµÄÊ×²¿£¬²¢ÇÒÖ÷º¯ÊýÐèÒª·ÅÔÚµÚÒ»¸öÎ»ÖÃ;
+  25           *  º¯Êý×¢ÊÍ²ÉÓÃ±ê×¼Ä£°å£¬º¯ÊýÄÚ²¿×¢ÊÍ²ÉÓÃ//;
+  26           *  ¶ÔÓÚ×¢ÊÍ½Ï¶àµÄ²¿·Ö£¬¿ÉÒÔÔö¼ÓÒ»¸ö×¢ÊÍ·û£¬È»ºóÏêÏ¸ËµÃ÷·ÅÔÚÎÄ¼þµÄÎ²²¿;
+  27           *--------------------------------- ÎÄ¼þ¹¦ÄÜËµÃ÷ -------------------------------------------------------*/
+  28           
+  29          /**ÓÐÐÎ²ÎµÄº¯Êý¸ñÊ½:*/
+  30          /*------------------------------------------------------------------------------------------------------*/
+  31          /**
+  32           *  @brief    xxÈÎÎñ´¦Àíº¯Êý
+  33           *
+  34           *  @param    xx :
+  35           *
+  36           *  @return   xx
+  37           *
+  38           *  @note     xx
+  39           *
+  40           */
+  41          /*------------------------------------------------------------------------------------------------------*/
+  42          /**ÎÞÐÎ²ÎµÄº¯Êý¸ñÊ½:*/
+  43          /*------------------------------------------------------------------------------------------------------*/
+  44          /**
+  45           *  @brief    ÉÏµçËùÓÐ¿ÚÏßÅäÖÃ³É³õÊ¼×´Ì¬£¬ºóÃæ¿É¸ù¾ÝÐèÒª¿ªÆôºÍÅäÖÃ
+  46           *
+  47           *  @return   xx
+  48           *
+  49           *  @note     xx
+  50           *
+  51           */
+  52          /*------------------------------------------------------------------------------------------------------*/
+C51 COMPILER V9.54   APPEMUATT7036                                                         11/18/2021 18:53:11 PAGE 2   
+
+  53           
+  54           
+  55          /*----------------< °üº¬ÎÄ¼þ >----------------------------------*/
+  56          #include "..\SourceFiles\PUB\Include.h"
+  57          #if ( METER_TYPE == METER_TYPE_DTSY666)
+              /*----------------< ºê¶¨ÒåÇø >----------------------------------*/
+              
+              #define chk_reg_num     28
+              #define const_reg_num   11
+              #define C_ClearVoltage   50///µçÑ¹µÍÓÚ5VÃðÁã
+              /*----------------< ³£Á¿¶¨Òå >----------------------------------*/
+              uchar8 xdata GA_EmuRegData[TRIPEMU_CALPARA_Type_LEN];
+              
+              const ulong32 code Dl_Cpu_Init[chk_reg_num]=
+              {
+                      0x37007FFF,///ÏàÎ»ÇøÓò0
+                      0x60000000,///ÏàÎ»ÇøÓò1   ///Ç°Ãæ4¸öÎªÅäÖÃÊý¾Ý
+                      0x36000030,///Æð¶¯¹¦ÂÊ·§ÖµÉèÖÃ
+                      0x1E000050,///HFCONST
+                      
+                      0x04000000,///AÏàÓÐ¹¦¹¦ÂÊÔöÒæ
+                      0x05000000,///B
+                      0x06000000,///C
+                      0x07000000,///AÏàÎÞ¹¦¹¦ÂÊÔöÒæ
+                      0x08000000,///B
+                      0x09000000,///C
+                      0x0A000000,///AÏàÊÓÔÚ¹¦ÂÊÔöÒæ
+                      0x0B000000,///B
+                      0x0C000000,///C
+                      0x0D000000,///AÏàÏàÎ»Ð£Õý0
+                      0x0E000000,///B
+                      0x0F000000,///C
+                      0x10000000,///AÏàÏàÎ»Ð£Õý1
+                      0x11000000,///B
+                      0x12000000,///C
+                      0x17000000,///AÏàµçÑ¹ÔöÒæ
+                      0x18000000,///BÏàµçÑ¹ÔöÒæ
+                      0x19000000,///CÏàµçÑ¹ÔöÒæ
+                      0x1A000000,///AÏàµçÁ÷ÔöÒæ
+                      0x1B000000,///BÏàµçÁ÷ÔöÒæ
+                      0x1C000000,///CÏàµçÁ÷ÔöÒæ
+                      0x61000000,///AÏàÏàÎ»Ð£Õý2
+                      0x62000000,///BÏàÏàÎ»Ð£Õý2
+                      0x63000000,///CÏàÏàÎ»Ð£Õý2
+              };
+              
+              const ulong32 code Const_Cpu_Init[const_reg_num]=
+              {
+                      0x0100B97E  ,///Ä£Ê½Ïà¹Ø¿ØÖÆ
+                      0x0300F884,      ///EMUÄ£¿é¿ØÖÆ¼Ä´æÆ÷
+                      0x31003427,      ///µçÂ·Ä£¿é¿ØÖÆ¼Ä´æÆ÷
+                      0x02000100, ///ADCÔöÒæÑ¡Ôñ
+                      0x1F000000,///Ê§Ñ¹ãÐÖµÑ¡Ôñ
+                      0x1D000160,///Æð¶¯µçÁ÷ÉèÖÃ
+                      0x27000007,///AÏàµçÁ÷ÓÐÐ§ÖµoffsetÐ£Õý
+                      0x28000007,///BÏàµçÁ÷ÓÐÐ§ÖµoffsetÐ£Õý?
+                      0x29000007,///CÏàµçÁ÷ÓÐÐ§ÖµoffsetÐ£Õý
+                      0x70000000,///EMUCFG
+                      0x33003300,///Âö³å³£Êý±¶Êý
+                      
+              };
+              
+C51 COMPILER V9.54   APPEMUATT7036                                                         11/18/2021 18:53:11 PAGE 3   
+
+              ///µçÄÜÊý¾Ý¼Ä´æÆ÷
+              const uchar8 Str_EnergyRegADDr[]=
+              {
+                      C_ActiveEnergy_TReg,
+                      C_ActiveEnergy_AReg,
+                      C_ActiveEnergy_BReg,
+                      C_ActiveEnergy_CReg,
+                      C_ReativeEnergy_TReg,
+                      C_ReativeEnergy_AReg,
+                      C_ReativeEnergy_BReg,
+                      C_ReativeEnergy_CReg,
+                      C_ApparentEnergy_TReg,
+                      C_ApparentEnergy_AReg,
+                      C_ApparentEnergy_BReg,
+                      C_ApparentEnergy_CReg
+              };
+              ///Ë²Ê±Á¿Êý¾Ý¼Ä´æÆ÷
+              const uchar8 Str_RmsRegADDr[]=
+              {
+                      C_rPa,          //AÏàÓÐ¹¦¹¦ÂÊ0
+                      C_rPb,          //BÏàÓÐ¹¦¹¦ÂÊ1
+                      C_rPc,          //CÏàÓÐ¹¦¹¦ÂÊ2
+                      C_rPt,          //ºÏÏàÓÐ¹¦¹¦ÂÊ3
+                      C_UaRms ,   //AÏàµçÑ¹ÓÐÐ§Öµ4
+                      C_UbRms ,   //BÏàµçÑ¹ÓÐÐ§Öµ5
+                  C_UcRms     ,   //CÏàµçÑ¹ÓÐÐ§Öµ6
+                      C_UtRms ,       //ºÏÏàµçÑ¹ÓÐÐ§Öµ±íÓÃ7
+                      C_IaRms ,       //AÏàµçÁ÷ÓÐÐ§Öµ8
+                      C_IbRms ,       //BÏàµçÁ÷ÓÐÐ§Öµ9
+                      C_IcRms ,       //CÏàµçÁ÷ÓÐÐ§Öµ10
+                      C_ItRms ,       //ºÏÏàµçÁ÷ÓÐÐ§Öµ11
+                      C_Pfa   ,       //AÏà¹¦ÂÊÒòÊý12
+                      C_Pfb   ,       //BÏà¹¦ÂÊÒòÊý13
+                      C_Pfc   ,       //CÏà¹¦ÂÊÒòÊý14
+                      C_Pft   ,       //ºÏÏà¹¦ÂÊÒòÊý15
+                      C_Freq  ,       //ÏßÆµÂÊ16
+              };      
+              
+              #define C_ucUIPREG_TAB_Index  sizeof(Str_RmsRegADDr)
+                              
+              ///Ð£±íÓÃ
+              EMU_COMM_TRIPCAL_TAB_Type code EMU_COMM_TRIPEMUC_TAB[]={   ////¿É¶ÁÐ´
+                      { 0x00,         {C_PGainA       ,   C_PGainB            ,C_PGainC               }       ,       },  ///ÓÐ¹¦¹¦ÂÊÔöÒæÐ£Õý
+                      { 0x01,         {C_QGainA       ,   C_QGainB            ,C_QGainC               }       ,       },  ///ÎÞ¹¦¹¦ÂÊÔöÒæÐ£Õý
+                      { 0x02,         {C_SGainA       ,   C_SGainB            ,C_SGainC               }       ,       },  ///ÊÓÔÚ¹¦ÂÊÔöÒæÐ£Õý
+                      { 0x04,         {C_UGainA       ,   C_UGainB            ,C_UGainC               }       ,       },  ///µçÑ¹ÔöÒæÐ£Õý
+                      { 0x06,         {C_IGainA       ,   C_IGainB            ,C_IGainC               }       ,       },  ///µçÁ÷ÔöÒæÐ£Õý
+                      { 0x08,         {C_PhSregApq0   ,   C_PhSregBpq0        ,C_PhSregCpq0   }       ,       },  ///´óµçÁ÷ÏàÎ»Ð£Õý
+                      { 0x09,         {C_PhSregApq1   ,   C_PhSregBpq1        ,C_PhSregCpq1   }       ,       },  ///ÖÐµçÁ÷ÏàÎ»Ð£Õý
+                      { 0x0A,         {C_PhSregApq2   ,   C_PhSregBpq2        ,C_PhSregCpq2   }       ,       },  ///Ð¡µçÁ÷ÏàÎ»Ð£Õý   
+              };
+              
+              EMU_Read_TRIPCAL_TAB_Type code EMU_READ_TRIPEMUC_TAB[]={   ////Ö»¶Á
+                      { 0x03,         {       C_rPa           ,   C_rPb               ,C_rPc          ,C_rPt          },      },  ///¹¦ÂÊ
+                      { 0x05,         {       C_UaRms         ,   C_UbRms     ,C_UcRms        ,C_UtRms        },      },  ///µçÑ¹
+                      { 0x07,         {       C_IaRms         ,   C_IbRms     ,C_IcRms        ,C_ItRms        },      },  ///µçÁ÷
+                      
+              };
+              
+              /*----------------< ±äÁ¿¶¨Òå >----------------------------------*/
+              
+              TRIPEMU_CALPARA_Type    Str_TRIPEmuCalPara;             // Ð£±í²ÎÊý
+C51 COMPILER V9.54   APPEMUATT7036                                                         11/18/2021 18:53:11 PAGE 4   
+
+              
+              TRIPEMU_UIPKms_Type             Str_TRIPUIPKmsPara;             // Ë²Ê±Á¿ÏµÊý
+              /*----------------< º¯ÊýÉùÃ÷ >----------------------------------*/
+              static uchar8 AppEMU_TripCheckCalParaCRC( void );
+              static void AppEMU_ClearCalReg_MeterIC(void);
+              
+              void  ApiEMU_EMUInit();
+              uchar8 AppEMU_TripReadEmuReg( uchar8 v_ucChID );
+              void ApiEMU_CommEndCal( uchar8 v_ucChID );
+              uchar8 ApiEMU_CommErrCal( uchar8 v_ucChID );
+              void ApiEMU_CommStartCal(v_ucChID);
+              void AppEMU_TRipCommSetReg( uchar8 v_ucChID );
+              void AppEMU_WriteOneReg_MeterIC(uchar8 *P_Data,uchar8 V_RegAddr);
+              void AppEMU_WriteRegToEE(uchar8 *P_Data,uchar8 V_RegAddr);
+              void  ApiEMU_EMUParaCheck();
+              void ApiEMU_DisOrEnable(uchar8 v_ucWorkMode);
+                      
+              void Hal_EraseFlashSector(INT16U adr, INT8U dat, INT8U sta);
+              INT8U Hal_ReadEEPROM(INT8U  *Dst, INT16U Src, INT16U Len);
+              INT8U Hal_WriteEEPROM(INT16U Dst, INT8U  *Src, INT16U Len);
+              /*----------------< º¯Êý¶¨Òå >----------------------------------*/
+              
+              /*------------------------------------------------------------------------------------------------------*/
+              /**
+               *  @brief    Ê¹ÄÜ/¹Ø±Õ¼ÆÁ¿Ä£¿é
+               *
+               *  @return   xx
+               *
+               *  @note     xx
+               *
+               */
+              /*------------------------------------------------------------------------------------------------------*/
+              void ApiEMU_DisOrEnable(uchar8 v_ucWorkMode)
+              {
+                      if( EMU_ENABLE == v_ucWorkMode )        // Ê¹ÄÜ¼ÆÁ¿Ä£¿é
+                      {
+                              SPIDrv_Eable_MeterIC();
+                      }
+                      else    // ¹Ø±Õ¼ÆÁ¿Ä£¿é
+                      {
+                              SPIDrv_Disable_MeterIC();
+                      }
+              }
+              
+              ///*****************************************************************************************///
+              ///*º¯ÊýÔ­ÐÍ£ºvoid SPIDrv_WriteEnable_MeterIC(void)
+              ///*¹¦ÄÜÃèÊö£º¼ÆÁ¿Ð¾Æ¬Ð´Ê¹ÄÜ
+              ///*ÊäÈë²ÎÊý£ºÎÞ
+              ///*Êä³ö²ÎÊý£ºÎÞ
+              ///*·µ»Ø²ÎÊý£ºÎÞ
+              ///*¹¦ÄÜËµÃ÷£º¼ÆÁ¿Ð¾Æ¬Ð´Ê¹ÄÜÖ÷ÒªÊÇ¶Ô¼ÆÁ¿Ð¾Æ¬C9ÌØÊâ¼Ä´æÆ÷½øÐÐ²Ù×÷£¬Ð´Èë0x000000ÎªÐ´Ê§ÄÜ£¬Ð´Èë0x00005AÎªÐ´Ê¹
+             -ÄÜ
+              ///*µ÷ÓÃ»úÖÆ£º
+              ///*±¸    ×¢£º
+              ///*****************************************************************************************///
+              void AppEMU_WriteEnable_MeterIC(void)
+              {
+                      uchar8 V_Data[4],i;
+                      ulong32 V_EnWriteData;
+                      V_EnWriteData=0xC900005A;       //Ð´Ê¹ÄÜÖ±½ÓÐ´Èë0xC900005A¸ß×Ö½ÚÎªÌØÊâ¼Ä´æÆ÷µØÖ·,µÍÈý×Ö½ÚÎªÐ´ÈëÊý¾Ý
+                      SPIDrv_Eable_MeterIC();
+                      LibPub_Ulong32ToBuffer4(&V_Data[0],V_EnWriteData);///¸Ã×ª»»Îª´ó¶Ë£¬ÒªÏÈÐ´C9¼¶data0
+C51 COMPILER V9.54   APPEMUATT7036                                                         11/18/2021 18:53:11 PAGE 5   
+
+                      for(i=4;i>0;i--)
+                      {
+                              SPIDrv_SendBtye(V_Data[4-i]);
+                      }
+                      SPIDrv_Disable_MeterIC();
+              }
+              ///*****************************************************************************************///
+              ///*º¯ÊýÔ­ÐÍ£ºvoid SPIDrv_WriteDisable_MeterIC(void)
+              ///*¹¦ÄÜÃèÊö£º¼ÆÁ¿Ð¾Æ¬Ð´Ê§ÄÜ
+              ///*ÊäÈë²ÎÊý£ºÎÞ
+              ///*Êä³ö²ÎÊý£ºÎÞ
+              ///*·µ»Ø²ÎÊý£ºÎÞ
+              ///*¹¦ÄÜËµÃ÷£º¼ÆÁ¿Ð¾Æ¬Ð´Ê¹ÄÜÖ÷ÒªÊÇ¶Ô¼ÆÁ¿Ð¾Æ¬C9ÌØÊâ¼Ä´æÆ÷½øÐÐ²Ù×÷£¬Ð´Èë0x000000ÎªÐ´Ê§ÄÜ£¬Ð´Èë0x00005AÎªÐ´Ê¹
+             -ÄÜ
+              ///*µ÷ÓÃ»úÖÆ£º
+              ///*±¸    ×¢£º
+              ///*****************************************************************************************///
+              void AppEMU_WriteDisable_MeterIC(void)
+              {
+                      uchar8 V_Data[4],i;
+                      ulong32 V_DisWriteData;
+                      V_DisWriteData=0xC9000000;      //Ð´Ê§ÄÜÖ±½ÓÐ´Èë0xc9000000¸ß×Ö½ÚÎªÌØÊâ¼Ä´æÆ÷µØÖ·,µÍÈý×Ö½ÚÎªÐ´ÈëÊý¾Ý
+                      SPIDrv_Eable_MeterIC();
+                      LibPub_Ulong32ToBuffer4(&V_Data[0],V_DisWriteData);///¸Ã×ª»»Îª´ó¶Ë£¬ÐèÏÈÐ´data0
+                      for(i=0;i<4;i++)
+                      {
+                              SPIDrv_SendBtye(V_Data[i]);
+                      }
+                      SPIDrv_Disable_MeterIC();
+              }
+              
+              ///*****************************************************************************************///
+              ///*º¯ÊýÔ­ÐÍ£ºvoid SPIDrv_ReadDataModeSet(uchar8 V_Data)
+              ///*¹¦ÄÜÃèÊö£ºÑ¡Ôñ¼ÆÁ¿Ð¾Æ¬¼Ä´æÆ÷¶ÁÈ¡¿ØÖÆ:¶ÁÈ¡¼ÆÁ¿²ÎÊý¼Ä´æÆ÷ºÍ¶ÁÈ¡Ð£±í²ÎÊý¼Ä´æÆ÷
+              ///*ÊäÈë²ÎÊý£º00=¶ÁÈ¡¼ÆÁ¿Êý¾Ý¼Ä´æÆ÷£»01=¶ÁÈ¡Ð£±í²ÎÊý¼Ä´æÆ÷
+              ///*Êä³ö²ÎÊý£ºÎÞ
+              ///*·µ»Ø²ÎÊý£ºÎÞ
+              ///*¹¦ÄÜËµÃ÷£º¶ÁÈ¡¼ÆÁ¿Ð¾Æ¬¼Ä´æÆ÷ÉèÖÃº¯Êý£¬Í¨¹ýÅäÖÃÌØÊâ¼Ä´æÆ÷C6Îª0x000000¶ÁÈ¡¼ÆÁ¿²ÎÊý¼Ä´æÆ÷¡¢Îª0x00005A¶ÁÈ¡
+             -Ð£±í²ÎÊý¼Ä´æÆ÷
+              ///*µ÷ÓÃ»úÖÆ£º
+              ///*±¸    ×¢£º
+              ///*****************************************************************************************///
+              void AppEMU_ReadDataModeSet(uchar8 V_ModeData)
+              {
+                      uchar8 V_Data[4],i;
+                      ulong32 V_EnWriteData;
+                      if(V_ModeData==C_MeterPara)
+                      {
+                              V_EnWriteData=0xC6000000;       //¼ÆÁ¿Ð¾Æ¬ÉèÖÃÎª¶ÁÈ¡(¼ÆÁ¿)²ÎÊý¸ß×Ö½ÚÎª¼Ä´æÆ÷µØÖ·£¬µÍÈý×Ö½ÚÎªÐ´ÈëÊý¾Ý
+                      }
+                      else
+                      {
+                              V_EnWriteData=0xC600005A;       //¼ÆÁ¿Ð¾Æ¬ÉèÖÃÎª¶ÁÈ¡(Ð£±í)²ÎÊý¸ß×Ö½ÚÎª¼Ä´æÆ÷µØÖ·£¬µÍÈý×Ö½ÚÎªÐ´ÈëÊý¾Ý
+                      }
+                      SPIDrv_Eable_MeterIC();         //CSÊ¹ÄÜ¼ÆÁ¿Ð¾Æ¬
+                      LibPub_Ulong32ToBuffer4(&V_Data[0],V_EnWriteData);
+                      for(i=4;i>0;i--)
+                      {
+                              SPIDrv_SendBtye(V_Data[4-i]);
+                      }
+                      SPIDrv_Disable_MeterIC();       //CSÊ§ÄÜ¼ÆÁ¿Ð¾Æ¬
+              }
+C51 COMPILER V9.54   APPEMUATT7036                                                         11/18/2021 18:53:11 PAGE 6   
+
+              ///*****************************************************************************************///
+              ///*º¯ÊýÔ­ÐÍ£ºvoid SPI_ReadOneReg_MeterIC(uchar8 V_usRegAddr, uchar8* P_Data)
+              ///*¹¦ÄÜÃèÊö£º´Ó¼ÆÁ¿Ð¾Æ¬¼ÆÁ¿²ÎÊý¼Ä´æÆ÷ÖÐ¶ÁÈ¡Èý×Ö½ÚÊý¾Ý
+              ///*ÊäÈë²ÎÊý£º
+              ///*            uchar8 V_usRegAddr£ºÔ¤¶ÁÈ¡¼ÆÁ¿Ð¾Æ¬¼Ä´æÆ÷µØÖ·
+              ///*            uchar8* P_Data£ºÊý¾Ý×ª´æÖ¸Õë
+              ///*            uchar8 V_MeaORCal  00:¶ÁÈ¡¼ÆÁ¿²ÎÊý¼Ä´æÆ÷   01:¶ÁÈ¡Ð£±í²ÎÊý¼Ä´æÆ÷
+              ///*Êä³ö²ÎÊý£º uchar8* P_DataÊý¾ÝÖ¸ÕëÖÐ´æ´¢V_usRegAddrµØÖ·ÏÂµÄÈý×Ö½ÚÊý¾Ý(7038Ð¾Æ¬¶ÁÈ¡µÄ¼ÆÁ¿²ÎÊýÎªÈý×Ö½ÚÓÐÐ
+             -§£¬Ð£±í²ÎÊýÎªÁ½×Ö½ÚÓÐÐ§)
+              ///*·µ»Ø²ÎÊý£º¶ÁÈ¡³É¹¦C_OK
+              ///*¹¦ÄÜËµÃ÷£º
+              ///*µ÷ÓÃ»úÖÆ£º
+              ///*±¸    ×¢£º
+              ///*****************************************************************************************///
+              void AppEMU_ReadOneReg_MeterIC(uchar8 V_usRegAddr, uchar8* P_Data,uchar8 V_MeaORCal)
+              {
+                      AppEMU_ReadDataModeSet(V_MeaORCal);     
+                      SPIDrv_Eable_MeterIC();
+                      SPIDrv_SendBtye(V_usRegAddr&0x7F);
+                      LibPub_Delay2us();
+                      *P_Data=SPIDrv_ReceiveByte();
+                      *(P_Data+1)=SPIDrv_ReceiveByte();
+                      *(P_Data+2)=SPIDrv_ReceiveByte();
+                      SPIDrv_Disable_MeterIC();
+              }
+              
+              ///*****************************************************************************************///
+              ///*º¯ÊýÔ­ÐÍ£ºuchar8 SPIDrv_WriteOneReg_MeterIC(uchar8 *P_Data,uchar8 V_RegAddr)
+              ///*¹¦ÄÜÃèÊö£º½«Èý×Ö½ÚÊý¾ÝÐ´Èë¼ÆÁ¿Ð¾Æ¬¼Ä´æÆ÷Ö¸¶¨µØÖ·(½öÊÊÓÃÓÚÐ´Ð£±í²ÎÊý¼Ä´æÆ÷)
+              ///*ÊäÈë²ÎÊý£º
+              ///*            uchar8 *P_Data£ºÔ¤Ð´ÈëÊý¾ÝÖ¸Õë
+              ///*            uchar8 V_RegAddr£º¼ÆÁ¿Ð¾Æ¬¼Ä´æÆ÷µØÖ·
+              ///*Êä³ö²ÎÊý£ºÎÞ37
+              ///*·µ»Ø²ÎÊý£º
+              ///*            C_OK£ºÐ´Èë³É¹¦
+              ///*¹¦ÄÜËµÃ÷£ºÍ¨¹ýÐ´Ò»×Ö½ÚÊý¾Ý£¬Ð´Èë½«µØÖ·£¬µØÖ·Êý¾ÝÊ×Î»ÒªÖÃ1£¬È»ºóµ÷ÓÃ3´ÎÐ´Ò»×Ö½ÚÊý¾Ý£¬°´´Ó¸ß×Ö½Úµ½µÍ×Ö½Ú
+             -½«3×Ö½ÚÊý¾ÝÐ´Èë¼ÆÁ¿Ð¾Æ¬
+              ///*µ÷ÓÃ»úÖÆ£º
+              ///*±¸    ×¢£º
+              ///*****************************************************************************************///
+              void AppEMU_WriteOneReg_MeterIC(uchar8 *P_Data,uchar8 V_RegAddr)
+              {
+                      uchar8 V_Data[3],i;
+                      V_Data[0]=*P_Data;
+                      V_Data[1]=*(P_Data+1);
+                      V_Data[2]=*(P_Data+2);
+                      AppEMU_WriteEnable_MeterIC();
+                      SPIDrv_Eable_MeterIC();
+                      SPIDrv_SendBtye(V_RegAddr|0x80);        //µØÖ·Êý¾ÝÊ×Î»ÖÃ1£¬Ð´ÈëÊý¾Ý
+                      for(i=3;i>0;i--)
+                      {
+                              SPIDrv_SendBtye(V_Data[3-i]);
+                      }
+                      SPIDrv_Disable_MeterIC();
+                      AppEMU_WriteDisable_MeterIC();
+              }
+              ///*****************************************************************************************///
+              ///*º¯ÊýÔ­ÐÍ£ºuchar8 AppEMU_WriteRegToEE(uchar8 *P_Data,uchar8 V_RegAddr)
+              ///*¹¦ÄÜÃèÊö£º½«Èý×Ö½ÚÊý¾ÝÐ´ÈëÀàEE(½öÊÊÓÃÓÚÐ´Ð£±í²ÎÊý¼Ä´æÆ÷)
+              ///*ÊäÈë²ÎÊý£º
+              ///*            uchar8 *P_Data£ºÔ¤Ð´ÈëÊý¾ÝÖ¸Õë
+              ///*            uchar8 V_RegAddr£º¼ÆÁ¿Ð¾Æ¬¼Ä´æÆ÷µØÖ·
+C51 COMPILER V9.54   APPEMUATT7036                                                         11/18/2021 18:53:11 PAGE 7   
+
+              ///*Êä³ö²ÎÊý£ºÎÞ37
+              ///*·µ»Ø²ÎÊý£º
+              ///*            C_OK£ºÐ´Èë³É¹¦
+              ///*¹¦ÄÜËµÃ÷£ºÍ¨¹ýÐ´Ò»×Ö½ÚÊý¾Ý£¬Ð´Èë½«µØÖ·£¬µØÖ·Êý¾ÝÊ×Î»ÒªÖÃ1£¬È»ºóµ÷ÓÃ3´ÎÐ´Ò»×Ö½ÚÊý¾Ý£¬°´´Ó¸ß×Ö½Úµ½µÍ×Ö½Ú
+             -½«3×Ö½ÚÊý¾ÝÐ´Èë¼ÆÁ¿Ð¾Æ¬
+              ///*µ÷ÓÃ»úÖÆ£º
+              ///*±¸    ×¢£º
+              ///*****************************************************************************************///
+              void AppEMU_WriteRegToEE(uchar8 *P_Data,uchar8 V_RegAddr)
+              {
+                      uchar8 V_Data[3],i,V_WriteData[4];
+                      V_Data[0]=*P_Data;
+                      V_Data[1]=*(P_Data+1);
+                      V_Data[2]=*(P_Data+2);
+                      GStr_Flag.ucWrE2promSafeByte|=C_SafeByte_Step1;
+                      for ( i=0; i<chk_reg_num; i++ )
+                      {
+                              LibPub_Ulong32ToBuffer4(V_WriteData, Dl_Cpu_Init[i]);
+                              if( V_WriteData[0] == V_RegAddr  )
+                              { 
+                                      GStr_Flag.ucWrE2promSafeByte|=C_SafeByte_Step2;
+                                      V_WriteData[0] = V_RegAddr;
+                                      LibPub_MemCopyBytes(V_Data, &V_WriteData[1] ,3);
+                                      Hal_ReadEEPROM(GA_EmuRegData,CAddr_EMU_CALPARA_Note,TRIPEMU_CALPARA_Type_LEN);
+                                      LibPub_MemCopyBytes(V_WriteData,&GA_EmuRegData[4*i],4);
+                                      
+                                      LibPub_MemCopyBytes(&GA_EmuRegData[0],(uchar8*)&Str_TRIPEmuCalPara.ulaCalPara[0],TRIPEMU_CALPARA_Type_L
+             -EN-2);
+                                      Str_TRIPEmuCalPara.usCRC16=LibPub_CRC16_CCITT((uchar8*) &Str_TRIPEmuCalPara.ulaCalPara[0], TRIPEMU_CALP
+             -ARA_Type_LEN-2);
+                                      ////¸üÐÂRAM
+                                      GStr_Flag.ucWrE2promSafeByte|=C_SafeByte_Step3;
+                                      Hal_EraseFlashSector(CAddr_EMU_CALPARA_Note, 0x00, FLASH_RW_ENABLE);///²Á³ýÀàEEÖÐÐ£±íÊý¾Ý
+                                      Hal_EraseFlashSector(CAddr_EMU_CALPARA_BAK_Note, 0x00, FLASH_RW_ENABLE);
+              
+                                      Hal_WriteEEPROM(CAddr_EMU_CALPARA_Note, (uchar8*)&Str_TRIPEmuCalPara.ulaCalPara[0], TRIPEMU_CALPARA_Typ
+             -e_LEN);
+                                      Hal_WriteEEPROM(CAddr_EMU_CALPARA_BAK_Note, (uchar8*)&Str_TRIPEmuCalPara.ulaCalPara[0], TRIPEMU_CALPARA
+             -_Type_LEN);///Êý¾ÝÐ´ÈëÀàEE
+                                      GStr_Flag.ucWrE2promSafeByte=C_SafeByte_Step0;
+                                      break;
+                              }
+                      }
+              }
+              ///***********************************************************************************///
+              ///*º¯ÊýÔ­ÐÍ£ºvoid SPIDrv_ClearCalReg_MeterIC(void)
+              ///*¹¦ÄÜÃèÊö£ºÇå³ýÐ£±í¼Ä´æÆ÷
+              ///*ÊäÈë²ÎÊý£ºÎÞ
+              ///*Êä³ö²ÎÊý£ºÎÞ
+              ///*·µ»Ø²ÎÊý£ºÎÞ
+              ///*¹¦ÄÜËµÃ÷£º
+              ///*µ÷ÓÃ»úÖÆ£º
+              ///*±¸    ×¢£º
+              ///***********************************************************************************///
+              static void AppEMU_ClearCalReg_MeterIC(void)
+              {
+                      uchar8 V_Addr,V_WriteData[4];
+                      uchar8 i;
+                      LibPub_MemSetBytes(V_WriteData,0,4);    
+                      V_Addr=0xC3;
+                      AppEMU_WriteOneReg_MeterIC(V_WriteData,V_Addr);//0xC3µØÖ·Ð´Èë000000,³õÊ¼»¯¼ÆÁ¿Ð¾Æ¬Ð£±í¼Ä´æÆ÷³õÖµ
+                      LibPub_DelayNms(25);
+C51 COMPILER V9.54   APPEMUATT7036                                                         11/18/2021 18:53:11 PAGE 8   
+
+                      LibPub_DelayNms(25);
+                      SPIDrv_ENSPIMode();
+                      SPIDrv_Eable_MeterIC();
+                      
+                      for(i=0;i<const_reg_num;i++)
+                      {
+                              LibPub_Ulong32ToBuffer4(V_WriteData, Const_Cpu_Init[i]);
+                              V_Addr=V_WriteData[0];
+                              AppEMU_WriteOneReg_MeterIC(&V_WriteData[1],V_Addr);     
+                      }
+              }
+              
+              ///*****************************************************************************************///
+              ///*º¯ÊýÔ­ÐÍ£ºvoid SPIDrv_ClearEnergyData_MeterIC(void)
+              ///*¹¦ÄÜÃèÊö£ºÇå¼ÆÁ¿Ð¾Æ¬µçÄÜ¼Ä´æÆ÷
+              ///*ÊäÈë²ÎÊý£ºÎÞ
+              ///*Êä³ö²ÎÊý£ºÎÞ
+              ///*·µ»Ø²ÎÊý£ºÎÞ
+              ///*¹¦ÄÜËµÃ÷£ºÍ¨¹ý¶ÁÈ¡¼ÆÁ¿Ð¾Æ¬µÄµçÄÜ¼Ä´æÆ÷£¬À´Æðµ½ÇåÁãµçÄÜ¼Ä´æÆ÷µÄÄ¿µÄ£¬¼ÆÁ¿Ð¾Æ¬ÅäÖÃÎª¶ÁºóÇå
+              ///*µ÷ÓÃ»úÖÆ£º
+              ///*±¸    ×¢£º
+              ///*****************************************************************************************///
+              void AppEMU_ClearEnergyData_MeterIC(void)
+              {
+                      uchar8 i,V_Data[3];
+                      for(i=0;i<sizeof(Str_EnergyRegADDr);i++)
+                      {
+                              AppEMU_ReadOneReg_MeterIC(Str_EnergyRegADDr[i], V_Data,0x00);
+                      }
+              }
+              ///*****************************************************************************************///
+              ///*º¯ÊýÔ­ÐÍ£ºvoid SPIDrv_SoftwareRESET_MeterIC(void)
+              ///*¹¦ÄÜÃèÊö£ºÍ¨¹ý¸´Î»RESET¹Ü½Å£¬¸´Î»¼ÆÁ¿Ð¾Æ¬£¬²¢ÖØÐÂÇå¼ÆÁ¿Ð¾Æ¬µçÄÜÊý¾Ý¼Ä´æÆ÷
+              ///*ÊäÈë²ÎÊý£ºÎÞ
+              ///*Êä³ö²ÎÊý£ºÎÞ
+              ///*·µ»Ø²ÎÊý£ºÎÞ
+              ///*¹¦ÄÜËµÃ÷
+              ///*µ÷ÓÃ»úÖÆ£º
+              ///*±¸    ×¢£º
+              ///*****************************************************************************************///
+              void AppEMU_SoftwareRESET_MeterIC(void)
+              {
+                      uchar8 V_Addr,V_WriteData[4];
+                      LibPub_MemSetBytes(V_WriteData,0,4);    
+                      V_Addr=0xD3;
+                      AppEMU_WriteOneReg_MeterIC(V_WriteData,V_Addr);//0xD3µØÖ·Ð´Èë000000
+                      LibPub_DelayNms(1);
+                      SPIDrv_ENSPIMode();             
+                      AppEMU_ClearCalReg_MeterIC();
+              }
+              
+              ///*****************************************************************************************///
+              ///*º¯ÊýÔ­ÐÍ£ºvoid  AppEMU_EMUPara_Check(void)
+              ///*¹¦ÄÜÃèÊö£ºÐ£±í²ÎÊýÐ§Ñé
+              ///*ÊäÈë²ÎÊý£º
+              ///*Êä³ö²ÎÊý£ºÎÞ
+              ///*·µ»Ø²ÎÊý£ºÎÞ
+              ///*¹¦ÄÜËµÃ÷£º
+              ///*µ÷ÓÃ»úÖÆ£º
+              ///*±¸    ×¢£º
+              ///*****************************************************************************************///
+              void  ApiEMU_EMUParaCheck()
+C51 COMPILER V9.54   APPEMUATT7036                                                         11/18/2021 18:53:11 PAGE 9   
+
+              {
+                      uchar8   V_ucResult = _FAILED;
+                      uchar8   V_ucCnti,V_Addr,V_ReadData[4],V_WriteData[4];
+                      
+                      do{
+              
+                              /* ÏÈ¼ì²é¹Ì¶¨Öµ  */
+                              for( V_ucCnti = 0; V_ucCnti<const_reg_num; V_ucCnti++ )
+                              {
+                                      LibPub_Ulong32ToBuffer4(V_WriteData, Const_Cpu_Init[V_ucCnti]);
+                                      V_Addr=V_WriteData[0];
+                                      AppEMU_ReadOneReg_MeterIC(V_Addr, &V_ReadData[1],C_EMUPara);
+                                      
+                                      if( C_Equal!=LibPub_CompareData(&V_ReadData[1], &V_WriteData[1], 3,CMP_MODE_HIGHT) )
+                                      {
+                                              break;
+                                      }
+                              }
+                              if( V_ucCnti < const_reg_num ) break;
+                              
+                              /* ¼ì²éÒ»ÏÂÐ£±íÊý¾Ý */
+                              if ( _FAILED == AppEMU_TripCheckCalParaCRC() )///* ´íÁË¾ÍÖ±½ÓÍË³ö£¬³õÊ¼»¯Ò»ÏÂ¼ÆÁ¿Ð¾Æ¬£¬ÕâÀïbreakÊÇÍË³ödo
+             - while Ñ­»· */// 
+                              {
+                                       break;         
+                              }
+                              
+                              for( V_ucCnti = 0; V_ucCnti<chk_reg_num; V_ucCnti++ )
+                              {
+                                      LibPub_Ulong32ToBuffer4(V_WriteData, Str_TRIPEmuCalPara.ulaCalPara[V_ucCnti]);
+                                      V_Addr=V_WriteData[0];
+                                      AppEMU_ReadOneReg_MeterIC(V_Addr, &V_ReadData[1],C_EMUPara);
+                                              
+                                      if( C_Equal!=LibPub_CompareData(&V_ReadData[1], &V_WriteData[1], 3,CMP_MODE_HIGHT) )
+                                      {
+                                              break;
+                                      }
+                              }
+                              if( V_ucCnti < chk_reg_num ) break;
+                              
+                              V_ucResult = _SUCCESS;  
+                              
+                      }while(0);
+                      
+                      /* Èç¹ûÓÐ´í¾ÍÖ±½Ó³õÊ¼»¯Ð¾Æ¬ */
+                      if(( _FAILED == V_ucResult )&&(0==GStr_Flag.ucPowerOnFlag))
+                      {
+                              ApiEMU_EMUInit();
+                      }
+                      
+              //      // Ð£±íÏµÊý²ÎÊýÐ£ÑéÒ»ÏÂ
+              //      ApiEMU_CheckKmsParaCRC();
+              }
+              ///*****************************************************************************************///
+              ///*º¯ÊýÔ­ÐÍ£ºvoid  SPIDrv_Initial_MeterIC (void)
+              ///*¹¦ÄÜÃèÊö£º³õÊ¼»¯¼ÆÁ¿Ð¾Æ¬£¬ÅäÖÃ¼ÆÁ¿Ð¾Æ¬¿¼¼Ä´æÆ÷
+              ///*ÊäÈë²ÎÊý£º
+              ///*Êä³ö²ÎÊý£ºÎÞ
+              ///*·µ»Ø²ÎÊý£ºÎÞ
+              ///*¹¦ÄÜËµÃ÷£º
+              ///*µ÷ÓÃ»úÖÆ£º
+              ///*±¸    ×¢£º
+C51 COMPILER V9.54   APPEMUATT7036                                                         11/18/2021 18:53:11 PAGE 10  
+
+              ///*****************************************************************************************///
+              void  ApiEMU_EMUInit()
+              {
+                      uchar8 V_CalRegData[3],i,V_Addr,V_WriteData[4];
+                      ushort16 V_Data;
+                      
+                      EMUSR &= ~EMUSR_DSPEN;
+                      IEN1 &= ~IEN1_EEMU;///¹Ø±ÕSOC¼ÆÁ¿µ¥Ôª
+                      
+                      AppEMU_SoftwareRESET_MeterIC();
+              
+                       Hal_ReadEEPROM((uchar8*)&Str_TRIPEmuCalPara.ulaCalPara[0],CAddr_EMU_CALPARA_Note,TRIPEMU_CALPARA_Type_LE
+             -N);
+                       if(_TRUE!=LibPub_CrcCheck((uchar8*)&Str_TRIPEmuCalPara.ulaCalPara[0],TRIPEMU_CALPARA_Type_LEN-2,Str_TRIP
+             -EmuCalPara.usCRC16))
+                       {
+                               Hal_ReadEEPROM((uchar8*)&Str_TRIPEmuCalPara.ulaCalPara[0],CAddr_EMU_CALPARA_BAK_Note,TRIPEMU_CALPARA_Ty
+             -pe_LEN);///¶Á±¸·Ý
+                               {
+                                       if(_TRUE!=LibPub_CrcCheck((uchar8*)&Str_TRIPEmuCalPara.ulaCalPara[0],TRIPEMU_CALPARA_Type_LEN-2,Str_TR
+             -IPEmuCalPara.usCRC16))
+                                       {      
+                                              for(i=0;i<chk_reg_num;i++)
+                                              {
+                                                      Str_TRIPEmuCalPara.ulaCalPara[i]=Dl_Cpu_Init[i];///ÀàEEÖÐÊý¾Ý´íÈ¡Ä¬ÈÏÖµ
+                                              }       
+                                       }       
+                               }
+                       }
+              
+                      AppEMU_ClearCalReg_MeterIC();           //Çå¼ÆÁ¿Ð¾Æ¬Ð£±í²ÎÊý¼Ä´æÆ÷,Ë³±ãÐ´ÁËÒ»ÏÂ¹Ì¶¨Öµ
+                      
+                      LibPub_MemSetBytes(V_CalRegData,0,3);
+                      V_Data=C_EMUCfg&0x0FFF; //ÅäÖÃ¼Ä´æÆ÷
+                      LibPub_Ushort16ToBuffer2(&V_CalRegData[1],V_Data);
+                      AppEMU_WriteOneReg_MeterIC(V_CalRegData,C_EMUCfg_Reg);
+                      
+                      for(i=0;i<chk_reg_num;i++)
+                      {
+                              LibPub_Ulong32ToBuffer4(V_WriteData, Str_TRIPEmuCalPara.ulaCalPara[i]);
+                              V_Addr=V_WriteData[0];
+                              AppEMU_WriteOneReg_MeterIC(&V_WriteData[1],V_Addr);
+                      }
+                      
+                      LibPub_MemSetBytes(V_CalRegData,0,3);
+                      V_Data=C_EMUCfg;        //ÅäÖÃ¼Ä´æÆ÷
+                      LibPub_Ushort16ToBuffer2(&V_CalRegData[1],V_Data);
+                      AppEMU_WriteOneReg_MeterIC(V_CalRegData,C_EMUCfg_Reg);
+              }
+              
+              
+              /*------------------------------------------------------------------------------------------------------*/
+              /**
+               *  @brief    Ð£ÑéÐ£±í²ÎÊýCRCÊÇ·ñÕýÈ·
+               *
+               *  @return   _FALSE:Êý¾ÝÕýÈ·  _TRUE£ºÊý¾Ý´íÎó
+               *
+               *  @note     xx
+               *
+               */
+              /*------------------------------------------------------------------------------------------------------*/
+              static uchar8 AppEMU_TripCheckCalParaCRC( void )
+C51 COMPILER V9.54   APPEMUATT7036                                                         11/18/2021 18:53:11 PAGE 11  
+
+              {
+                      if ( _TRUE != LibPub_CrcCheck( (uchar8*)&Str_TRIPEmuCalPara.ulaCalPara[0], TRIPEMU_CALPARA_Type_LEN-2, St
+             -r_TRIPEmuCalPara.usCRC16 ) )
+                      {
+                               Hal_ReadEEPROM((uchar8*)&Str_TRIPEmuCalPara.ulaCalPara[0],CAddr_EMU_CALPARA_Note,TRIPEMU_CALPARA_Type_L
+             -EN);
+                               if(_TRUE!=LibPub_CrcCheck((uchar8*)&Str_TRIPEmuCalPara.ulaCalPara[0],TRIPEMU_CALPARA_Type_LEN-2,Str_TRI
+             -PEmuCalPara.usCRC16))
+                               {
+                                       Hal_ReadEEPROM((uchar8*)&Str_TRIPEmuCalPara.ulaCalPara[0],CAddr_EMU_CALPARA_BAK_Note,TRIPEMU_CALPARA_T
+             -ype_LEN);///¶Á±¸·Ý
+                                       {
+                                               if(_TRUE!=LibPub_CrcCheck((uchar8*)&Str_TRIPEmuCalPara.ulaCalPara[0],TRIPEMU_CALPARA_Type_LEN-2,Str_T
+             -RIPEmuCalPara.usCRC16))
+                                               {      
+                                                      return _FAILED;
+                                               }       
+                                       }
+                               }
+              
+                      }
+              
+                      return _SUCCESS;
+              }
+              
+              ///*------------------------------------------------------------------------------------------------------
+             -*/
+              ///**
+              // *  @brief    Ð£ÑéÏµÊýCRCÊÇ·ñÕýÈ·
+              // *
+              // *  @return   _FALSE:Êý¾ÝÕýÈ·  _TRUE£ºÊý¾Ý´íÎó
+              // *
+              // *  @note     xx
+              // *
+              // */
+              ///*------------------------------------------------------------------------------------------------------
+             -*/
+              //static uchar8 AppEMU_TripCheckKmsParaCRC( void )
+              //{
+              //      if ( _TRUE != LibPub_CrcCheck( (uchar8*)&Str_TRIPUIPKmsPara.ulaKmsuip, TRIPEMU_UIPKms_Type_LEN-2, Str_T
+             -RIPUIPKmsPara.usCRC16 ))
+              //      {
+              //              LibPub_ReadDataFromE2prom( LIB_E2P_EMU_UIPKms, 0, (uchar8*)&Str_TRIPUIPKmsPara.ulaKmsuip);
+              //              return _FAILED;
+              //      }
+              //      
+              //      return _SUCCESS;
+              //}
+              ///*------------------------------------------------------------------------------------------------------
+             -*/
+              ///**
+              // *  @brief    Æð¶¯Ð£±í
+              // *
+              // *  @return   
+              // *
+              // *  @note     xx
+              // *///Ö÷ÒªÊÇ³õÊ¼»¯Ð£±í¼Ä´æÆ÷
+              // */
+              ///*------------------------------------------------------------------------------------------------------
+             -*/
+              void ApiEMU_CommStartCal(v_ucChID)
+              {
+C51 COMPILER V9.54   APPEMUATT7036                                                         11/18/2021 18:53:11 PAGE 12  
+
+                      uchar8 V_Addr,V_WriteData[4],i;
+              
+                      GStr_Flag.ucWrE2promSafeByte|=C_SafeByte_Step1;
+                      
+                      LibPub_MemSetBytes( GA_EmuRegData, 0, TRIPEMU_CALPARA_Type_LEN );
+                      
+                      AppEMU_ClearCalReg_MeterIC();///ÇëÐ£±í¼Ä´æÆ÷
+                      
+                      GStr_Flag.ucWrE2promSafeByte|=C_SafeByte_Step2;
+                      for( i=0;i<chk_reg_num;i++ )///Ð£±í¼Ä´æÆ÷Ð´Ä¬ÈÏÖµ
+                      {
+                              LibPub_Ulong32ToBuffer4(V_WriteData, Dl_Cpu_Init[i]);
+                              V_Addr=V_WriteData[0];
+                              AppEMU_WriteOneReg_MeterIC(&V_WriteData[1],V_Addr);
+                      }
+                              GStr_Flag.ucWrE2promSafeByte|=C_SafeByte_Step3;
+                      Hal_EraseFlashSector(CAddr_EMU_CALPARA_Note, 0x00, FLASH_RW_ENABLE);///²Á³ýÀàEEÖÐÐ£±íÊý¾Ý
+                      Hal_EraseFlashSector(CAddr_EMU_CALPARA_BAK_Note, 0x00, FLASH_RW_ENABLE);
+                      
+                      Hal_WriteEEPROM(CAddr_EMU_CALPARA_Note, (uchar8*)&Dl_Cpu_Init[0], TRIPEMU_CALPARA_Type_LEN);
+                      Hal_WriteEEPROM(CAddr_EMU_CALPARA_BAK_Note, (uchar8*)&Dl_Cpu_Init[0], TRIPEMU_CALPARA_Type_LEN);///Êý¾ÝÐ´
+             -ÈëÀàEE
+                      GStr_Flag.ucWrE2promSafeByte =C_SafeByte_Step0;
+              //      LibPub_MemCopyBytes((uchar8*) &Dl_Cpu_Init[0], (uchar8*) &Str_TRIPEmuCalPara.ulaCalPara[0], chk_reg_num
+             -*4);
+              //      Str_TRIPEmuCalPara.usCRC16=LibPub_CRC16_CCITT((uchar8*) &Str_TRIPEmuCalPara.ulaCalPara[0], chk_reg_num*
+             -4);
+              }
+              ///*------------------------------------------------------------------------------------------------------
+             -*/
+              ///**
+              // *  @brief   ²ÎÊýÉèÖÃ
+              // *
+              // *  @return   
+              // *
+              // *  @note     xx
+              // *///Ö÷ÒªÉèÖÃÅäÖÃ¼Ä´æÆ÷²¢Ð´ÈëHFCONST
+              // */
+              ///*------------------------------------------------------------------------------------------------------
+             -*/
+              void AppEMU_TRipCommSetReg( uchar8 v_ucChID )
+              {
+                      uchar8 V_WriteData[4];
+                      
+              //      Hal_EraseFlashSector(CAddr_EMU_CALPARA_Note, 0x00, FLASH_RW_ENABLE);///²Á³ýÀàEEÖÐÐ£±íÊý¾Ý
+              //      Hal_EraseFlashSector(CAddr_EMU_CALPARA_BAK_Note, 0x00, FLASH_RW_ENABLE);        
+                      V_WriteData[0]=0x37;  ///ÏàÎ»ÇøÓò0
+                      V_WriteData[1]=0;
+                      V_WriteData[2]=Gstr_UartComm[v_ucChID].ucaCommTXBuff[API_DLT645_D0_W+41];
+                      V_WriteData[3]=Gstr_UartComm[v_ucChID].ucaCommTXBuff[API_DLT645_D0_W+40];
+                      AppEMU_WriteRegToEE(&V_WriteData[1],V_WriteData[0]);///Ð£±í²ÎÊý´æEE
+                      AppEMU_WriteOneReg_MeterIC(&V_WriteData[1],V_WriteData[0]);
+              //      LibPub_MemCopyBytes(V_WriteData, GA_EmuRegData, 4);
+                      
+                      V_WriteData[0]=0x60;  ///ÏàÎ»ÇøÓò1
+                      V_WriteData[1]=0;
+                      V_WriteData[2]=Gstr_UartComm[v_ucChID].ucaCommTXBuff[API_DLT645_D0_W+45];
+                      V_WriteData[3]=Gstr_UartComm[v_ucChID].ucaCommTXBuff[API_DLT645_D0_W+44];
+                      AppEMU_WriteRegToEE(&V_WriteData[1],V_WriteData[0]);    
+                      AppEMU_WriteOneReg_MeterIC(&V_WriteData[1],V_WriteData[0]);
+              //      LibPub_MemCopyBytes(V_WriteData, &GA_EmuRegData[4], 4);
+                      
+C51 COMPILER V9.54   APPEMUATT7036                                                         11/18/2021 18:53:11 PAGE 13  
+
+                      V_WriteData[0]=0x36;  ///Æð¶¯¹¦ÂÊÉèÖÃ
+                      V_WriteData[1]=0;
+                      V_WriteData[2]=Gstr_UartComm[v_ucChID].ucaCommTXBuff[API_DLT645_D0_W+21];
+                      V_WriteData[3]=Gstr_UartComm[v_ucChID].ucaCommTXBuff[API_DLT645_D0_W+20];
+                      AppEMU_WriteRegToEE(&V_WriteData[1],V_WriteData[0]);
+                      AppEMU_WriteOneReg_MeterIC(&V_WriteData[1],V_WriteData[0]);     
+              //      LibPub_MemCopyBytes(V_WriteData, &GA_EmuRegData[8], 4);
+                      
+                      V_WriteData[0]=0x1E;  ///HFCONST
+                      V_WriteData[1]=0;
+                      V_WriteData[2]=Gstr_UartComm[v_ucChID].ucaCommTXBuff[API_DLT645_D0_W+5];
+                      V_WriteData[3]=Gstr_UartComm[v_ucChID].ucaCommTXBuff[API_DLT645_D0_W+4];
+                      AppEMU_WriteRegToEE(&V_WriteData[1],V_WriteData[0]);
+                      AppEMU_WriteOneReg_MeterIC(&V_WriteData[1],V_WriteData[0]);
+              
+              //      LibPub_MemCopyBytes(V_WriteData, &GA_EmuRegData[12], 4);
+                      
+              //      Hal_WriteEEPROM(CAddr_EMU_CALPARA_Note, GA_EmuRegData, TRIPEMU_CALPARA_Type_LEN);
+              //      Hal_WriteEEPROM(CAddr_EMU_CALPARA_BAK_Note, GA_EmuRegData, TRIPEMU_CALPARA_Type_LEN);///Êý¾ÝÐ´ÈëÀàEE
+                      
+              }
+              
+              /*------------------------------------------------------------------------------------------------------*/
+              /**
+               *  @brief    µ÷Ð£Îó²î
+               *
+               *  @param    v_ucChID : ¼Ä´æÆ÷µØÖ·
+               *
+               *  @return   ³É¹¦£º_SUCCESS£»Ê§°Ü£º_FAILED
+               *
+               *  @note     xx
+               *
+               */
+              /*------------------------------------------------------------------------------------------------------*/
+              uchar8 ApiEMU_CommErrCal( uchar8 v_ucChID )
+              {
+                      uchar8   V_ucResult = _SUCCESS,i,j;
+                      uchar8   V_ucRegAddress;                // ¼Ä´æÆ÷µØÖ·
+                      uchar8   V_WriteData[3][4];
+                      
+                      do{
+                              
+                              if(( 0x02 <Gstr_UartComm[v_ucChID].ucaCommTXBuff[API_DLT645_DI0] )      
+                                      &&(0xFF !=Gstr_UartComm[v_ucChID].ucaCommTXBuff[API_DLT645_DI0]))///* ½öÖ§³ÖDI0==00\01\02\FF *///
+                              {
+                                      V_ucResult = _FAILED; 
+                                      break;  // Ìø³ödo-whileÑ­»·
+                              } 
+                              
+                              ///* ×¼±¸Êý¾Ý *///
+                              //---------------------------------------------------------------------------
+                              LibPub_MemExchangeBytes(&Gstr_UartComm[v_ucChID].ucaCommTXBuff[API_DLT645_D0_W], &V_WriteData[0][0], 4);
+                              if(0xFF ==Gstr_UartComm[v_ucChID].ucaCommTXBuff[API_DLT645_DI0])
+                              {
+                                      LibPub_MemExchangeBytes(&Gstr_UartComm[v_ucChID].ucaCommTXBuff[API_DLT645_D0_W+4],&V_WriteData[1][0], 4
+             -);
+                                      LibPub_MemExchangeBytes(&Gstr_UartComm[v_ucChID].ucaCommTXBuff[API_DLT645_D0_W+8],&V_WriteData[2][0], 4
+             -);
+                              }
+                              //---------------------------------------------------------------------------
+                              ///* DI1:0x00 1.0L 100%Ib ÓÐ¹¦¹¦ÂÊÔöÒæÐ£Õý ¶ÔÓ¦¼Ä´æÆ÷ 0c *///
+                              ///* DI1:0x09 0.5L 100%Ib ÏàÎ»Ð£Õý  ¶ÔÓ¦¼Ä´æÆ÷ 18*///
+C51 COMPILER V9.54   APPEMUATT7036                                                         11/18/2021 18:53:11 PAGE 14  
+
+                              ///* DI1:0x0D 1.0L 5%Ib ¹¦ÂÊoffsetÐ£Õý  ¶ÔÓ¦¼Ä´æÆ÷ 78*///
+                              for( i=0;i<(sizeof(EMU_COMM_TRIPEMUC_TAB)/sizeof(EMU_COMM_TRIPCAL_TAB_Type));i++)
+                              {
+                                      if(EMU_COMM_TRIPEMUC_TAB[i].ucCommDI1==(Gstr_UartComm[v_ucChID].ucaCommTXBuff[API_DLT645_DI0+1]))
+                                      {
+                                              if(0xFF !=Gstr_UartComm[v_ucChID].ucaCommTXBuff[API_DLT645_DI0])
+                                              {
+                                                      V_ucRegAddress=Gstr_UartComm[v_ucChID].ucaCommTXBuff[API_DLT645_DI0];
+                                                      V_ucRegAddress=EMU_COMM_TRIPEMUC_TAB[i].ucEmuAddr[V_ucRegAddress];
+                                                      AppEMU_WriteRegToEE(&V_WriteData[0][1],V_ucRegAddress); 
+                                                      AppEMU_WriteOneReg_MeterIC(&V_WriteData[0][1],V_ucRegAddress);
+                                                      V_WriteData[0][0]=V_ucRegAddress;
+                                              }
+                                              else
+                                              {
+                                                      for(j=0;j<3;j++)
+                                                      {
+                                                              V_ucRegAddress=EMU_COMM_TRIPEMUC_TAB[i].ucEmuAddr[j];
+                                                              AppEMU_WriteRegToEE(&V_WriteData[j][1],V_ucRegAddress);                                         
+                                                              AppEMU_WriteOneReg_MeterIC(&V_WriteData[j][1],V_ucRegAddress);
+                                                              V_WriteData[i][0]=V_ucRegAddress;
+                                                      }
+                                              }
+                                              break;
+                                      }
+                              
+                              }
+                                      
+              //                      case 0x11:      ///* ¹¦ÂÊÓÐÐ§ÖµÐ£Õý£¬Ð£Ò»ÏÂÏµÊý *///
+              //                      { 
+              //                              // ÉèÖÃÒ»ÏÂÇ±¶¯ãÐÖµ
+              //                              ApiEMU_SetStartVal(); 
+              //                              
+              //                              // Ð£Ò»ÏÂÏµÊý
+              //                              ApiEMU_SetUIPKms();
+              //                              
+              //                      }break;
+                                      
+              //                      default:break;
+              //              } 
+                      }while(0);
+                      
+                      //---------------------------------------------------------------------------
+                      return( V_ucResult );
+              }
+              
+              /*------------------------------------------------------------------------------------------------------*/
+              /**
+               *  @brief    ½áÊøÐ£±í
+               *
+               *  @param    v_ucChID : ¼Ä´æÆ÷µØÖ·
+               *
+               *  @return   xx
+               *
+               *  @note     xx
+               *
+               */
+              /*------------------------------------------------------------------------------------------------------*/
+              void ApiEMU_CommEndCal( uchar8 v_ucChID )
+              {
+                      uchar8 V_ucTemp;
+                      
+C51 COMPILER V9.54   APPEMUATT7036                                                         11/18/2021 18:53:11 PAGE 15  
+
+                      AppEMU_ClearEnergyData_MeterIC();
+                      
+                      V_ucTemp = v_ucChID;
+              }
+              
+              /*------------------------------------------------------------------------------------------------------*/
+              /**
+               *  @brief    ¶Á¼Ä´æÆ÷
+               *
+               *  @param    v_ucChID : ¼Ä´æÆ÷µØÖ·
+               *
+               *  @return   ³É¹¦£º_SUCCESS£»Ê§°Ü£º_FAILED
+               *
+               *  @note     xx
+               *
+               */
+              /*------------------------------------------------------------------------------------------------------*/
+              uchar8 AppEMU_TripReadEmuReg( uchar8 v_ucChID )
+              {
+                      uchar8   V_ucResult = _SUCCESS,i,j;
+                      uchar8   V_ucRegAddress;                // ¼Ä´æÆ÷µØÖ·
+                      uchar8   V_ReadData[4];
+                      
+                      if( 0x01 ==Gstr_UartComm[v_ucChID].ucaCommTXBuff[API_DLT645_DI0+2] )    ///0x8001XXXX
+                      {
+                              for( i=0;i<(sizeof(EMU_COMM_TRIPEMUC_TAB)/sizeof(EMU_COMM_TRIPCAL_TAB_Type));i++)
+                              {
+                                      if(EMU_COMM_TRIPEMUC_TAB[i].ucCommDI1==(Gstr_UartComm[v_ucChID].ucaCommTXBuff[API_DLT645_DI0+1]))///ËµÃ
+             -÷ÊÇÐ£±í²ÎÊý
+                                      {
+                                              if(0xFF !=Gstr_UartComm[v_ucChID].ucaCommTXBuff[API_DLT645_DI0])
+                                              {
+                                                      V_ucRegAddress=Gstr_UartComm[v_ucChID].ucaCommTXBuff[API_DLT645_DI0];
+                                                      V_ucRegAddress=EMU_COMM_TRIPEMUC_TAB[i].ucEmuAddr[V_ucRegAddress];
+                                                      AppEMU_ReadOneReg_MeterIC(V_ucRegAddress, &V_ReadData[1],C_EMUPara);
+                                                      V_ReadData[0]=0;
+                                                      LibPub_MemExchangeBytes(V_ReadData,&Gstr_UartComm[v_ucChID].ucaCommTXBuff[API_DLT645_1STDATA+4], 4);
+                                              }
+                                              else
+                                              {
+                                                      for(j=0;j<3;j++)
+                                                      {
+                                                              V_ucRegAddress=EMU_COMM_TRIPEMUC_TAB[i].ucEmuAddr[j];
+                                                              AppEMU_ReadOneReg_MeterIC(V_ucRegAddress, &V_ReadData[1],C_EMUPara);
+                                                              V_ReadData[0]=0;
+                                                              LibPub_MemExchangeBytes(V_ReadData,&Gstr_UartComm[v_ucChID].ucaCommTXBuff[API_DLT645_1STDATA+4*(j+1)
+             -], 4);
+                                                      }
+                                              }
+                                              return( V_ucResult );
+                                      }
+                              }
+                              for( i=0;i<(sizeof(EMU_READ_TRIPEMUC_TAB)/sizeof(EMU_COMM_TRIPCAL_TAB_Type));i++)///ËµÃ÷¼ÆÁ¿²ÎÊý²ÎÊý
+                              {
+                                      if(EMU_READ_TRIPEMUC_TAB[i].ucCommDI1==(Gstr_UartComm[v_ucChID].ucaCommTXBuff[API_DLT645_DI0+1]))///ËµÃ
+             -÷ÊÇÓÐÐ§ÖµÊý¾Ý
+                                      {
+                                              if(0xFF !=Gstr_UartComm[v_ucChID].ucaCommTXBuff[API_DLT645_DI0])
+                                              {
+                                                      V_ucRegAddress=Gstr_UartComm[v_ucChID].ucaCommTXBuff[API_DLT645_DI0];
+                                                      V_ucRegAddress=EMU_READ_TRIPEMUC_TAB[i].ucEmuAddr[V_ucRegAddress];
+                                                      AppEMU_ReadOneReg_MeterIC(V_ucRegAddress, &V_ReadData[1],C_MeterPara);
+C51 COMPILER V9.54   APPEMUATT7036                                                         11/18/2021 18:53:11 PAGE 16  
+
+                                                      V_ReadData[0]=0;
+                                                      LibPub_MemExchangeBytes(V_ReadData,&Gstr_UartComm[v_ucChID].ucaCommTXBuff[API_DLT645_1STDATA+4], 4);
+                                              }
+                                              else
+                                              {
+                                                      for(j=0;j<4;j++)////¼ÆÁ¿²ÎÊý´øºÏÏà£¬ËùÒÔÐèÒª¶Á4¸ö¼Ä´æÆ÷
+                                                      {
+                                                              V_ucRegAddress=EMU_READ_TRIPEMUC_TAB[i].ucEmuAddr[j];
+                                                              AppEMU_ReadOneReg_MeterIC(V_ucRegAddress, &V_ReadData[1],C_MeterPara);
+                                                              V_ReadData[0]=0;
+                                                              LibPub_MemExchangeBytes(V_ReadData,&Gstr_UartComm[v_ucChID].ucaCommTXBuff[API_DLT645_1STDATA+4*(j+1)
+             -], 4);
+                                                      }
+                                              }
+                                              return( V_ucResult );
+                                      }
+                              }
+                              V_ucResult = _FAILED;
+                              return( V_ucResult );  ///²»ÊÇ±í¸ñÀïµÄÊý¾Ý£¬»Ø´í
+                      }
+                      
+                      if( 0x03 ==Gstr_UartComm[v_ucChID].ucaCommTXBuff[API_DLT645_DI0+2] )    ///0x8003XXXX //¶ÁÖ¸¶¨µØÖ·¼ÆÁ¿²ÎÊý
+                      {
+                              if(0x00!=Gstr_UartComm[v_ucChID].ucaCommTXBuff[API_DLT645_DI0+1] )
+                              {
+                                      V_ucResult = _FAILED; 
+                                      return( V_ucResult );
+                              }
+                              V_ucRegAddress=Gstr_UartComm[v_ucChID].ucaCommTXBuff[API_DLT645_DI0];
+                              AppEMU_ReadOneReg_MeterIC(V_ucRegAddress, &V_ReadData[1],C_MeterPara);
+                              V_ReadData[0]=0;
+                              LibPub_MemExchangeBytes(V_ReadData,&Gstr_UartComm[v_ucChID].ucaCommTXBuff[API_DLT645_1STDATA+4], 4);
+                              return( V_ucResult );
+                      }
+                      if( 0x04 ==Gstr_UartComm[v_ucChID].ucaCommTXBuff[API_DLT645_DI0+2] )    ///0x8003XXXX //¶ÁÖ¸¶¨µØÖ·Ð£±í²ÎÊý
+                      {
+                              if(0x00!=Gstr_UartComm[v_ucChID].ucaCommTXBuff[API_DLT645_DI0+1] )
+                              {
+                                      V_ucResult = _FAILED; 
+                                      return( V_ucResult );
+                              }
+                              V_ucRegAddress=Gstr_UartComm[v_ucChID].ucaCommTXBuff[API_DLT645_DI0];
+                              AppEMU_ReadOneReg_MeterIC(V_ucRegAddress, &V_ReadData[1],C_EMUPara);
+                              V_ReadData[0]=0;
+                              LibPub_MemExchangeBytes(V_ReadData,&Gstr_UartComm[v_ucChID].ucaCommTXBuff[API_DLT645_1STDATA+4], 4);
+                              return( V_ucResult );
+                      }
+                      
+                      V_ucResult = _FAILED; 
+                      return( V_ucResult );///¶¼²»ÊÇ»Ø´í
+              }
+              /*------------------------------------------------------------------------------------------------------*/
+              /**
+               *  @brief    ¸üÐÂË²Ê±Á¿
+               *
+               *  @param    v_ucChID : ¼Ä´æÆ÷µØÖ·
+               *
+               *  @return   ³É¹¦£º_SUCCESS£»Ê§°Ü£º_FAILED
+               *
+               *  @note     xx
+               *
+               */
+C51 COMPILER V9.54   APPEMUATT7036                                                         11/18/2021 18:53:11 PAGE 17  
+
+              /*------------------------------------------------------------------------------------------------------*/
+              ushort16 C_ucCurrentTab[]={ 10,15,25,50,100,150,200,300 };
+              
+              uchar8 ApiEMU_UpdateUIP(void)
+              {
+                      uchar8 i;
+                      uchar8   V_ucaRegData[C_ucUIPREG_TAB_Index][4];
+                      ulong32  V_ulaRegData[C_ucUIPREG_TAB_Index];
+                      ulong32  V_ulTemp[4],V_ulKms1,V_ulKms2;
+                      uchar8   V_ucaReverseData[3];
+                      uchar8   V_ucaReverseFlag_A,V_ucaReverseFlag_B,V_ucaReverseFlag_C;
+                      V_ucaReverseFlag_A=0;
+                      V_ucaReverseFlag_B=0;
+                      V_ucaReverseFlag_C=0;
+                      
+                      
+                      Str_TRIPUIPKmsPara.ulaKmsuip=3000/C_ucCurrentTab[GStr_FunConfigPara.ucFunCurrentVal];////µçÁ÷ÏµÊý¹Ì¶¨Îª30
+             -/Ib,´Ë´¦Îª300/Ib
+              //      AppEMU_TripCheckKmsParaCRC();///Ð£ÑéÒ»ÏÂµçÁ÷ÏµÊý
+                      
+                      for( i=0;i<C_ucUIPREG_TAB_Index;i++ )
+                      {
+                              AppEMU_ReadOneReg_MeterIC(Str_RmsRegADDr[i], &V_ucaRegData[i][1],C_MeterPara);
+                              V_ucaRegData[i][0]=0;///¸ßÎ»Îª0
+                              V_ulaRegData[i]=LibPub_Buffer4ToUlong32( &V_ucaRegData[i][0] );
+                      }
+                      
+                      ///¿ªÊ¼¼ÆËãË²Ê±Á¿
+                      ///µçÑ¹  Êµ¼ÊÖµÎª¼Ä´æÆ÷ÖµVrms/2^13
+                      GStr_UIPGroup.ulVoltage[0] = 10.0*V_ulaRegData[4] /8192;        ///AÏàµçÑ¹
+                      GStr_UIPGroup.ulVoltage[1] = 10.0*V_ulaRegData[5] /8192;        ///BÏàµçÑ¹
+                      GStr_UIPGroup.ulVoltage[2] = 10.0*V_ulaRegData[6] /8192;        ///CÏàµçÑ¹
+                      GStr_UIPGroup.ulVoltage[3] = 10.0*V_ulaRegData[7] /4096;        ///ºÏÏàµçÑ¹
+                      
+                      for(i=0;i<4;i++)
+                      {
+                              ////µçÑ¹ÃðÁã  µ±µçÑ¹Ð¡ÓÚ5VÊ±£¬ÃðÁã
+                              if( GStr_UIPGroup.ulVoltage[i] < C_ClearVoltage )
+                              {
+                                      GStr_UIPGroup.ulVoltage[i]=0;
+                              }
+                              V_ulTemp[i]=GStr_UIPGroup.ulVoltage[i]*10;      
+                      }
+                      ///AÏà
+                      LibPub_HEXtoBCDBytes(V_ulTemp[0],&GStr_UIPDisplay.ucVoltageA[0],4);///×ª»»ÎªBCDÓÃÓÚÏÔÊ¾ Á½Î»Ð¡Êý
+                      LibPub_HEXtoBCDBytes(GStr_UIPGroup.ulVoltage[0],&GStr_UIPDisplay.ucCOMMVoltageA[0],4);///×ª»»ÎªBCDÓÃÓÚÍ¨Ð
+             -Å
+                      ///BÏà
+                      LibPub_HEXtoBCDBytes(V_ulTemp[1],&GStr_UIPDisplay.ucVoltageB[0],4);///×ª»»ÎªBCDÓÃÓÚÏÔÊ¾ Á½Î»Ð¡Êý
+                      LibPub_HEXtoBCDBytes(GStr_UIPGroup.ulVoltage[1],&GStr_UIPDisplay.ucCOMMVoltageB[0],4);///×ª»»ÎªBCDÓÃÓÚÍ¨Ð
+             -Å
+                      ///CÏà
+                      LibPub_HEXtoBCDBytes(V_ulTemp[2],&GStr_UIPDisplay.ucVoltageC[0],4);///×ª»»ÎªBCDÓÃÓÚÏÔÊ¾ Á½Î»Ð¡Êý
+                      LibPub_HEXtoBCDBytes(GStr_UIPGroup.ulVoltage[2],&GStr_UIPDisplay.ucCOMMVoltageC[0],4);///×ª»»ÎªBCDÓÃÓÚÍ¨Ð
+             -Å
+                      ///ºÏÏà
+                      LibPub_HEXtoBCDBytes(V_ulTemp[3],&GStr_UIPDisplay.ucVoltage[0],4);///×ª»»ÎªBCDÓÃÓÚÏÔÊ¾ Á½Î»Ð¡Êý
+                      LibPub_HEXtoBCDBytes(GStr_UIPGroup.ulVoltage[3],&GStr_UIPDisplay.ucCOMMVoltage[0],4);///×ª»»ÎªBCDÓÃÓÚÍ¨ÐÅ
+                      
+                      ///µçÁ÷   Êµ¼ÊÖµÎª¼Ä´æÆ÷Öµ(Vrms/2^13)/N
+                      GStr_UIPGroup.ulCurrent[0] = 1000.0*V_ulaRegData[8] /8192*10/Str_TRIPUIPKmsPara.ulaKmsuip;        ///AÏàµ
+             -çÁ÷
+C51 COMPILER V9.54   APPEMUATT7036                                                         11/18/2021 18:53:11 PAGE 18  
+
+                      GStr_UIPGroup.ulCurrent[1] = 1000.0*V_ulaRegData[9] /8192*10/Str_TRIPUIPKmsPara.ulaKmsuip;        ///BÏàµ
+             -çÁ÷
+                      GStr_UIPGroup.ulCurrent[2] = 1000.0*V_ulaRegData[10] /8192*10/Str_TRIPUIPKmsPara.ulaKmsuip;        ///CÏà
+             -µçÁ÷
+                      GStr_UIPGroup.ulCurrent[3] = 1000.0*V_ulaRegData[11] /4096*10/Str_TRIPUIPKmsPara.ulaKmsuip;        ///ºÏÏ
+             -àµçÁ÷
+                      
+                      LibPub_HEXtoBCDBytes(GStr_UIPGroup.ulCurrent[0],&GStr_UIPDisplay.ucCurrentA[0],4);///×ª»»ÎªBCDÓÃÓÚÏÔÊ¾
+                      LibPub_HEXtoBCDBytes(GStr_UIPGroup.ulCurrent[1],&GStr_UIPDisplay.ucCurrentB[0],4);///×ª»»ÎªBCDÓÃÓÚÏÔÊ¾
+                      LibPub_HEXtoBCDBytes(GStr_UIPGroup.ulCurrent[2],&GStr_UIPDisplay.ucCurrentC[0],4);///×ª»»ÎªBCDÓÃÓÚÏÔÊ¾
+                      LibPub_HEXtoBCDBytes(GStr_UIPGroup.ulCurrent[3],&GStr_UIPDisplay.ucCurrent[0],4);///×ª»»ÎªBCDÓÃÓÚÏÔÊ¾
+                      
+                      LibPub_MemCopyBytes(&GStr_UIPDisplay.ucCurrentA[0],&GStr_UIPDisplay.ucCOMMCurrentA[0],4);///ÓÃÓÚÍ¨ÐÅ
+                      LibPub_MemCopyBytes(&GStr_UIPDisplay.ucCurrentB[0],&GStr_UIPDisplay.ucCOMMCurrentB[0],4);///ÓÃÓÚÍ¨ÐÅ
+                      LibPub_MemCopyBytes(&GStr_UIPDisplay.ucCurrentC[0],&GStr_UIPDisplay.ucCOMMCurrentC[0],4);///ÓÃÓÚÍ¨ÐÅ
+                      LibPub_MemCopyBytes(&GStr_UIPDisplay.ucCurrent[0],&GStr_UIPDisplay.ucCOMMCurrent[0],4);///ÓÃÓÚÍ¨ÐÅ
+                      
+                      ///¹¦ÂÊ
+                      ///¼Ä´æÆ÷ÖµÎªX£¬ÈôX>2^23  XX=X-2^24,·ñÔòXX=X   ·ÖÏàÊµ¼ÊÖµÎªXXX=XX*K    ºÏÏàÊµ¼ÊÖµÎªXXX=XX*2*K
+                      ///K=2.592*10^10/(HFCONST*EC*2^23)   µ¥Î»ÎªW
+                      V_ulKms1=(Str_TRIPEmuCalPara.ulaCalPara[3]&0x00FFFFFF)*GStr_FunConfigPara.ucFunMeterConst*83886.08;
+                      ///                                                        HFCONST                                      * Âö³å³£ÊýµÄ°Ù·ÖÖ®Ò»*2^23       
+                      V_ulKms2=2592000;
+                      for(i=0;i<4;i++)
+                      {
+                              if(V_ulaRegData[i]>8388608)
+                              {
+                                      V_ulTemp[i]=16777216-V_ulaRegData[i];   ////¹¦ÂÊ
+                              }
+                              else
+                              {
+                                      V_ulTemp[i]=V_ulaRegData[i];
+                              }
+                              if(i!=3)
+                              {
+                                      GStr_UIPGroup.ulPower[i]=10.0*V_ulTemp[i]*V_ulKms2/V_ulKms1;///·ÖÏà¹¦ÂÊ///µ¥Î»ÎªWÇÐ»»ÎªkW£¬ËÄÎ»Ð¡Êý
+                              }
+                              else
+                              {
+                                      GStr_UIPGroup.ulPower[i]=10.0*V_ulTemp[i]*V_ulKms2/V_ulKms1*2;///ºÏÏà¹¦ÂÊ
+                              }       
+                      }
+                      LibPub_HEXtoBCDBytes(GStr_UIPGroup.ulPower[0],&GStr_UIPDisplay.ucPowerA[0],4);///×ª»»ÎªBCDÓÃÓÚÏÔÊ¾
+                      LibPub_HEXtoBCDBytes(GStr_UIPGroup.ulPower[1],&GStr_UIPDisplay.ucPowerB[0],4);///×ª»»ÎªBCDÓÃÓÚÏÔÊ¾
+                      LibPub_HEXtoBCDBytes(GStr_UIPGroup.ulPower[2],&GStr_UIPDisplay.ucPowerC[0],4);///×ª»»ÎªBCDÓÃÓÚÏÔÊ¾
+                      LibPub_HEXtoBCDBytes(GStr_UIPGroup.ulPower[3],&GStr_UIPDisplay.ucPower[0],4);///×ª»»ÎªBCDÓÃÓÚÏÔÊ¾
+                      
+                      LibPub_MemCopyBytes(&GStr_UIPDisplay.ucPowerA[0],&GStr_UIPDisplay.ucCOMMPowerA[0],4);///ÓÃÓÚÍ¨ÐÅ
+                      LibPub_MemCopyBytes(&GStr_UIPDisplay.ucPowerB[0],&GStr_UIPDisplay.ucCOMMPowerB[0],4);///ÓÃÓÚÍ¨ÐÅ
+                      LibPub_MemCopyBytes(&GStr_UIPDisplay.ucPowerC[0],&GStr_UIPDisplay.ucCOMMPowerC[0],4);///ÓÃÓÚÍ¨ÐÅ
+                      LibPub_MemCopyBytes(&GStr_UIPDisplay.ucPower[0],&GStr_UIPDisplay.ucCOMMPower[0],4);///ÓÃÓÚÍ¨ÐÅ
+                      
+                      ///¹¦ÂÊÒòÊý
+                      ///¼Ä´æÆ÷ÖµÎªX£¬ÈôX>2^23  XX=X-2^24,·ñÔòXX=X   Êµ¼Ê¹¦ÂÊÒòÊýpf=XX/2^23
+                      for(i=0;i<4;i++)
+                      {
+                              if(V_ulaRegData[12+i]>8388608)
+                              {
+                                      V_ulTemp[i]=16777216-V_ulaRegData[12+i];   ////¹¦ÂÊÒòÊý
+                              }
+                              else
+                              {
+C51 COMPILER V9.54   APPEMUATT7036                                                         11/18/2021 18:53:11 PAGE 19  
+
+                                      V_ulTemp[i]=V_ulaRegData[12+i];
+                              }
+                              GStr_UIPGroup.ulFactory[i]=100.0*V_ulTemp[i]/8388608*10;
+                      }
+                      LibPub_HEXtoBCDBytes(GStr_UIPGroup.ulFactory[0],&GStr_UIPDisplay.ucFactoryA[0],4);///×ª»»ÎªBCDÓÃÓÚÍ¨ÐÅºÍÏ
+             -ÔÊ¾
+                      LibPub_HEXtoBCDBytes(GStr_UIPGroup.ulFactory[1],&GStr_UIPDisplay.ucFactoryB[0],4);///×ª»»ÎªBCDÓÃÓÚÍ¨ÐÅºÍÏ
+             -ÔÊ¾
+                      LibPub_HEXtoBCDBytes(GStr_UIPGroup.ulFactory[2],&GStr_UIPDisplay.ucFactoryC[0],4);///×ª»»ÎªBCDÓÃÓÚÍ¨ÐÅºÍÏ
+             -ÔÊ¾
+                      LibPub_HEXtoBCDBytes(GStr_UIPGroup.ulFactory[3],&GStr_UIPDisplay.ucFactory[0],4);///×ª»»ÎªBCDÓÃÓÚÍ¨ÐÅºÍÏÔ
+             -Ê¾
+                      
+                      LibPub_MemCopyBytes(&GStr_UIPDisplay.ucFactoryA[0],&GStr_UIPDisplay.ucCOMMFactoryA[0],4);///ÓÃÓÚÍ¨ÐÅ
+                      LibPub_MemCopyBytes(&GStr_UIPDisplay.ucFactoryB[0],&GStr_UIPDisplay.ucCOMMFactoryB[0],4);///ÓÃÓÚÍ¨ÐÅ
+                      LibPub_MemCopyBytes(&GStr_UIPDisplay.ucFactoryC[0],&GStr_UIPDisplay.ucCOMMFactoryC[0],4);///ÓÃÓÚÍ¨ÐÅ
+                      LibPub_MemCopyBytes(&GStr_UIPDisplay.ucFactory[0],&GStr_UIPDisplay.ucCOMMFactory[0],4);///ÓÃÓÚÍ¨ÐÅ
+                      
+                      ///ÆµÂÊ
+                      ///¼Ä´æÆ÷ÖµÎªX   freq=X/2^13
+                      V_ulTemp[0]=V_ulaRegData[16];
+                      GStr_UIPGroup.ulFrequency=100.0*V_ulTemp[0]/8192;
+                      LibPub_HEXtoBCDBytes(GStr_UIPGroup.ulFrequency,&GStr_UIPDisplay.ucFrequency[0],4);///×ª»»ÎªBCDÓÃÓÚÍ¨ÐÅºÍÏ
+             -ÔÊ¾
+                      
+                      AppEMU_ReadOneReg_MeterIC(C_Psign, &V_ucaReverseData[0],C_MeterPara);//¶Á¹¦ÂÊ·½Ïò¼Ä´æÆ÷
+                      if(V_ucaReverseData[2]&0x01)
+                      {
+                              V_ucaReverseFlag_A=1;
+                              GStr_UIPDisplay.ucCOMMFactoryA[2] |=0x80;///AÏà·´Ïò£¬µçÑ¹µçÁ÷¹¦ÂÊ¹¦ÂÊÒòÊý×î¸ßÎ»ÖÃ1
+                              GStr_UIPDisplay.ucCOMMPowerA[1] |=0x80;///AÏà·´Ïò£¬µçÑ¹µçÁ÷¹¦ÂÊ¹¦ÂÊÒòÊý×î¸ßÎ»ÖÃ1
+                              GStr_UIPDisplay.ucCOMMCurrentA[1]|=0x80;///AÏà·´Ïò£¬µçÑ¹µçÁ÷¹¦ÂÊ¹¦ÂÊÒòÊý×î¸ßÎ»ÖÃ1
+                      }
+                      if(V_ucaReverseData[2]&0x02)
+                      {
+                              V_ucaReverseFlag_B=1;
+                              GStr_UIPDisplay.ucCOMMFactoryB[2] |=0x80;///BÏà·´Ïò£¬µçÑ¹µçÁ÷¹¦ÂÊ¹¦ÂÊÒòÊý×î¸ßÎ»ÖÃ1
+                              GStr_UIPDisplay.ucCOMMPowerB[1] |=0x80;///BÏà·´Ïò£¬µçÑ¹µçÁ÷¹¦ÂÊ¹¦ÂÊÒòÊý×î¸ßÎ»ÖÃ1
+                              GStr_UIPDisplay.ucCOMMCurrentB[1]|=0x80;///BÏà·´Ïò£¬µçÑ¹µçÁ÷¹¦ÂÊ¹¦ÂÊÒòÊý×î¸ßÎ»ÖÃ1
+                      }
+                      if(V_ucaReverseData[2]&0x04)
+                      {
+                              V_ucaReverseFlag_C=1;
+                              GStr_UIPDisplay.ucCOMMFactoryC[2] |=0x80;///CÏà·´Ïò£¬µçÑ¹µçÁ÷¹¦ÂÊ¹¦ÂÊÒòÊý×î¸ßÎ»ÖÃ1
+                              GStr_UIPDisplay.ucCOMMPowerC[1] |=0x80;///CÏà·´Ïò£¬µçÑ¹µçÁ÷¹¦ÂÊ¹¦ÂÊÒòÊý×î¸ßÎ»ÖÃ1
+                              GStr_UIPDisplay.ucCOMMCurrentC[1]|=0x80;///CÏà·´Ïò£¬µçÑ¹µçÁ÷¹¦ÂÊ¹¦ÂÊÒòÊý×î¸ßÎ»ÖÃ1
+                      }
+                      if(V_ucaReverseData[2]&0x08)
+                      {
+                              GStr_UIPDisplay.ucCOMMFactory[2] |=0x80;///ºÏÏà·´Ïò£¬µçÑ¹µçÁ÷¹¦ÂÊ¹¦ÂÊÒòÊý×î¸ßÎ»ÖÃ1
+                              GStr_UIPDisplay.ucCOMMPower[1] |=0x80;///ºÏÏà·´Ïò£¬µçÑ¹µçÁ÷¹¦ÂÊ¹¦ÂÊÒòÊý×î¸ßÎ»ÖÃ1
+                              GStr_UIPDisplay.ucCOMMCurrent[1]|=0x80;///ºÏÏà·´Ïò£¬µçÑ¹µçÁ÷¹¦ÂÊ¹¦ÂÊÒòÊý×î¸ßÎ»ÖÃ1
+                      }
+                      
+                      // 6. ÅÐ¶ÏÊÇ·ñÇ±Æð¶¯
+                      //---------------------------------------------------------------------------
+                      AppEMU_ReadOneReg_MeterIC(C_EmuState, &V_ucaReverseData[0],C_MeterPara);//¶Á±êÖ¾¼Ä´æÆ÷
+                      // µçÁ÷ºÍ¹¦ÂÊÔÚ³§ÄÚ²»ÃðÁã£¬³§ÍâÃðÁã
+                      if(V_ucaReverseData[1]&0x02)///AÏàÇ±¶¯  
+                      {
+                              if( (GStr_Flag.ucMeterMode & F_FACTORY_MODE)!= F_FACTORY_MODE ) 
+                              {
+C51 COMPILER V9.54   APPEMUATT7036                                                         11/18/2021 18:53:11 PAGE 20  
+
+                                      if(GStr_UIPGroup.ulCurrent[0]<=(2*(100*C_ucCurrentTab[GStr_FunConfigPara.ucFunCurrentVal])/1000))
+                                      {
+                                              LibPub_MemSetBytes( &GStr_UIPDisplay.ucCurrentA[0], 0x00, 4 );
+                                              LibPub_MemSetBytes( &GStr_UIPDisplay.ucCOMMCurrentA[0],0x00,4);
+                                      }
+                                      LibPub_MemSetBytes( &GStr_UIPDisplay.ucPowerA[0], 0x00, 4 );
+                                      LibPub_MemSetBytes( &GStr_UIPDisplay.ucCOMMPowerA[0],0x00,4);
+                              }
+                              LibPub_MemSetBytes( &GStr_UIPDisplay.ucFactoryA[0], 0x00, 4 );
+                              LibPub_MemSetBytes( &GStr_UIPDisplay.ucCOMMFactoryA[0], 0x00, 4 );
+                              GStr_UIPDisplay.ucFactoryA[2] = 0x10;
+                              GStr_UIPDisplay.ucCOMMFactoryA[2] = 0x10;
+                              V_ucaReverseFlag_A=0;///ÇåAÏà·´Ïò±êÖ¾
+                      }
+                      if(V_ucaReverseData[1]&0x04)///BÏàÇ±¶¯  
+                      {
+                              if( (GStr_Flag.ucMeterMode & F_FACTORY_MODE)!= F_FACTORY_MODE ) 
+                              {
+                                      if(GStr_UIPGroup.ulCurrent[1]<=(2*(100*C_ucCurrentTab[GStr_FunConfigPara.ucFunCurrentVal])/1000))
+                                      {
+                                              LibPub_MemSetBytes( &GStr_UIPDisplay.ucCurrentB[0], 0x00, 4 );
+                                              LibPub_MemSetBytes( &GStr_UIPDisplay.ucCOMMCurrentB[0],0x00,4);
+                                      }
+                                      LibPub_MemSetBytes( &GStr_UIPDisplay.ucPowerB[0], 0x00, 4 );
+                                      LibPub_MemSetBytes( &GStr_UIPDisplay.ucCOMMPowerB[0],0x00,4);
+                              }
+                              LibPub_MemSetBytes( &GStr_UIPDisplay.ucFactoryB[0], 0x00, 4 );
+                              LibPub_MemSetBytes( &GStr_UIPDisplay.ucCOMMFactoryB[0], 0x00, 4 );
+                              GStr_UIPDisplay.ucFactoryB[2] = 0x10;
+                              GStr_UIPDisplay.ucCOMMFactoryB[2] = 0x10;
+                              V_ucaReverseFlag_B=0;///ÇåBÏà·´Ïò±êÖ¾
+                      }
+                      if(V_ucaReverseData[1]&0x08)///CÏàÇ±¶¯  
+                      {
+                              if( (GStr_Flag.ucMeterMode & F_FACTORY_MODE)!= F_FACTORY_MODE ) 
+                              {
+                                      if(GStr_UIPGroup.ulCurrent[2]<=(2*(100*C_ucCurrentTab[GStr_FunConfigPara.ucFunCurrentVal])/1000))
+                                      {
+                                              LibPub_MemSetBytes( &GStr_UIPDisplay.ucCurrentC[0], 0x00, 4 );
+                                              LibPub_MemSetBytes( &GStr_UIPDisplay.ucCOMMCurrentC[0],0x00,4);
+                                      }
+                                      LibPub_MemSetBytes( &GStr_UIPDisplay.ucPowerC[0], 0x00, 4 );
+                                      LibPub_MemSetBytes( &GStr_UIPDisplay.ucCOMMPowerC[0],0x00,4);
+                              }
+                              LibPub_MemSetBytes( &GStr_UIPDisplay.ucFactoryC[0], 0x00, 4 );
+                              LibPub_MemSetBytes( &GStr_UIPDisplay.ucCOMMFactoryC[0], 0x00, 4 );
+                              GStr_UIPDisplay.ucFactoryC[2] = 0x10;
+                              GStr_UIPDisplay.ucCOMMFactoryC[2] = 0x10;
+                              V_ucaReverseFlag_C=0;///ÇåCÏà·´Ïò±êÖ¾
+                      }
+                      if((V_ucaReverseData[1]&0x02)&&(V_ucaReverseData[1]&0x04)&&(V_ucaReverseData[1]&0x08))///A\B\CÏà¶¼Ç±¶¯  
+                      {
+                              if( (GStr_Flag.ucMeterMode & F_FACTORY_MODE)!= F_FACTORY_MODE ) 
+                              {
+                                      if(GStr_UIPGroup.ulCurrent[3]<=(6*(100*C_ucCurrentTab[GStr_FunConfigPara.ucFunCurrentVal])/1000))
+                                      {
+                                              LibPub_MemSetBytes( &GStr_UIPDisplay.ucCurrent[0], 0x00, 4 );
+                                              LibPub_MemSetBytes( &GStr_UIPDisplay.ucCOMMCurrent[0],0x00,4);
+                                      }
+                                      LibPub_MemSetBytes( &GStr_UIPDisplay.ucPower[0], 0x00, 4 );
+                                      LibPub_MemSetBytes( &GStr_UIPDisplay.ucCOMMPower[0],0x00,4);
+                              }
+C51 COMPILER V9.54   APPEMUATT7036                                                         11/18/2021 18:53:11 PAGE 21  
+
+                              LibPub_MemSetBytes( &GStr_UIPDisplay.ucFactory[0], 0x00, 4 );
+                              LibPub_MemSetBytes( &GStr_UIPDisplay.ucCOMMFactory[0], 0x00, 4 );
+                              GStr_UIPDisplay.ucFactory[2] = 0x10;
+                              GStr_UIPDisplay.ucCOMMFactory[2] = 0x10;
+                      }
+                              
+                      if((V_ucaReverseFlag_A)||(V_ucaReverseFlag_B)||(V_ucaReverseFlag_C))
+                      {
+                              GStr_Flag.ucRunState1 |=F_RUN_POWER_REVERSE;  //ÖÃ¹¦ÂÊ·´Ïò±êÖ¾
+                      }
+                      else
+                      {
+                              GStr_Flag.ucRunState1 &=~F_RUN_POWER_REVERSE; //Çå¹¦ÂÊ·´Ïò±êÖ¾
+                      }
+              //---------------------------------------------------------------------------
+                      
+                      return(_SUCCESS);
+              }
+              /*------------------------------------------------------------------------------------------------------*/
+              /**
+               *  @brief    »ñÈ¡¹¦ÂÊ·½Ïò
+               *
+               *  @return   _FALSE£º·´Ïò  _TRUE£ºÕýÏò
+               *
+               *  @note     xx///¸Ãº¯ÊýÖ»ÓÃÓÚÅÐ¶ÏÕý·´ÏòÂö³å£¬ÓÃºÏÏàµÄ·½ÏòÎª×¼
+               *
+               */
+              /*------------------------------------------------------------------------------------------------------*/
+              uchar8  ApiEMU_GetDirP(void)
+              {
+                      uchar8 V_ucaRegData[3];
+                      
+                      AppEMU_ReadOneReg_MeterIC(C_Psign, &V_ucaRegData[0],C_MeterPara);//¶Á¹¦ÂÊ·½Ïò¼Ä´æÆ÷
+                      
+                      if(V_ucaRegData[2]&0x08)/// ºÏÏà·´Ïò
+                      {
+                              return _FALSE;
+                      }
+                      return _TRUE;
+              }
+              
+              #endif
+C51 COMPILER V9.54   APPEMUATT7036                                                         11/18/2021 18:53:11 PAGE 22  
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+uint16_t . . . . . . . . . . . . . . .  TYPEDEF  -----  U_INT    -----  2
+IB_CON2. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00F3H  1
+COMM_BLE_STAT. . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+API_COMM_STATUS_OVERTIME . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+TB81 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00DBH  1
+P0 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0080H  1
+IB_CON3. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00F4H  1
+FP64 . . . . . . . . . . . . . . . . .  TYPEDEF  -----  FLOAT    -----  4
+TKCON. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A4H  1
+P1 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0090H  1
+IB_CON4. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00F5H  1
+PASLO. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E7H  1
+GStr_ENERGYDEC_Type. . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  26
+  ucaFw_EnergyDec. . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  13
+  ucaBk_EnergyDec. . . . . . . . . . .  MEMBER   -----  ARRAY    000DH  13
+P2 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A0H  1
+OSCLO. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00FEH  1
+IB_CON5. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00F6H  1
+GStr_EventRecordNum_Type . . . . . . .  TYPEDEF  -----  STRUCT   -----  26
+  ucEventTimes . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  24
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    0018H  2
+GStr_FLAG_Type . . . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  16
+  ucSystem . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0000H  1
+  ucMeterMode. . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0001H  1
+  ucPwOnState. . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0002H  1
+  ucRunState . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0003H  1
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    0004H  2
+  ucRunState2. . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0006H  1
+  ucRunState1. . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0007H  1
+  ucRunState3. . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0008H  1
+  ucDisp . . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0009H  1
+  ucFactoryKey . . . . . . . . . . . .  MEMBER   -----  U_CHAR   000AH  1
+  ucDispKey. . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   000BH  1
+  ucMoney. . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   000CH  1
+  ucPowerOnFlag. . . . . . . . . . . .  MEMBER   -----  U_CHAR   000DH  1
+  ucWrE2promSafeByte . . . . . . . . .  MEMBER   -----  U_CHAR   000EH  1
+  ucBLESTATFlag. . . . . . . . . . . .  MEMBER   -----  U_CHAR   000FH  1
+BOOLEAN. . . . . . . . . . . . . . . .  TYPEDEF  -----  U_CHAR   -----  1
+SM1_RXOV . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      009EH  1
+P3 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B0H  1
+AC . . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00D6H  1
+P4 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C0H  1
+SPCON. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A1H  1
+SBRTH. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   009CH  1
+P5 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E9H  1
+LIB_E2P_Price_BAK. . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+EA . . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00AFH  1
+P6 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00EAH  1
+LIB_E2P_Display_Table. . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+GStr_DISPLAY_PARA_Type . . . . . . . .  TYPEDEF  -----  STRUCT   -----  129
+  ucFullDisp_Time. . . . . . . . . . .  MEMBER   -----  U_CHAR   0000H  1
+  ucDispDurTime. . . . . . . . . . . .  MEMBER   -----  U_CHAR   0001H  1
+  ucAutoDispNum. . . . . . . . . . . .  MEMBER   -----  U_CHAR   0002H  1
+  ucKeyDispNum . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0003H  1
+  usDisp_ParaCRC16 . . . . . . . . . .  MEMBER   -----  U_INT    0004H  2
+  ucAutoDisptable. . . . . . . . . . .  MEMBER   -----  ARRAY    0006H  30
+  ucKeyDisptable . . . . . . . . . . .  MEMBER   -----  ARRAY    0024H  30
+C51 COMPILER V9.54   APPEMUATT7036                                                         11/18/2021 18:53:11 PAGE 23  
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+  usDisp_tableCRC16. . . . . . . . . .  MEMBER   -----  U_INT    0042H  2
+  ucBackLightTime. . . . . . . . . . .  MEMBER   -----  U_CHAR   0044H  1
+  ucRelayLEDTime . . . . . . . . . . .  MEMBER   -----  U_CHAR   0045H  1
+  ulDispUpdataTime . . . . . . . . . .  MEMBER   -----  U_LONG   0046H  4
+  usDispCnt. . . . . . . . . . . . . .  MEMBER   -----  U_INT    004AH  2
+  ulDisptimer. . . . . . . . . . . . .  MEMBER   -----  U_LONG   004CH  4
+  ucKeydelaytimer. . . . . . . . . . .  MEMBER   -----  U_CHAR   0050H  1
+  ucFirstKeyDisp . . . . . . . . . . .  MEMBER   -----  U_CHAR   0051H  1
+  ucDisp_0_flag. . . . . . . . . . . .  MEMBER   -----  U_CHAR   0052H  1
+  ucDisp_tongxin_Flag. . . . . . . . .  MEMBER   -----  U_CHAR   0053H  1
+  ucDisp_tongxin_Time. . . . . . . . .  MEMBER   -----  U_LONG   0054H  4
+  ucDispNum. . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0058H  1
+  ucLCDDrvDispBuf. . . . . . . . . . .  MEMBER   -----  ARRAY    0059H  40
+int32_t. . . . . . . . . . . . . . . .  TYPEDEF  -----  LONG     -----  4
+P7 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00EBH  1
+IB_DATA. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00EFH  1
+P8 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00ECH  1
+int16_t. . . . . . . . . . . . . . . .  TYPEDEF  -----  INT      -----  2
+SBRTL. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   009DH  1
+P9 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00EDH  1
+PBANKLO. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B7H  1
+GStr_COUNTER_Type. . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  9
+  ucFactoryMode_Cnt. . . . . . . . . .  MEMBER   -----  U_INT    0000H  2
+  ucKeyRelayOn_Cnt . . . . . . . . . .  MEMBER   -----  U_INT    0002H  2
+  ucRelayDelay_Cnt . . . . . . . . . .  MEMBER   -----  U_CHAR   0004H  1
+  ucHoldMoney_Cnt. . . . . . . . . . .  MEMBER   -----  U_CHAR   0005H  1
+  ucPasswordErr_Cnt. . . . . . . . . .  MEMBER   -----  ARRAY    0006H  3
+SPSTA. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A2H  1
+IEN0 . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A8H  1
+PWRCON1. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B3H  1
+ulong32. . . . . . . . . . . . . . . .  TYPEDEF  -----  U_LONG   -----  4
+EMUSR. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0095H  1
+IEN1 . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A9H  1
+PWRCON2. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B4H  1
+DPH1 . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0085H  1
+P0_0 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0080H  1
+ushort16 . . . . . . . . . . . . . . .  TYPEDEF  -----  U_INT    -----  2
+P1_0 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0090H  1
+P0_1 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0081H  1
+ADCH . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C3H  1
+BLE_DRV_OPERATION_INDEX. . . . . . . .  TYPEDEF  -----  U_CHAR   -----  1
+LIB_E2P_SOFTI_J. . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+P2_0 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00A0H  1
+P1_1 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0091H  1
+P0_2 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0082H  1
+IPH0 . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00BAH  1
+DPL1 . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0084H  1
+size_t . . . . . . . . . . . . . . . .  TYPEDEF  -----  U_INT    -----  2
+LIB_E2P_FUN_CONFIG_BAK . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+GStr_MONITOR_Tpye. . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  59
+  ulTimer_ms . . . . . . . . . . . . .  MEMBER   -----  U_LONG   0000H  4
+  ulTimer_ms_old . . . . . . . . . . .  MEMBER   -----  U_LONG   0004H  4
+  ulTimerClrWDT. . . . . . . . . . . .  MEMBER   -----  U_LONG   0008H  4
+  ulTimerMin . . . . . . . . . . . . .  MEMBER   -----  U_LONG   000CH  4
+  ulTimer5ms . . . . . . . . . . . . .  MEMBER   -----  U_LONG   0010H  4
+  ucPowerOnTimer . . . . . . . . . . .  MEMBER   -----  U_CHAR   0014H  1
+  ulTimers . . . . . . . . . . . . . .  MEMBER   -----  U_LONG   0015H  4
+C51 COMPILER V9.54   APPEMUATT7036                                                         11/18/2021 18:53:11 PAGE 24  
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+  ulUpDateUIPTime. . . . . . . . . . .  MEMBER   -----  U_LONG   0019H  4
+  ulSoftI_JTime. . . . . . . . . . . .  MEMBER   -----  U_LONG   001DH  4
+  usSoftI_JTimeCRC16 . . . . . . . . .  MEMBER   -----  U_INT    0021H  2
+  usPasswordErrTime. . . . . . . . . .  MEMBER   -----  ARRAY    0023H  8
+  ucCommSymbolTime . . . . . . . . . .  MEMBER   -----  U_CHAR   002BH  1
+  ucPowerLimitNum. . . . . . . . . . .  MEMBER   -----  U_CHAR   002CH  1
+  ulOverDemandCloseTime. . . . . . . .  MEMBER   -----  U_LONG   002DH  4
+  ulProgEventDelayTime . . . . . . . .  MEMBER   -----  U_LONG   0031H  4
+  ulReadRandom2DelayTime . . . . . . .  MEMBER   -----  U_LONG   0035H  4
+  ucBleAdvCnt. . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0039H  1
+  ucBleConnectCnt. . . . . . . . . . .  MEMBER   -----  U_CHAR   003AH  1
+P3_0 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00B0H  1
+P2_1 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00A1H  1
+P1_2 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0092H  1
+P0_3 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0083H  1
+IPH1 . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00BBH  1
+COMM_BLE_MAC . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+P4_0 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00C0H  1
+P3_1 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00B1H  1
+P2_2 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00A2H  1
+P1_3 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0093H  1
+P0_4 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0084H  1
+EXF0 . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E8H  1
+P4_1 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00C1H  1
+P3_2 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00B2H  1
+P2_3 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00A3H  1
+P1_4 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0094H  1
+P0_5 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0085H  1
+P4_2 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00C2H  1
+P3_3 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00B3H  1
+P2_4 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00A4H  1
+P1_5 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0095H  1
+P0_6 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0086H  1
+EXF2 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00CEH  1
+TKF0 . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A6H  1
+IPL0 . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B8H  1
+LIB_E2P_ENRGY_BAK. . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+P4_3 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00C3H  1
+P3_4 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00B4H  1
+P2_5 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00A5H  1
+P1_6 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0096H  1
+P0_7 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0087H  1
+REN1 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00DCH  1
+IPL1 . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B9H  1
+LIB_E2P_EventNum . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+long32 . . . . . . . . . . . . . . . .  TYPEDEF  -----  LONG     -----  4
+P4_4 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00C4H  1
+P3_5 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00B5H  1
+P2_6 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00A6H  1
+P1_7 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0097H  1
+TK0H . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E2H  1
+SUSLO. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   008EH  1
+P4_5 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00C5H  1
+P3_6 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00B6H  1
+P2_7 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00A7H  1
+TK1H . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E4H  1
+P4_6 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00C6H  1
+C51 COMPILER V9.54   APPEMUATT7036                                                         11/18/2021 18:53:11 PAGE 25  
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+P3_7 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00B7H  1
+TK2H . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E6H  1
+LIB_E2P_Money_BAK. . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+short16. . . . . . . . . . . . . . . .  TYPEDEF  -----  INT      -----  2
+P4_7 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00C7H  1
+RI . . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0098H  1
+E7816. . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00AAH  1
+CY . . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00D7H  1
+TK0L . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E1H  1
+API_COMM_STATUS_ERROR. . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+TI . . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0099H  1
+EADR . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0091H  1
+TK1L . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E3H  1
+TK2L . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E5H  1
+SADEN1 . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00DBH  1
+SM10_FE1 . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00DFH  1
+SADEN2 . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00FBH  1
+LIB_E2P_EMU_CALPARA. . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+GStr_ENERGY_PULSE_Type . . . . . . . .  TYPEDEF  -----  STRUCT   -----  8
+  ucPulseAdd . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0000H  1
+  ucPulseAddBusy . . . . . . . . . . .  MEMBER   -----  U_CHAR   0001H  1
+  ucPulseStatu . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0002H  1
+  ucPulseDecimal . . . . . . . . . . .  MEMBER   -----  U_CHAR   0003H  1
+  ucPulseDecSavePtr. . . . . . . . . .  MEMBER   -----  U_CHAR   0004H  1
+  ucPulseDecSaveNoFF . . . . . . . . .  MEMBER   -----  U_CHAR   0005H  1
+  ucaPulseRemain . . . . . . . . . . .  MEMBER   -----  ARRAY    0006H  2
+PS0L . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00BCH  1
+PT0L . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00B9H  1
+SADDR1 . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00DAH  1
+LIB_E2P_INDEX_MAX. . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+LIB_E2P_Display_Para . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+SM12_TXCOL1. . . . . . . . . . . . . .  ABSBIT   -----  BIT      00DDH  1
+PT1L . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00BBH  1
+SADDR2 . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00FAH  1
+RCAP2H . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00CBH  1
+COMM_BLE_MOD . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+PT2L . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00BDH  1
+SP . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0081H  1
+INT32S . . . . . . . . . . . . . . . .  TYPEDEF  -----  LONG     -----  4
+OV . . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00D2H  1
+LIB_E2P_EventNumPiont. . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+GStr_METER_IFO_Type. . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  27
+  ucaCommAddr. . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  6
+  ucaMeterID . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0006H  6
+  ucaUserID. . . . . . . . . . . . . .  MEMBER   -----  ARRAY    000CH  6
+  ucVoltageTrans . . . . . . . . . . .  MEMBER   -----  ARRAY    0012H  3
+  ucCurrentTrans . . . . . . . . . . .  MEMBER   -----  ARRAY    0015H  3
+  ucBpsVal . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0018H  1
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    0019H  2
+RCAP2L . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00CAH  1
+INT32U . . . . . . . . . . . . . . . .  TYPEDEF  -----  U_LONG   -----  4
+INT16S . . . . . . . . . . . . . . . .  TYPEDEF  -----  INT      -----  2
+INT16U . . . . . . . . . . . . . . . .  TYPEDEF  -----  U_INT    -----  2
+PX4L . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00B8H  1
+C_T2 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00C9H  1
+SFINE2 . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00DEH  1
+GStr_BLE_GROUP_Type. . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  26
+C51 COMPILER V9.54   APPEMUATT7036                                                         11/18/2021 18:53:11 PAGE 26  
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+  ucBleMAC . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  6
+  ucBleName. . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0006H  12
+  ucBleKey . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0012H  3
+  usAdvTime. . . . . . . . . . . . . .  MEMBER   -----  U_INT    0015H  2
+  ucBleTPL . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0017H  1
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    0018H  2
+COMM_BLE_MFV . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+GStr_EventNumPiont_Type. . . . . . . .  TYPEDEF  -----  STRUCT   -----  8
+  uc_Num . . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  6
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    0006H  2
+IRCON1 . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00ADH  1
+IRCON2 . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00AFH  1
+GStr_Comm_MAP. . . . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  14
+  ucaDataId. . . . . . . . . . . . . .  MEMBER   -----  U_LONG   0000H  4
+  ucaRamAdd. . . . . . . . . . . . . .  MEMBER   -----  PTR      0004H  3
+  IsWrite. . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0007H  1
+  ucaE2pIndex. . . . . . . . . . . . .  MEMBER   -----  U_INT    0008H  2
+  ucaE2offset. . . . . . . . . . . . .  MEMBER   -----  U_CHAR   000AH  1
+  ucaDataLen . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   000BH  1
+  IsBCD. . . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   000CH  1
+  EEIsHEX. . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   000DH  1
+API_COMM_STATUS_IDLE . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+EXCON1 . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00ABH  1
+SBUF . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0099H  1
+EXCON2 . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00ACH  1
+PCON . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0087H  1
+B32_B08. . . . . . . . . . . . . . . .  * TAG *  -----  UNION    -----  4
+  B08. . . . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  4
+  B16. . . . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  4
+  B32. . . . . . . . . . . . . . . . .  MEMBER   -----  U_LONG   0000H  4
+AUXC . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00F1H  1
+COMM_BLE_TPL . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+GStr_UART_COMM_Type. . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  423
+  ucCommChStatus . . . . . . . . . . .  MEMBER   -----  U_CHAR   0000H  1
+  ucCommRevStep. . . . . . . . . . . .  MEMBER   -----  U_CHAR   0001H  1
+  ucCommRevLen . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0002H  1
+  ucCommSndLen . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0003H  1
+  ucCommSndCnt . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0004H  1
+  ucCommAddrType . . . . . . . . . . .  MEMBER   -----  U_CHAR   0005H  1
+  ucCommError. . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0006H  1
+  ulCommTimeInit . . . . . . . . . . .  MEMBER   -----  U_LONG   0007H  4
+  ulCommRcvByteOverTime. . . . . . . .  MEMBER   -----  U_LONG   000BH  4
+  ulCommSndByteOverTime. . . . . . . .  MEMBER   -----  U_LONG   000FH  4
+  ulCommRspOverTime. . . . . . . . . .  MEMBER   -----  U_LONG   0013H  4
+  ucaCommRXBuff. . . . . . . . . . . .  MEMBER   -----  ARRAY    0017H  200
+  ucaCommTXBuff. . . . . . . . . . . .  MEMBER   -----  ARRAY    00DFH  200
+GStr_ENERGY_Type . . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  10
+  ucaFw_Energy . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  4
+  ucaBk_Energy . . . . . . . . . . . .  MEMBER   -----  ARRAY    0004H  4
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    0008H  2
+GU_B32_B08_Type. . . . . . . . . . . .  TYPEDEF  -----  UNION    -----  4
+  B08. . . . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  4
+  B16. . . . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  4
+  B32. . . . . . . . . . . . . . . . .  MEMBER   -----  U_LONG   0000H  4
+SCON . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0098H  1
+TK0BASEH . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D4H  1
+TMOD . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0089H  1
+C51 COMPILER V9.54   APPEMUATT7036                                                         11/18/2021 18:53:11 PAGE 27  
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+TCON . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0088H  1
+IENX . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00AAH  1
+IB_OFFSET. . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00EEH  1
+TK1BASEH . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D6H  1
+SBRT1H . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00DCH  1
+TK2BASEH . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00DFH  1
+SBRT2H . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00FCH  1
+RSTSTAT. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B1H  1
+LIB_E2P_Password . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+TK0BASEL . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D3H  1
+LIB_E2P_BLE_PARA . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+LIB_E2P_RUN_STATE. . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+TK1BASEL . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D5H  1
+SBRT1L . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00DDH  1
+COMM_BLE_TTP . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+EMU_EPADR_Type . . . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  5
+  ucEmuAddr. . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0000H  1
+  ulEmuRegData . . . . . . . . . . . .  MEMBER   -----  U_LONG   0001H  4
+TK2BASEL . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D7H  1
+SBRT2L . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00FDH  1
+API_COMM_STATUS_SEND . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+SM0_FE . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      009FH  1
+CLKCON . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B2H  1
+API_COMM_STATUS_RECV_OK. . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+SM2_TXCOL. . . . . . . . . . . . . . .  ABSBIT   -----  BIT      009DH  1
+LDOCON . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B5H  1
+B. . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00F0H  1
+API_COMM_STATUS_RECV . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+EMU_CALPARA_Type . . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  22
+  ulaCalPara . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  20
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    0014H  2
+CP_RL2 . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00C8H  1
+LIB_E2P_EMU_UIPKms . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+GStr_UIP_GROUP_Type. . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  68
+  ulVoltage. . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  16
+  ulCurrent. . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0010H  16
+  ulPower. . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0020H  16
+  ulFactory. . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0030H  16
+  ulFrequency. . . . . . . . . . . . .  MEMBER   -----  U_LONG   0040H  4
+ENUM_API_COMM_STATUS . . . . . . . . .  TYPEDEF  -----  U_CHAR   -----  1
+ACC. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E0H  1
+ES0. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00ACH  1
+ET0. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00A9H  1
+ET1. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00ABH  1
+TF0. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      008DH  1
+ET2. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00ADH  1
+TF1. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      008FH  1
+RI1. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00D8H  1
+RB8. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      009AH  1
+TF2. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00CFH  1
+TH0. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   008CH  1
+INSCON . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0086H  1
+TH1. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   008DH  1
+uchar8 . . . . . . . . . . . . . . . .  TYPEDEF  -----  U_CHAR   -----  1
+TI1. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00D9H  1
+TB8. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      009BH  1
+TH2. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00CDH  1
+C51 COMPILER V9.54   APPEMUATT7036                                                         11/18/2021 18:53:11 PAGE 28  
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+LIB_E2P_EMU_CALPARA_BAK. . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+uint8_t. . . . . . . . . . . . . . . .  TYPEDEF  -----  U_CHAR   -----  1
+P. . . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00D0H  1
+GStr_UIP_DISPLAY_Type. . . . . . . . .  TYPEDEF  -----  STRUCT   -----  135
+  ucVoltage. . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  4
+  ucVoltageA . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0004H  4
+  ucVoltageB . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0008H  4
+  ucVoltageC . . . . . . . . . . . . .  MEMBER   -----  ARRAY    000CH  4
+  ucCOMMVoltage. . . . . . . . . . . .  MEMBER   -----  ARRAY    0010H  4
+  ucCOMMVoltageA . . . . . . . . . . .  MEMBER   -----  ARRAY    0014H  4
+  ucCOMMVoltageB . . . . . . . . . . .  MEMBER   -----  ARRAY    0018H  4
+  ucCOMMVoltageC . . . . . . . . . . .  MEMBER   -----  ARRAY    001CH  4
+  ucCurrent. . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0020H  4
+  ucCurrentA . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0024H  4
+  ucCurrentB . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0028H  4
+  ucCurrentC . . . . . . . . . . . . .  MEMBER   -----  ARRAY    002CH  4
+  ucCOMMCurrent. . . . . . . . . . . .  MEMBER   -----  ARRAY    0030H  4
+  ucCOMMCurrentA . . . . . . . . . . .  MEMBER   -----  ARRAY    0034H  4
+  ucCOMMCurrentB . . . . . . . . . . .  MEMBER   -----  ARRAY    0038H  4
+  ucCOMMCurrentC . . . . . . . . . . .  MEMBER   -----  ARRAY    003CH  4
+  ucPower. . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0040H  4
+  ucPowerA . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0044H  4
+  ucPowerB . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0048H  4
+  ucPowerC . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    004CH  4
+  ucCOMMPower. . . . . . . . . . . . .  MEMBER   -----  ARRAY    0050H  4
+  ucCOMMPowerA . . . . . . . . . . . .  MEMBER   -----  ARRAY    0054H  4
+  ucCOMMPowerB . . . . . . . . . . . .  MEMBER   -----  ARRAY    0058H  4
+  ucCOMMPowerC . . . . . . . . . . . .  MEMBER   -----  ARRAY    005CH  4
+  ucFactory. . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0060H  4
+  ucFactoryA . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0064H  4
+  ucFactoryB . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0068H  4
+  ucFactoryC . . . . . . . . . . . . .  MEMBER   -----  ARRAY    006CH  4
+  ucCOMMFactory. . . . . . . . . . . .  MEMBER   -----  ARRAY    0070H  4
+  ucCOMMFactoryA . . . . . . . . . . .  MEMBER   -----  ARRAY    0074H  4
+  ucCOMMFactoryB . . . . . . . . . . .  MEMBER   -----  ARRAY    0078H  4
+  ucCOMMFactoryC . . . . . . . . . . .  MEMBER   -----  ARRAY    007CH  4
+  ucFrequency. . . . . . . . . . . . .  MEMBER   -----  ARRAY    0080H  4
+  ucMeterConst . . . . . . . . . . . .  MEMBER   -----  ARRAY    0084H  3
+TL0. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   008AH  1
+EX4. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00A8H  1
+TL1. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   008BH  1
+FLASHCON . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A7H  1
+LIB_E2P_Money_Para . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+TL2. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00CCH  1
+LIB_E2P_ENERGY_DECPULSE_BK . . . . . .  E_CONST  -----  U_CHAR   -----  1
+LIB_E2P_AvailTimer . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+RS0. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00D3H  1
+ADCDH. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C5H  1
+LIB_E2P_Price. . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+GStr_AVAIL_Type. . . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  41
+  us_IDAvailTimer. . . . . . . . . . .  MEMBER   -----  U_INT    0000H  2
+  ucBackMonFlag. . . . . . . . . . . .  MEMBER   -----  U_CHAR   0002H  1
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    0003H  2
+  ulAutRemainingTime . . . . . . . . .  MEMBER   -----  U_LONG   0005H  4
+  ucRechangeMoney. . . . . . . . . . .  MEMBER   -----  ARRAY    0009H  4
+  ucBuybeforeMoney . . . . . . . . . .  MEMBER   -----  ARRAY    000DH  4
+  ucbeforeFwEnergy . . . . . . . . . .  MEMBER   -----  ARRAY    0011H  4
+C51 COMPILER V9.54   APPEMUATT7036                                                         11/18/2021 18:53:11 PAGE 29  
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+  ucbeforeBkEnergy . . . . . . . . . .  MEMBER   -----  ARRAY    0015H  4
+  ucE2Key. . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0019H  16
+GU_BoolWordVariable. . . . . . . . . .  TYPEDEF  -----  UNION    -----  2
+  BYTE . . . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  2
+  BIT. . . . . . . . . . . . . . . . .  MEMBER   -----  STRUCT   0000H  2
+TR0. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      008CH  1
+RS1. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00D4H  1
+PWMCON . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   009FH  1
+TR1. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      008EH  1
+char8. . . . . . . . . . . . . . . . .  TYPEDEF  -----  CHAR     -----  1
+TR2. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00CAH  1
+int8_t . . . . . . . . . . . . . . . .  TYPEDEF  -----  CHAR     -----  1
+ADCDL. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C4H  1
+ADT. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C2H  1
+LIB_E2P_INDEX. . . . . . . . . . . . .  TYPEDEF  -----  U_CHAR   -----  1
+GStr_PRICE_Type. . . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  14
+  ucaPrice . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  4
+  ucaPurchaseMoneyAll. . . . . . . . .  MEMBER   -----  ARRAY    0004H  4
+  ucPurchaseTimes. . . . . . . . . . .  MEMBER   -----  ARRAY    0008H  4
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    000CH  2
+DPH. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0083H  1
+DPL. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0082H  1
+SBUF1. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D9H  1
+COMM_BLE_EADV. . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+LIB_E2P_FUN_CONFIG . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+EXEN2. . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00CBH  1
+SBUF2. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00F9H  1
+EMU_COMM_CAL_TAB_Type. . . . . . . . .  TYPEDEF  -----  STRUCT   -----  2
+  ucCommDI1. . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0000H  1
+  ucEmuAddr. . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0001H  1
+LIB_E2P_ENERGY_DECPULSE_FW . . . . . .  E_CONST  -----  U_CHAR   -----  1
+SM11_RXOV1 . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00DEH  1
+PADCL. . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00BEH  1
+REN. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      009CH  1
+SCON1. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D8H  1
+STATUS . . . . . . . . . . . . . . . .  TYPEDEF  -----  U_CHAR   -----  1
+LCDCON1. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D1H  1
+ADCON. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C1H  1
+SCON2. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00F8H  1
+TCON1. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   008FH  1
+LIB_E2P_EventValidPiont. . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+LIB_E2P_ENRGY. . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+LCDCON2. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D2H  1
+EDTAH. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0092H  1
+T2MOD. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C9H  1
+T2CON. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C8H  1
+EMU_UIPKms_Type. . . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  14
+  ulaKmsuip. . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  12
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    000CH  2
+GStr_FUN_CONFIG_Type . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  16
+  ucFunCurrentVal. . . . . . . . . . .  MEMBER   -----  U_CHAR   0000H  1
+  ucFunMeterConst. . . . . . . . . . .  MEMBER   -----  U_CHAR   0001H  1
+  ucRes. . . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0002H  12
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    000EH  2
+GStr_EventParaData . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  5
+  V_usEventID. . . . . . . . . . . . .  MEMBER   -----  U_INT    0000H  2
+  V_usEventAddr. . . . . . . . . . . .  MEMBER   -----  U_INT    0002H  2
+C51 COMPILER V9.54   APPEMUATT7036                                                         11/18/2021 18:53:11 PAGE 30  
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+  V_ucEventLenth . . . . . . . . . . .  MEMBER   -----  U_CHAR   0004H  1
+LIB_E2P_Money. . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+EDTAL. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0094H  1
+GStr_EEPROM_MAP. . . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  8
+  ucE2pAddressIndex. . . . . . . . . .  MEMBER   -----  U_INT    0000H  2
+  usE2pAddress . . . . . . . . . . . .  MEMBER   -----  U_INT    0002H  2
+  ucE2pSize. . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0004H  1
+  ucE2pLen . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0005H  1
+  ucIsCRC. . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0006H  1
+  ucIsBak. . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0007H  1
+EDTAM. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0093H  1
+TK0DIFH. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00BCH  1
+SADEN. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   009BH  1
+wchar_t. . . . . . . . . . . . . . . .  TYPEDEF  -----  CHAR     -----  1
+LIB_E2P_METER_INFO . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+TK1DIFH. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00BEH  1
+PBANK. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B6H  1
+GStr_EventValidPiont_Type. . . . . . .  TYPEDEF  -----  STRUCT   -----  8
+  uc_Point . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  6
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    0006H  2
+TK2DIFH. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A5H  1
+EADTP. . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00AEH  1
+SADDR. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   009AH  1
+TK0DIFL. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00CFH  1
+LIB_E2P_ENERGY_DECPULSE_WS . . . . . .  E_CONST  -----  U_CHAR   -----  1
+GStr_MONEY_Type. . . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  14
+  ucaRemainMoney . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  6
+  ucaTickMoney . . . . . . . . . . . .  MEMBER   -----  ARRAY    0006H  6
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    000CH  2
+TK1DIFL. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00BDH  1
+TK2DIFL. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00BFH  1
+P7816L . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00BAH  1
+LPDCON1. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C6H  1
+LIB_E2P_EMU_UIPKms_BAK . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+LPDCON2. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C7H  1
+MAX_BLE_INDEX. . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+LIB_E2P_SecretKey. . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+F0 . . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00D5H  1
+IRDAT. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00AEH  1
+F1 . . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00D1H  1
+EMUIE. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0096H  1
+SFINE. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   009EH  1
+XPAGE. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00F7H  1
+Gstr_VirtualEsam . . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  64
+  ucTempKey. . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  16
+  ucDisKey . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0010H  16
+  ucComplexKey . . . . . . . . . . . .  MEMBER   -----  ARRAY    0020H  16
+  ucRs485RandNum . . . . . . . . . . .  MEMBER   -----  ARRAY    0030H  8
+  ucRs485RandNum2. . . . . . . . . . .  MEMBER   -----  ARRAY    0038H  8
+GStr_MONEY_PARA_Type . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  25
+  ucaAlarmMoneyL1. . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  4
+  ucaAlarmMoneyL2. . . . . . . . . . .  MEMBER   -----  ARRAY    0004H  4
+  ucaMaxMoneyLimit . . . . . . . . . .  MEMBER   -----  ARRAY    0008H  4
+  ucaTickMoneyLimit. . . . . . . . . .  MEMBER   -----  ARRAY    000CH  4
+  ucaAllowcloseMoney . . . . . . . . .  MEMBER   -----  ARRAY    0010H  4
+  ucaOverLoadVal . . . . . . . . . . .  MEMBER   -----  ARRAY    0014H  3
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    0017H  2
+C51 COMPILER V9.54   APPEMUATT7036                                                         11/18/2021 18:53:11 PAGE 31  
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+INT8S. . . . . . . . . . . . . . . . .  TYPEDEF  -----  CHAR     -----  1
+EMUIF. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0097H  1
+API_COMM_STATUS_FRAME_OK . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+INT8U. . . . . . . . . . . . . . . . .  TYPEDEF  -----  U_CHAR   -----  1
+PSW. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D0H  1
+FP32 . . . . . . . . . . . . . . . . .  TYPEDEF  -----  FLOAT    -----  4
+uint32_t . . . . . . . . . . . . . . .  TYPEDEF  -----  U_LONG   -----  4
+API_COMM_STATUS_FRAME. . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+RB81 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00DAH  1
+SPDAT. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A3H  1
+IB_CON1. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00F2H  1
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   ----    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

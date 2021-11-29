@@ -1,0 +1,1868 @@
+C51 COMPILER V9.54   APPVIRTUALESAM                                                        11/18/2021 18:54:10 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE APPVIRTUALESAM
+OBJECT MODULE PLACED IN .\AppVirtualEsam.obj
+COMPILER INVOKED BY: C:\Program Files (x86)\Keil_v5 FMSH\C51\BIN\C51.EXE ..\SourceFiles\APP\AppVirtualEsam.c LARGE OBJEC
+                    -TADVANCED OPTIMIZE(8,SPEED) BROWSE DEFINE(DTSY666) DEBUG SYMBOLS PRINT(.\AppVirtualEsam.lst) OBJECT(.\AppVirtualEsam.obj
+                    -)
+
+line level    source
+
+   1          
+   2          ///*######################################################################*///
+   3          ///* 头文件包含  *///
+   4          #include "..\SourceFiles\PUB\Include.h"
+   5          
+   6          Gstr_VirtualEsam      GStr_VirtualEsamPara;
+   7          uchar8  GA_ucDisperFactor[8];
+   8          uchar8 GV_ucMACErrNum;
+   9          
+  10          ///*######################################################################*///
+  11          ///* 函数声明 */// 
+  12          void PrepaymentModule_InValidation();
+  13          void PrepaymentModule_Comm_MACErrNum();
+  14          void PrepaymentModule_Comm_ClrMACErrNum();
+  15          uchar8 PrepaymentModule_Comm_INTAUTH(uchar8 *P_DataPtr);
+  16          uchar8 PrepaymentModule_Comm_ModifyKey(uchar8 *P_DataPtr);
+  17          uchar8 PrepaymentModule_Comm_OpenAccout(uchar8 *P_DataPtr);
+  18          uchar8 PrepaymentModule_Comm_HandBackMoney(uchar8 *P_DataPtr);
+  19          uchar8 PrepaymentModule_Comm_TimeAvailableIn(uchar8 *P_DataPtr);
+  20          uchar8 PrepaymentModule_DataEncription(uchar8 *P_DataPtr,uchar8 *P_ucLen);
+  21          uchar8 PrepaymentModule_DataDecription(uchar8 *P_DataPtr, uchar8 V_ucMACType, uchar8 *P_ucLen);
+  22          uchar8 PrepaymentModule_Comm_INTAUTH_Invalidation(uchar8 *P_DataPtr);
+  23          uchar8 PrepaymentModule_Comm_Control(uchar8 *P_DataPtr);
+  24          uchar8 PrepaymentModule_GetWorkkey(uchar8 V_ucKeyNum); 
+  25          uchar8 PrepaymentModule_CommWriteESAMBinaryMAC(uchar8 *P_ucData, uchar8 V_ucLen, uchar8 V_ucHeadNum, uchar
+             -8 V_ucType);
+  26          uchar8 PrepaymentModule_GetChallenge(uchar8 *P_DataPtr, uchar8 V_DataLen);
+  27          uchar8 PrepaymentModule_Comm_Excerption(uchar8 *P_DataPtr);
+  28          uchar8 PrepaymentModule_Comm_StateQuery(uchar8 *P_DataPtr);
+  29          uchar8 Money_Recharge( uchar8 V_ProcessType);
+  30          void ApiEvent_WriteRecord(uchar8 v_ucEventType);
+  31          
+  32          ///***********************************************************************************///
+  33          ///*PrepaymentModule_Comm_INTAUTH                                                    *///
+  34          ///*Description：远程身份认证                                                        *///
+  35          ///*Input：*P_DataPoint为入口数据指针DI0                                             *///      
+  36          ///*                                                                                 *///
+  37          ///*                                                                                 *///
+  38          ///*Output：返回值=C_OK：操作正常                                                    *///
+  39          ///*              =C_ERR：操作异常                                                   *///
+  40          ///*Calls：                                                                          *///
+  41          ///*Called By：                                                                      *///
+  42          ///*Influence：                                                                      *///
+  43          ///*Tips：函数正确执行后自动将需要应答的数据保存到通讯缓存相应地址           
+             -        *///
+  44          ///*Others：                                                                         *///
+  45          ///*Author:chenshou                                                                  *///
+  46          ///***********************************************************************************///
+  47          ///*frame::FE FE FE FE 68 A0 A1 A2 A3 A4 A5 68 03 L  DI0 DI1 DI2 DI3 C0 C1 C2 C3 N1...Nm CS 16*///
+  48          ///*offset:0  1  2  3  4  5  6  4  8  9  10 11 12 13 14  15  16  17  18 19 20 21 22...........*/// 
+  49          ///*接收8-15密文1   16-23随机数  24-31分散因子*/// 
+  50          ///*ACKNo: FE FE FE FE 68 A0 A1 A2 A3 A4 A5 68 C3 02 SERR  CS  16 异常应答*///
+  51          uchar8 PrepaymentModule_Comm_INTAUTH(uchar8 *P_ucDataPtr)
+C51 COMPILER V9.54   APPVIRTUALESAM                                                        11/18/2021 18:54:10 PAGE 2   
+
+  52          {
+  53   1              uchar8   k;
+  54   1          uchar8   V_ucBuffer[3];
+  55   1               uchar8   V_uctest[16];
+  56   1              
+  57   1              LibPub_Inverse (P_ucDataPtr+24, 8); ///表号倒序
+  58   1              if(LibPub_CompareData(&GStr_MeterIFO.ucaMeterID[0],P_ucDataPtr+26,6,CMP_MODE_HIGHT)!=C_Equal)///*命令�
+             -�中下发的表号与实际表号不同，则返回错误*///
+  59   1              {B_Err_Other=1;return C_ERR;}
+  60   1      
+  61   1              ///* 数据倒向，低位在前倒为高位在前 *///
+  62   1              for ( k = 0; k < 2; k++ )
+  63   1              { LibPub_Inverse (P_ucDataPtr+8+8*k, 0x08); }
+  64   1              
+  65   1              LibPub_MemCopyBytes ( P_ucDataPtr+16, &GStr_VirtualEsamPara.ucRs485RandNum[0], 0x08);   ///*存随机数1*/
+             -//
+  66   1              LibPub_MemCopyBytes ( P_ucDataPtr+24, &GA_ucDisperFactor[0], 0x08);                                     ///*存分散因子*///
+  67   1              
+  68   1              ///* 3DES加密分散因子得到临时密钥，密钥存在GA_ucDesKey中*///
+  69   1              if( C_ERR == PrepaymentModule_GetWorkkey(C_KeyNum00) )
+  70   1              { B_Err_IDAuthenFail=1; return C_ERR; }
+  71   1      
+  72   1              ///* 3DES加密随机数，得到密文 *///
+  73   1              if( C_ERR == TripleDES_DeOrEncryption( C_KeyNumTp, P_ucDataPtr+16, ENCRYPTION) )
+  74   1              { B_Err_IDAuthenFail=1; return C_ERR; }
+  75   1              LibPub_MemCopyBytes ( P_ucDataPtr+16, V_uctest, 0x08);
+  76   1              LibPub_MemCopyBytes ( P_ucDataPtr+8, &V_uctest[7], 0x08);
+  77   1      
+  78   1              ///* 比较随机数密文和上位机传过来的密文，相等则继续，错误退出 */// 
+  79   1              if ( C_Equal != LibPub_CompareData ( P_ucDataPtr+8, P_ucDataPtr+16, 0x08,CMP_MODE_HIGHT ) )
+  80   1              { B_Err_IDAuthenFail=1; return C_ERR; }
+  81   1              
+  82   1              
+  83   1              ///* 获取随机数2，以便使用后续的认证操作 */// 
+  84   1              if(GStr_Flag.ucRunState3&F_RUN_READ_RANDOM2)///读取过随机数，直接回提前返回的随机数
+  85   1              {
+  86   2                              LibPub_MemCopyBytes(&GStr_VirtualEsamPara.ucRs485RandNum2[0], &GStr_VirtualEsamPara.ucRs485RandNum[0], 
+             -4);
+  87   2              }
+  88   1              else///没读取过随机数2，要重新生成随机数
+  89   1              {
+  90   2                              if( C_ERR == PrepaymentModule_GetChallenge(&GStr_VirtualEsamPara.ucRs485RandNum[0], 0x04) )
+  91   2                              { B_Err_IDAuthenFail=1; return C_ERR; }  
+  92   2              }
+  93   1      
+  94   1         LibPub_MemSetBytes(&GStr_VirtualEsamPara.ucRs485RandNum[4], 0x00, 4);
+  95   1         LibPub_MemExchangeBytes(&GStr_VirtualEsamPara.ucRs485RandNum[0], P_ucDataPtr+4, 0x04 );      ///* 数据倒�
+             -��以便数据返回 *///
+  96   1         
+  97   1              ///* 获取ESAM序列号(表号) *///
+  98   1              *(P_ucDataPtr+14) = 0x00;
+  99   1              *(P_ucDataPtr+15) = 0x00;
+ 100   1              LibPub_MemExchangeBytes( &GStr_MeterIFO.ucaMeterID[0], P_ucDataPtr+8, 6); 
+ 101   1      
+ 102   1              ///* 身份认证有效时长 */// 
+ 103   1              if ( _FAILED == LibPub_ReadDataFromE2prom(LIB_E2P_AvailTimer, 0, &V_ucBuffer[0] ))
+ 104   1              {
+ 105   2                      GStr_AVAIL.ulAutRemainingTime = C_AvailTimer;  ///*如果读失败，默认时效为5min*///
+ 106   2              }
+ 107   1              else
+ 108   1              {               
+ 109   2                      V_ucBuffer[0] = LibPub_1BCD_2_1HEX(V_ucBuffer[0]);
+C51 COMPILER V9.54   APPVIRTUALESAM                                                        11/18/2021 18:54:10 PAGE 3   
+
+ 110   2                      GStr_AVAIL.ulAutRemainingTime = (ulong32)V_ucBuffer[0];
+ 111   2                      V_ucBuffer[1] = LibPub_1BCD_2_1HEX(V_ucBuffer[1]);
+ 112   2                      GStr_AVAIL.ulAutRemainingTime = GStr_AVAIL.ulAutRemainingTime * 100 + V_ucBuffer[1];    ///*加入到分钟
+             -基本定时器中*///
+ 113   2                      if ( GStr_AVAIL.ulAutRemainingTime == 0 )               ///*如果数据为0，默认时效为5min*///
+ 114   2                      {
+ 115   3                              GStr_AVAIL.ulAutRemainingTime = C_AvailTimer;
+ 116   3                      }
+ 117   2              }
+ 118   1              GStr_AVAIL.ulAutRemainingTime = GStr_AVAIL.ulAutRemainingTime*60;
+ 119   1              
+ 120   1              GStr_Flag.ucRunState2 |=F_RUN_INTAUTHAvailabilityFlag;///*置身份认证有效标志*/// 
+ 121   1              GStr_Flag.ucRunState2 |=F_RUN_FirstProgFlag;
+ 122   1              return(C_OK);   
+ 123   1      }
+ 124          ///***********************************************************************************///
+ 125          ///*PrepaymentModule_Comm_TimeAvailableIn                                            *///
+ 126          ///*Description：远程身份认证时效设置                                                *///
+ 127          ///*Input：*P_DataPoint为入口数据指针DI0                                             *///      
+ 128          ///*                                                                                 *///
+ 129          ///*                                                                                 *///
+ 130          ///*Output：返回值=C_OK：操作正常                                                    *///
+ 131          ///*              =C_ERR：操作异常                                                   *///
+ 132          ///*Calls：                                                                          *///
+ 133          ///*Called By：                                                                      *///
+ 134          ///*Influence：                                                                      *///
+ 135          ///*Tips：函数正确执行后自动将需要应答的数据保存到通讯缓存相应地址           
+             -        *///
+ 136          ///*Others：执行时间63ms                                                             *///
+ 137          ///*Author:chenshou                                                                  *///
+ 138          ///***********************************************************************************///
+ 139          ///*frame::FE FE FE FE 68 A0 A1 A2 A3 A4 A5 68 03 L  DI0 DI1 DI2 DI3 C0 C1 C2 C3 N1...Nm CS 16*///
+ 140          ///*offset:0  1  2  3  4  5  6  4  8  9  10 11 12 13 14  15  16  17  18 19 20 21 22...........*///
+ 141          ///*接收22-23身份认证时效 24-27计算MAC*///
+ 142          ///*接收8-9身份认证时效   10-13计算MAC  *///
+ 143          ///*ACKNo: FE FE FE FE 68 A0 A1 A2 A3 A4 A5 68 C3 02 SERR  CS  16 异常应答*///
+ 144          uchar8 PrepaymentModule_Comm_TimeAvailableIn(uchar8 *P_DataPtr)
+ 145          { 
+ 146   1              uchar8 V_Buffer[3] ;
+ 147   1              ///* 身份认证超时 *///
+ 148   1          if(F_RUN_INTAUTHAvailabilityFlag!=( GStr_Flag.ucRunState2 &F_RUN_INTAUTHAvailabilityFlag))
+ 149   1              {
+ 150   2                      B_Err_IDAuthenFail=1;  return C_ERR;
+ 151   2              } 
+ 152   1              
+ 153   1              ///*网络数据倒向，低位在前倒为高位在前*///
+ 154   1              LibPub_Inverse(P_DataPtr + 8,0x02);              
+ 155   1              LibPub_Inverse(P_DataPtr + 10,0x04);
+ 156   1              
+ 157   1              ///* 数据有效性判断 */// 
+ 158   1              if(   (LibPub_IsBCD(P_DataPtr + 8, 2))
+ 159   1                      ||( (*(P_DataPtr + 8) == 0) && (*(P_DataPtr + 9) == 0) ) ) 
+ 160   1              { B_Err_Other=1; return C_ERR;  } 
+ 161   1              
+ 162   1      
+ 163   1              ///* 验证MAC *///
+ 164   1              if(C_ERR == PrepaymentModule_CommWriteESAMBinaryMAC(P_DataPtr+8, 0x02, 11, 0x01) )
+ 165   1              { B_Err_ESAMAuthenFail = 1;  return C_ERR; } 
+ 166   1              
+ 167   1              ///* 更新身份认证有效时间 */// 
+ 168   1              if ( _SUCCESS == LibPub_ReadDataFromE2prom(LIB_E2P_AvailTimer, 0, &V_Buffer[0] ))
+ 169   1              {
+C51 COMPILER V9.54   APPVIRTUALESAM                                                        11/18/2021 18:54:10 PAGE 4   
+
+ 170   2                      V_Buffer[0] = *(P_DataPtr+8);
+ 171   2                      V_Buffer[1] = *(P_DataPtr+9);
+ 172   2              }
+ 173   1              
+ 174   1              if( C_OK == LibPub_WriteDataToE2prom(LIB_E2P_AvailTimer , 0, &V_Buffer[0]) )
+ 175   1              {
+ 176   2                      V_Buffer[0] = LibPub_1BCD_2_1HEX( *(P_DataPtr+8) );
+ 177   2                      GStr_AVAIL.ulAutRemainingTime = (ulong32)V_Buffer[0];
+ 178   2                      V_Buffer[1] = LibPub_1BCD_2_1HEX( *(P_DataPtr+9) );
+ 179   2                      GStr_AVAIL.ulAutRemainingTime = GStr_AVAIL.ulAutRemainingTime * 100 + V_Buffer[1];      ///*加入到分钟�
+             -�本定时器中*///
+ 180   2                      GStr_AVAIL.ulAutRemainingTime = GStr_AVAIL.ulAutRemainingTime*60; 
+ 181   2      
+ 182   2                      GStr_AVAIL.us_IDAvailTimer=LibPub_Buffer2ToUshort16( P_DataPtr+8 );
+ 183   2                      GStr_AVAIL.usCRC16=LibPub_CRC16_CCITT((uchar8*)&GStr_AVAIL.us_IDAvailTimer,3);
+ 184   2                      
+ 185   2                      
+ 186   2      //              GStr_AvailTimer.us_IDAvailTimer.B08[0] = *(P_DataPtr+8);
+ 187   2      //              GStr_AvailTimer.us_IDAvailTimer.B08[1] = *(P_DataPtr+9);
+ 188   2      //              CRC_Generate(&GStr_AvailTimer.us_IDAvailTimer.B08[0],CAddr_AvailTimer_Lenth);
+ 189   2              }
+ 190   1              else
+ 191   1              { 
+ 192   2                      B_Err_Other = 1;
+ 193   2                      return C_ERR;   ///*其他错误*///;
+ 194   2              } 
+ 195   1              
+ 196   1              PrepaymentModule_Comm_ClrMACErrNum();
+ 197   1              GStr_Flag.ucRunState2 |=F_RUN_INTAUTHAvailabilityFlag;///*置身份认证有效标志*/// 
+ 198   1              
+ 199   1          return      C_OK ;     
+ 200   1      }
+ 201          ///***********************************************************************************///
+ 202          ///*PrepaymentModule_Comm_MACErrNum、PrepaymentModule_Comm_ClrMACErrNum              *///
+ 203          ///*Description：Mac错误次数+1/清零                                                  *///
+ 204          ///*Input：                                                                          *///      
+ 205          ///*                                                                                 *///
+ 206          ///*                                                                                 *///
+ 207          ///*Output：                                                     *///
+ 208          ///*                                                                 *///
+ 209          ///*Calls：                                                                          *///
+ 210          ///*Called By：                                                                      *///
+ 211          ///*Influence：                                                                      *///
+ 212          ///*Tips：                                                                           *///
+ 213          ///*Others：                                                                         *///
+ 214          ///*Author:                                                                   *///
+ 215          ///***********************************************************************************///
+ 216          void PrepaymentModule_Comm_MACErrNum()
+ 217          {
+ 218   1              if(GV_ucMACErrNum<200)
+ 219   1              {
+ 220   2                      GV_ucMACErrNum++;
+ 221   2                      GStr_Flag.ucRunState2 &= ~ F_RUN_INTAUTH_MACNumErrFlag;
+ 222   2              }
+ 223   1              if(GV_ucMACErrNum >= 200)
+ 224   1              {
+ 225   2                      GStr_Flag.ucRunState2 |=  F_RUN_INTAUTH_MACNumErrFlag;
+ 226   2                      GStr_Monitor.usPasswordErrTime[3]=1440;///24小时
+ 227   2                      PrepaymentModule_InValidation();
+ 228   2              }
+ 229   1      }
+ 230          ///***********************************************************************************///
+C51 COMPILER V9.54   APPVIRTUALESAM                                                        11/18/2021 18:54:10 PAGE 5   
+
+ 231          ///*PrepaymentModule_Comm_ClrMACErrNum              *///
+ 232          ///*Description：Mac错误次数 和状态清零                                                  *///
+ 233          ///*Input：                                                                          *///      
+ 234          ///*                                                                                 *///
+ 235          ///*                                                                                 *///
+ 236          ///*Output：                                                     *///
+ 237          ///*                                                                 *///
+ 238          ///*Calls：                                                                          *///
+ 239          ///*Called By：                                                                      *///
+ 240          ///*Influence：                                                                      *///
+ 241          ///*Tips：                                                                           *///
+ 242          ///*Others：                                                                         *///
+ 243          ///*Author:chenshou                                                                  *///
+ 244          ///***********************************************************************************///
+ 245          void PrepaymentModule_Comm_ClrMACErrNum()
+ 246          {       
+ 247   1              GV_ucMACErrNum = 0;
+ 248   1              GStr_Flag.ucRunState2 &= ~ F_RUN_INTAUTH_MACNumErrFlag;
+ 249   1      }
+ 250          ///***********************************************************************************///
+ 251          ///*PrepaymentModule_InValidation              *///
+ 252          ///*Description：清除身份认证状态                                                   *///
+ 253          ///*Input：                                                                          *///      
+ 254          ///*                                                                                 *///
+ 255          ///*                                                                                 *///
+ 256          ///*Output：                                                     *///
+ 257          ///*                                                                 *///
+ 258          ///*Calls：                                                                          *///
+ 259          ///*Called By：                                                                      *///
+ 260          ///*Influence：                                                                      *///
+ 261          ///*Tips：                                                                           *///
+ 262          ///*Others：                                                                         *///
+ 263          ///*Author:chenshou                                                                  *///
+ 264          ///***********************************************************************************///
+ 265          void PrepaymentModule_InValidation()
+ 266          {
+ 267   1              GStr_Flag.ucRunState2 &= ~ F_RUN_INTAUTHAvailabilityFlag;                               ///*身份认证标志 清零*
+             -///
+ 268   1              GStr_AVAIL.ulAutRemainingTime = 0;                              ///*身份认证有效时长 清零*///
+ 269   1              GStr_Flag.ucRunState2 &= ~ F_RUN_FirstProgFlag;
+ 270   1              
+ 271   1      }
+ 272          ///***********************************************************************************///
+ 273          ///*PrepaymentModule_Comm_OpenAccout                                                 *///
+ 274          ///*Description：网络开户01\充值02 \钱包初始化03                                           *//
+             -/
+ 275          ///*Input：*P_DataPoint为入口数据指针DI0                                             *///      
+ 276          ///*                                                                                 *///
+ 277          ///*                                                                                 *///
+ 278          ///*Output：返回值=C_OK：操作正常                                                    *///
+ 279          ///*              =C_ERR：操作异常                                                   *///
+ 280          ///*Calls：                                                                          *///
+ 281          ///*Called By：                                                                      *///
+ 282          ///*Influence：                                                                      *///
+ 283          ///*Tips：函数正确执行后自动将需要应答的数据保存到通讯缓存相应地址           
+             -        *///
+ 284          ///*Others：                                                                         *///
+ 285          ///*Author:chenshou                                                                  *///
+ 286          ///***********************************************************************************///
+ 287          ///*frame::FE FE FE FE 68 A0 A1 A2 A3 A4 A5 68 03 L  DI0 DI1 DI2 DI3 C0 C1 C2 C3 N1...Nm CS 16*///
+ 288          ///*offset:0  1  2  3  4  5  6  4  8  9  10 11 12 13 14  15  16  17  18 19 20 21 22...........*///
+ 289          ///*接收22-29购电金额、购电次数  30-33 MAC 22-29客户编号 30-33 MAC 开户、充值*///
+C51 COMPILER V9.54   APPVIRTUALESAM                                                        11/18/2021 18:54:10 PAGE 6   
+
+ 290          ///*充值：充值金额、购电次数、电价参数、报警金额1、报警金额2、CT/PT、透支�
+             -�额限值*///
+ 291          ///*接收8-15 购电金额、购电次数  16-19 MAC 20-25客户编号 26-29 MAC  *///
+ 292          ///*接收22-25预置金额 26-29 MAC 30-33购电次数 34-37 MAC 钱包初始化*///
+ 293          ///*接收8-11 预置金额 12-15 MAC 16-19购电次数 20-23 MAC  *///
+ 294          ///*ACKNo: FE FE FE FE 68 A0 A1 A2 A3 A4 A5 68 C3 02 SERR  CS  16 异常应答*///
+ 295          uchar8 PrepaymentModule_Comm_OpenAccout(uchar8 *P_DataPtr)
+ 296          {
+ 297   1              uchar8          DI1;///**///
+ 298   1              uchar8          i,k; 
+ 299   1              uchar8          V_Buff[25]; 
+ 300   1              ulong32         V_ulBuff[2];
+ 301   1              uchar8          V_ucUserIdMac[10];///* 客户编码 *///
+ 302   1              GU_B32_B08_Type V_unlMoneyMac[4];       ///* 购电金额+次数+MAC1 / 预置金额+MAC1+购电次数+MAC2*///
+             - 
+ 303   1              GU_B32_B08_Type V_unlTempBuff;
+ 304   1              
+ 305   1              DI1 = *(P_DataPtr+1); 
+ 306   1              
+ 307   1              if( ( (0x00 == DI1)||(0x04 < DI1) ) )
+ 308   1              { B_Err_Other = 1; return C_ERR; }  ///其它错误
+ 309   1              if(0x03 != DI1)
+ 310   1              {
+ 311   2                      if(!(GStr_Flag.ucRunState2&F_RUN_EsamKeyFlag) )
+ 312   2                      { B_Err_Other = 1;  return C_ERR;  }    ///公钥下不准开户和充值
+ 313   2              }
+ 314   1      
+ 315   1              if(F_RUN_INTAUTHAvailabilityFlag!=(GStr_Flag.ucRunState2&F_RUN_INTAUTHAvailabilityFlag) )
+ 316   1              { B_Err_IDAuthenFail = 1; return C_ERR;}    ///*身份认证超时*///
+ 317   1                
+ 318   1              if( 0x03 == DI1 ) { k = 4; }    //钱包初始化
+ 319   1              else              { k = 3; }    //充值、开户
+ 320   1              
+ 321   1              
+ 322   1              for( i = 0; i < k; i++ ) 
+ 323   1              {
+ 324   2                      LibPub_MemExchangeBytes(P_DataPtr+8+i*4, &V_unlMoneyMac[0].B08[i*4], 4);
+ 325   2              }
+ 326   1              if( 0x01 == DI1 )///* 开户 *///
+ 327   1              {
+ 328   2                      LibPub_MemExchangeBytes(P_DataPtr+8+12, &V_ucUserIdMac[0], 6);  ///* 客户编号 *///
+ 329   2                      LibPub_MemExchangeBytes(P_DataPtr+8+18, &V_ucUserIdMac[6], 4);  ///* 客户编号MAC *///
+ 330   2              
+ 331   2                      ///* 不是钱包初始化，要校验一下购电金额和次数 *///
+ 332   2                      if( C_ERR == PrepaymentModule_CommWriteESAMBinaryMAC(&V_unlMoneyMac[0].B08[0], 0x08, 10, 0x01) )
+ 333   2                      { B_Err_ESAMAuthenFail = 1;  return C_ERR; } 
+ 334   2                              
+ 335   2                      ///* 验证客户编号MAC *///
+ 336   2                      if(C_ERR == PrepaymentModule_CommWriteESAMBinaryMAC(&V_ucUserIdMac[0], 0x06, 7, 0x01) )
+ 337   2                      { B_Err_ESAMAuthenFail = 1;  return C_ERR; }  
+ 338   2                              
+ 339   2                      ///* 充值、处于开户的表再开户，比较客户编号*///
+ 340   2                      if( (0x01 != DI1) || ( (0x01 == DI1 )&&(GStr_Flag.ucRunState2&F_RUN_OpenAccoutFlag) ) )
+ 341   2                      {
+ 342   3                              LibPub_MemExchangeBytes(P_DataPtr+20,V_Buff,6);
+ 343   3                              if(C_Equal != LibPub_CompareData(&GStr_MeterIFO.ucaUserID[0], V_Buff, 6,CMP_MODE_HIGHT) ) 
+ 344   3                              { B_Err_CustomNumUnmatch = 1;return C_ERR; }    ///客户编号不匹配 *///
+ 345   3                      }
+ 346   2              }
+ 347   1              else if( 0x03 == DI1)///* 钱包初始化 *///
+ 348   1              {       
+ 349   2                      if(GStr_Flag.ucRunState2&F_RUN_EsamKeyFlag) ///* 私钥状态下不允许钱包初始化 *///
+C51 COMPILER V9.54   APPVIRTUALESAM                                                        11/18/2021 18:54:10 PAGE 7   
+
+ 350   2                      { B_Err_Other = 1;  return C_ERR;  }    
+ 351   2                      
+ 352   2                      if(C_ERR == PrepaymentModule_CommWriteESAMBinaryMAC(&V_unlMoneyMac[0].B08[0], 0x04, 8, 0x01) )
+ 353   2                      { B_Err_ESAMAuthenFail = 1;  return C_ERR; } 
+ 354   2                      
+ 355   2                      if(C_ERR == PrepaymentModule_CommWriteESAMBinaryMAC(&V_unlMoneyMac[2].B08[0], 0x04, 9, 0x01) )
+ 356   2                      { B_Err_ESAMAuthenFail = 1;  return C_ERR; } 
+ 357   2              }  
+ 358   1              else///* 充值 *///
+ 359   1              {
+ 360   2                      if( (0x01 != DI1) && ((GStr_Flag.ucRunState2&F_RUN_OpenAccoutFlag) != F_RUN_OpenAccoutFlag) ) /* 充值�
+             -��须是在开户情况下方可执行 */
+ 361   2                      { B_Err_Other = 1; return C_ERR; }  ///其它错误
+ 362   2      
+ 363   2                      LibPub_MemExchangeBytes(P_DataPtr+8+12, &V_ucUserIdMac[0], 6);  ///* 客户编号 *///
+ 364   2                      LibPub_MemExchangeBytes(P_DataPtr+8+18, &V_ucUserIdMac[6], 4);  ///* 客户编号MAC *///
+ 365   2              
+ 366   2                      ///* 不是钱包初始化，要校验一下购电金额和次数 *///
+ 367   2                      if( C_ERR == PrepaymentModule_CommWriteESAMBinaryMAC(&V_unlMoneyMac[0].B08[0], 0x08, 10, 0x01) )
+ 368   2                      { B_Err_ESAMAuthenFail = 1;  return C_ERR; } 
+ 369   2                              
+ 370   2                      ///* 验证客户编号MAC *///
+ 371   2                      if(C_ERR == PrepaymentModule_CommWriteESAMBinaryMAC(&V_ucUserIdMac[0], 0x06, 7, 0x01) )
+ 372   2                      { B_Err_ESAMAuthenFail = 1;  return C_ERR; }  
+ 373   2                              
+ 374   2                      ///* 充值、处于开户的表再开户，比较客户编号*///
+ 375   2                      if( (0x01 != DI1) || ( (0x01 == DI1 )&&(GStr_Flag.ucRunState2&F_RUN_OpenAccoutFlag) ) )
+ 376   2                      {
+ 377   3                              LibPub_MemExchangeBytes(P_DataPtr+20,V_Buff,6);
+ 378   3                              if(C_Equal != LibPub_CompareData(&GStr_MeterIFO.ucaUserID[0], V_Buff, 6,CMP_MODE_HIGHT) ) 
+ 379   3                              { B_Err_CustomNumUnmatch = 1;return C_ERR; }    ///客户编号不匹配 *///
+ 380   3                      }
+ 381   2      
+ 382   2              }
+ 383   1       
+ 384   1              ///* 比较一下购电次数 *//////*购电次数(4)/
+ 385   1      //      if(_TRUE != LibPub_CrcCheck( &GStr_EventRecordNum.ucEventTimes[0][0], GStr_EventRecordNum_TypeLEN-2, GS
+             -tr_EventRecordNum.usCRC16))
+ 386   1      //      {
+ 387   1      //              if(_FAILED==LibPub_ReadDataFromE2prom(LIB_E2P_EventNum,0,&GStr_EventRecordNum.ucEventTimes[0][0])  )
+ 388   1      //              {
+ 389   1      //                      if(LibPub_ZeroCheck(&GStr_EventRecordNum.ucEventTimes[0][0], GStr_EventRecordNum_TypeLEN-2) == _FALSE
+             - )
+ 390   1      //                      {
+ 391   1      //                              B_Err_Other = 1; return C_ERR;
+ 392   1      //                      }
+ 393   1      //              }
+ 394   1      //      }
+ 395   1              if(_TRUE != LibPub_CrcCheck( &GStr_PRICE.ucPurchaseTimes[0], GStr_PRICE_Type_LEN-2, GStr_PRICE.usCRC16))
+ 396   1              {
+ 397   2                      if(_FAILED==LibPub_ReadDataFromE2prom(LIB_E2P_Price,0,&GStr_PRICE.ucaPrice[0])  )
+ 398   2                      {
+ 399   3                              if(LibPub_ZeroCheck(&GStr_PRICE.ucPurchaseTimes[0], GStr_PRICE_Type_LEN-2) == _FALSE )
+ 400   3                              {
+ 401   4                                      B_Err_Other = 1; return C_ERR;
+ 402   4                              }
+ 403   3                      }
+ 404   2              }
+ 405   1          if((0x02==DI1)||(0x04==DI1))///处于二级报警和过零跳闸时，充值时继电器合闸
+ 406   1              {
+ 407   2                      if(GStr_Flag.ucRunState1&F_RUN_L2_ALRAM)
+ 408   2                      {
+C51 COMPILER V9.54   APPVIRTUALESAM                                                        11/18/2021 18:54:10 PAGE 8   
+
+ 409   3                               GStr_Flag.ucRunState |=F_RUN_CLOSE_L2;
+ 410   3                      }
+ 411   2                      if(GStr_Flag.ucRunState1&F_RUN_REMAIND_ZERO)
+ 412   2                      {
+ 413   3                              GStr_Flag.ucRunState |=F_RUN_CLOSE_ZERO;
+ 414   3                      }
+ 415   2                      ApiRelay_ControlProcess();
+ 416   2                      LibPub_WriteDataToE2prom(LIB_E2P_RUN_STATE,0,&GStr_Flag.ucRunState);
+ 417   2              }
+ 418   1              V_ulBuff[0]= LibPub_DECtoHEXBytes(&GStr_PRICE.ucPurchaseTimes[0],4);
+ 419   1              if( ((0x02==DI1)||(0x04==DI1))&&(V_unlMoneyMac[1].B32<=V_ulBuff[0]))
+ 420   1                      //(C_GreaterThan!=LibPub_CompareData(V_unlMoneyMac[1].B08, &GStr_PRICE.ucPurchaseTimes[0], 4,CMP_MODE_HI
+             -GHT)) )
+ 421   1              { 
+ 422   2                      
+ 423   2                      B_Err_RepeatCharge = 1;return C_ERR; 
+ 424   2              }///* 购电次数相等则重复充值 *///
+ 425   1          
+ 426   1              
+ 427   1              if(  ( (0x01==DI1)&& ((V_unlMoneyMac[1].B32>1)||(V_ulBuff[0]>1)) )      ///* 开户，购电次数大于1*///
+ 428   1                || ( ((0x02==DI1)||(0x04==DI1))&&((V_unlMoneyMac[1].B32-1) > V_ulBuff[0]) )   ///* 非开户，购电次
+             -数比表内大2 *///
+ 429   1                || ( (0x03==DI1)&&(V_unlMoneyMac[2].B32 != 0) )  )    ///* 钱包初始化，购电次数不等于0*///
+ 430   1              { B_Err_RechargeTimesErr = 1; return C_ERR; }  
+ 431   1      
+ 432   1              
+ 433   1              ///* 判断一下充值金额是否超出囤积金额 *///
+ 434   1              if( 0x03 != DI1 )///* 钱包初始化不判断囤积金额限值 *///
+ 435   1              {
+ 436   2                      if((V_unlMoneyMac[1].B32!=V_ulBuff[0])&&(V_unlMoneyMac[1].B32!=0))///*开户判断表内购电次数及�
+             -��户时的购电次数*///
+ 437   2                      {
+ 438   3                              if(_FAILED == LibPub_ReadDataFromE2prom(LIB_E2P_Money_Para, 0, &V_Buff[0]))
+ 439   3                              { B_Err_Other = 1; return C_ERR; } 
+ 440   3                              
+ 441   3                              LibPub_MemCopyBytes( &GStr_Money.ucaRemainMoney[0], &V_unlTempBuff.B08[0], 4);
+ 442   3                              
+ 443   3                              if(*(ulong32 *)&V_Buff[8]==0)
+ 444   3                              {
+ 445   4                                      *(ulong32 *)&V_Buff[8]=0x99999999;///*充值时若囤积金额限值为0，则默认为99999999*///
+ 446   4                              }
+ 447   3                              
+ 448   3                              V_ulBuff[0] = LibPub_DECtoHEXBytes( &V_Buff[8], 4 );    ///*囤积金额BCD转Hex*///
+ 449   3                               V_ulBuff[1]=LibPub_Buffer4ToUlong32(GStr_Money.ucaTickMoney);
+ 450   3                              if( V_unlMoneyMac[0].B32 > V_ulBuff[1] )
+ 451   3                              {
+ 452   4                                      V_ulBuff[1] = V_unlMoneyMac[0].B32 - V_ulBuff[1];
+ 453   4                              }
+ 454   3                              else
+ 455   3                              {
+ 456   4                                      V_ulBuff[1] = V_ulBuff[1]- V_unlMoneyMac[0].B32;
+ 457   4                              }
+ 458   3                              V_unlTempBuff.B32=LibPub_DECtoHEXBytes( &V_unlTempBuff.B08[0], 4 );///剩余金额转HEX
+ 459   3                              V_ulBuff[1] += V_unlTempBuff.B32 ;
+ 460   3                              
+ 461   3                              if(  V_ulBuff[0]  < V_ulBuff[1])   ///*囤积金额 < 购电金额+总剩余金额-透支金额 *///
+ 462   3                              { B_Err_OverPurchase = 1;return C_ERR; } 
+ 463   3                      }
+ 464   2              }
+ 465   1              
+ 466   1              if( 0x01 == DI1 ) 
+ 467   1              {   
+C51 COMPILER V9.54   APPVIRTUALESAM                                                        11/18/2021 18:54:10 PAGE 9   
+
+ 468   2                      V_ulBuff[0]= LibPub_Buffer4ToUlong32(&GStr_PRICE.ucPurchaseTimes[0]);
+ 469   2                      if( V_unlMoneyMac[1].B32 >= V_ulBuff[0] )
+ 470   2                      {
+ 471   3                              ///* 不管三七二十一，开个户先 *///  
+ 472   3                              ///* 写客户编号 */// 
+ 473   3                              LibPub_MemExchangeBytes( P_DataPtr+20, &GStr_MeterIFO.ucaUserID[0], 6);
+ 474   3                              if(_FAILED == LibPub_WriteDataToE2prom(LIB_E2P_METER_INFO,0,GStr_MeterIFO.ucaCommAddr) )
+ 475   3                              { B_Err_Other = 1; return C_ERR; }
+ 476   3                              GStr_MeterIFO.usCRC16=LibPub_CRC16_CCITT(GStr_MeterIFO.ucaCommAddr,GStr_METER_IFO_Type_LEN-2);
+ 477   3                              
+ 478   3                              PrepaymentModule_Comm_ClrMACErrNum();   ///* 清MAC错误次数和挂起标志 *///
+ 479   3                              ///* 开户标志更新 *///
+ 480   3                              GStr_AVAIL.ucBackMonFlag |= B0000_0010;  
+ 481   3                              if(_FAILED == LibPub_WriteDataToE2prom(LIB_E2P_AvailTimer,0,(uchar8*)&GStr_AVAIL.us_IDAvailTimer) )
+ 482   3                              { GStr_AVAIL.ucBackMonFlag &= ~B0000_0010; B_Err_Other = 1; return C_ERR; }
+ 483   3      
+ 484   3                              GStr_Flag.ucRunState2 |= F_RUN_OpenAccoutFlag ;
+ 485   3                              GStr_AVAIL.usCRC16=LibPub_CRC16_CCITT((uchar8*)&GStr_AVAIL.us_IDAvailTimer,3);
+ 486   3                              
+ 487   3                              if(V_unlMoneyMac[1].B32 == V_ulBuff[0])///* 购电次数相等，只开户*///
+ 488   3                              { 
+ 489   4                                      GStr_Flag.ucRunState1  &= ~F_RUN_L2_ALRAM;
+ 490   4      //                              Money_Subtraction();                                            ///* 充值后结算一下 *///                         
+ 491   4                                      ApiRelay_SubtractMoneyRelayJudge();                                     ///* 扣减后检测一下继电器状态 *///          函数待补�
+             -�        
+ 492   4                                      ApiRelay_ControlProcess();
+ 493   4                                      return C_OK; 
+ 494   4                              }
+ 495   3                      }
+ 496   2                      else
+ 497   2                      {
+ 498   3                              B_Err_RechargeTimesErr = 1; return C_ERR;
+ 499   3                      }
+ 500   2              }
+ 501   1      
+ 502   1              ///* 开始充值 *///
+ 503   1              *(ulong32*)&GStr_AVAIL.ucRechangeMoney[0] = V_unlMoneyMac[0].B32;
+ 504   1              if( C_OK == Money_Recharge( DI1 ) )                             ///* 充值 *///
+ 505   1              {
+ 506   2                      if(_FALSE==LibPub_ZeroCheck(GStr_Money.ucaRemainMoney,4))///剩余金额不为0
+ 507   2                      {
+ 508   3                              GStr_Flag.ucRunState &=~F_RUN_CLOSE_ZERO;///再次为0后，继电器跳闸
+ 509   3                              if(C_GreaterThan==LibPub_CompareData(GStr_Money.ucaRemainMoney, GStr_MoneyPara.ucaAlarmMoneyL2, 4, CMP_
+             -MODE_HIGHT))
+ 510   3                              {///充值后金额比二级报警要大，清掉二级报警合闸标志，再次二级报警时合闸
+ 511   4                                      GStr_Flag.ucRunState &=~F_RUN_CLOSE_L2;
+ 512   4                              }
+ 513   3                      }
+ 514   2      //              Money_Subtraction();                                            ///* 充值后结算一下 *///                 
+ 515   2                      ApiRelay_SubtractMoneyRelayJudge();                                     ///* 扣减后检测一下继电器状态 *///
+ 516   2                      ApiRelay_ControlProcess();
+ 517   2      //              EnergyStorageNmin(C_EnergyStorMode_Add1kWh, C_RechargeWrite);
+ 518   2      //              if( C_OK == Money_RechargeWriteE2Money() )      ///* 充值存E2后做事件记录 *///
+ 519   2                      { 
+ 520   3                              PrepaymentModule_Comm_ClrMACErrNum();   ///* 清MAC错误次数和挂起标志 *///
+ 521   3                              return C_OK; 
+ 522   3                      }
+ 523   2              }
+ 524   1              
+ 525   1              B_Err_Other = 1;        
+ 526   1              return C_ERR;    
+ 527   1      }
+C51 COMPILER V9.54   APPVIRTUALESAM                                                        11/18/2021 18:54:10 PAGE 10  
+
+ 528          ///***********************************************************************************///
+ 529          ///*PrepaymentModule_Comm_ModifyKey                                                  *///
+ 530          ///*Description：远程密钥更新                                                        *///
+ 531          ///*Input：*P_DataPoint为入口数据指针DI0                                             *///      
+ 532          ///*                                                                                 *///
+ 533          ///*                                                                                 *///
+ 534          ///*Output：返回值=C_OK：操作正常                                                    *///
+ 535          ///*              =C_ERR：操作异常                                                   *///
+ 536          ///*Calls：                                                                          *///
+ 537          ///*Called By：                                                                      *///
+ 538          ///*Influence：                                                                      *///
+ 539          ///*Tips：函数正确执行后自动将需要应答的数据保存到通讯缓存相应地址           
+             -        *///
+ 540          ///*Others：290ms                                                                    *///
+ 541          ///*Author:chenshou                                                                  *///
+ 542          ///***********************************************************************************///
+ 543          ///*frame::FE FE FE FE 68 A0 A1 A2 A3 A4 A5 68 03 L  DI0 DI1 DI2 DI3 C0 C1 C2 C3 N1...Nm CS 16*///
+ 544          ///*offset:0  1  2  3  4  5  6  4  8  9  10 11 12 13 14  15  16  17  18 19 20 21 22...........*///
+ 545          ///*接收8-11 更新标志 12-19 临时密钥 20-35修改密钥 36-39 MAC  */// 
+ 546          ///*ACKNo: FE FE FE FE 68 A0 A1 A2 A3 A4 A5 68 C3 02 SERR  CS  16 异常应答*///
+ 547          ///* 密钥版本和更新方式：D0D1D2D3D4：01+00+00+标志*///
+ 548          uchar8 PrepaymentModule_Comm_ModifyKey(uchar8 *P_DataPtr)
+ 549          {
+ 550   1              uchar8 i,V_ucTempBuff[16];  
+ 551   1              
+ 552   1          if((GStr_Flag.ucRunState2&F_RUN_INTAUTHAvailabilityFlag) != F_RUN_INTAUTHAvailabilityFlag)
+ 553   1              { B_Err_IDAuthenFail = 1;  return C_ERR; } 
+ 554   1              
+ 555   1              ///* 01000000或01000001*///
+ 556   1              if(   (0x01 <  *(P_DataPtr+8)) 
+ 557   1                      ||(0x00 != *(P_DataPtr+9)) 
+ 558   1                      ||(0x00 != *(P_DataPtr+10)) 
+ 559   1                      ||(0x01 != *(P_DataPtr+11)) )
+ 560   1              { B_Err_Other = 1; return C_ERR; }
+ 561   1      
+ 562   1              if(   ((F_RUN_EsamKeyFlag==(GStr_Flag.ucRunState2&F_RUN_EsamKeyFlag)) && (0x01 == *(P_DataPtr+8)))              ///* 
+             -如果正式密钥，再发下装命令，则不让下装 *///
+ 563   1                      ||((F_RUN_EsamKeyFlag!=(GStr_Flag.ucRunState2&F_RUN_EsamKeyFlag))&& (0x00 == *(P_DataPtr+8))) ) ///* 如
+             -果是测试密钥，再发恢复，则不恢复 *///
+ 564   1              { 
+ 565   2                      B_Err_IDAuthenFail = 1; return C_ERR;
+ 566   2              }
+ 567   1      
+ 568   1               ///*2)翻转数据*///
+ 569   1              LibPub_Inverse(P_DataPtr+8,  4);        ///* 更新标志 *///
+ 570   1              LibPub_Inverse(P_DataPtr+12, 16);       ///* 临时密钥 *///
+ 571   1              LibPub_Inverse(P_DataPtr+28, 16);       ///* 修改密钥 *///
+ 572   1              LibPub_Inverse(P_DataPtr+44, 4);        ///* MAC *///
+ 573   1              ///* 加密随机数，获得临时密钥跟下发的比 *///
+ 574   1              LibPub_MemCopyBytes( &GStr_VirtualEsamPara.ucRs485RandNum[0], &V_ucTempBuff[0], 8);
+ 575   1              if( C_ERR == TripleDES_DeOrEncryption( C_KeyNum00, &V_ucTempBuff[0], ENCRYPTION) )
+ 576   1              { B_Err_IDAuthenFail = 1; return C_ERR; }  
+ 577   1              for( i = 0; i < 8; i++ )
+ 578   1              {
+ 579   2                      V_ucTempBuff[i+8] = ~V_ucTempBuff[i];
+ 580   2              }
+ 581   1              if( C_Equal != LibPub_CompareData( &V_ucTempBuff[0], P_DataPtr+12, 16,CMP_MODE_HIGHT) )
+ 582   1              { B_Err_IDAuthenFail = 1; return C_ERR; }  
+ 583   1              
+ 584   1          ///* 计算密钥更新MAC *///
+ 585   1              if( C_ERR == PrepaymentModule_CommWriteESAMBinaryMAC(P_DataPtr+8, 36, 6, 0x01) )
+ 586   1              {   B_Err_ESAMAuthenFail = 1;   return C_ERR;  } 
+C51 COMPILER V9.54   APPVIRTUALESAM                                                        11/18/2021 18:54:10 PAGE 11  
+
+ 587   1              ///* 更新密钥 *///
+ 588   1      
+ 589   1              if(  C_ERR == LibPub_WriteDataToE2prom(LIB_E2P_SecretKey, 0, P_DataPtr+28) )
+ 590   1              { B_Err_Other = 1; return C_ERR; } 
+ 591   1              ///* 判断更新方式 *///
+ 592   1              
+ 593   1              if( 0x01 == *(P_DataPtr+11) )///* 下装(正式密钥） *///  修改
+ 594   1              {
+ 595   2                      GStr_AVAIL.ucBackMonFlag |= B0000_0100; ///* 置私钥状态 *///
+ 596   2                      GStr_Flag.ucRunState2 |=F_RUN_EsamKeyFlag;
+ 597   2              }
+ 598   1              else
+ 599   1              {
+ 600   2                      GStr_AVAIL.ucBackMonFlag &= ~B0000_0100;        ///* 置公钥状态 *///
+ 601   2                      GStr_Flag.ucRunState2 &=~F_RUN_EsamKeyFlag;
+ 602   2              } 
+ 603   1              
+ 604   1              if(  C_ERR == LibPub_WriteDataToE2prom(LIB_E2P_AvailTimer,0,(uchar8*)&GStr_AVAIL.us_IDAvailTimer))
+ 605   1              { B_Err_Other = 1; return C_ERR; }
+ 606   1              GStr_AVAIL.usCRC16=LibPub_CRC16_CCITT((uchar8*)&GStr_AVAIL.ulAutRemainingTime,3);
+ 607   1              
+ 608   1              
+ 609   1              return C_OK;   
+ 610   1      }
+ 611          ///***********************************************************************************///
+ 612          ///*PrepaymentModule_Comm_HandBackMoney                                                  *///
+ 613          ///*Description：退费                                                                *///
+ 614          ///*Input：*P_DataPoint为入口数据指针DI0                                             *///      
+ 615          ///*                                                                                 *///
+ 616          ///*                                                                                 *///
+ 617          ///*Output：返回值=C_OK：操作正常                                                    *///
+ 618          ///*              =C_ERR：操作异常                                                   *///
+ 619          ///*Calls：                                                                          *///
+ 620          ///*Called By：                                                                      *///
+ 621          ///*Influence：                                                                      *///
+ 622          ///*Tips：             1. 数据传过来已经是明文且数据没有经过倒向，直接做明文判断就可以
+             -了  *///
+ 623          ///*Others：                                                                     *///
+ 624          ///*Author:                                                                   *///
+ 625          ///***********************************************************************************///
+ 626          uchar8 PrepaymentModule_Comm_HandBackMoney(uchar8 *P_DataPtr)
+ 627          {  
+ 628   1              GU_B32_B08_Type V_unlTemp;
+ 629   1              ulong32                 V_ulTemp;
+ 630   1      
+ 631   1              if( 0x00 == (GStr_AVAIL.ucBackMonFlag & B0000_0010) )///开户之后允许退费
+ 632   1              { return C_ERR;}
+ 633   1              
+ 634   1              if(!(GStr_Flag.ucRunState2&F_RUN_EsamKeyFlag) ) ///公钥不允许退费
+ 635   1              { return C_ERR;}
+ 636   1      
+ 637   1              ///* 结算一下金额 *///
+ 638   1      //      Money_Subtraction();   后续补充
+ 639   1          LibPub_Inverse( P_DataPtr, 4 );
+ 640   1              V_unlTemp.B32 = LibPub_Buffer4ToUlong32(P_DataPtr);
+ 641   1      
+ 642   1              ///* 判断下剩余金额和退费金额 *///
+ 643   1          V_ulTemp= LibPub_Buffer4ToUlong32(GStr_Money.ucaRemainMoney);
+ 644   1              if( V_ulTemp < V_unlTemp.B32)
+ 645   1              { return C_ERR;}
+ 646   1         
+ 647   1              ///* 执行退费操作 */// 
+C51 COMPILER V9.54   APPVIRTUALESAM                                                        11/18/2021 18:54:10 PAGE 12  
+
+ 648   1          LibPub_MemCopyBytes(V_unlTemp.B08,GStr_AVAIL.ucRechangeMoney,4);///*退费金额 *///
+ 649   1              LibPub_MemCopyBytes(&GStr_Money.ucaRemainMoney[0],&GStr_AVAIL.ucBuybeforeMoney[0],4);//退费前剩余金
+             -额保存，用于事件记录
+ 650   1      
+ 651   1          LibPub_NBytesBCDSub(GStr_Money.ucaRemainMoney,GStr_AVAIL.ucRechangeMoney,4);
+ 652   1              GStr_Money.usCRC16=LibPub_CRC16_CCITT(GStr_Money.ucaRemainMoney,GStr_MONEY_Type_LEN-2);
+ 653   1          
+ 654   1          
+ 655   1          ///定时存储电量和金额  待补充
+ 656   1      //      EnergyStorageNmin(C_EnergyStorMode_Add1kWh, C_NormalWrite);
+ 657   1              
+ 658   1      //      Money_WriteE2Money ( C_NormalWrite );    ///* 存E2 *///        
+ 659   1              ///* 记录退费事件 *///
+ 660   1              
+ 661   1      //      WriteEventRecord(CAddr_RejectMoneyP_Inpage);
+ 662   1              LibPub_WriteDataToE2prom(LIB_E2P_Money,0,GStr_Money.ucaRemainMoney);///剩余金额写EE
+ 663   1              ///* 退费标志清除 *///
+ 664   1              ApiEvent_WriteRecord(C_RejectMoney);///做退费事件记录
+ 665   1      //      GStr_AVAIL.ucBackMonFlag &= ~B0000_0001; 
+ 666   1      //      RamCheck_Money();        剩余金额效验 待补充
+ 667   1      
+ 668   1              
+ 669   1              if(  C_ERR == LibPub_WriteDataToE2prom(LIB_E2P_AvailTimer,0,(uchar8*)&GStr_AVAIL.us_IDAvailTimer))
+ 670   1              { B_Err_Other = 1; return C_ERR; }
+ 671   1              GStr_AVAIL.usCRC16=LibPub_CRC16_CCITT((uchar8*)&GStr_AVAIL.ulAutRemainingTime,3);
+ 672   1              GStr_Flag.ucRunState1  &= ~F_RUN_L2_ALRAM;      
+ 673   1              ApiRelay_SubtractMoneyRelayJudge();                     ///*退费成功后根据当前剩余金额判断继电器状态*//
+             -/待补充
+ 674   1              ApiRelay_ControlProcess();
+ 675   1      
+ 676   1              return C_OK;
+ 677   1      }
+ 678          
+ 679          ///***********************************************************************************///
+ 680          ///*FunctionName：PrepaymentModule_DataDecription                                           *///
+ 681          ///*Description：数据加密                                                                   *///
+ 682          ///*Input：*P_DataPtr为入口数据指针                                                      *///      
+ 683          ///*       V_ucMACType MAC类型（见table表格）                                             *///
+ 684          ///*       *P_ucLen 数据长度，结束后会改变                                                    *///
+ 685          ///*Output：返回值=C_OK：操作正常                                                    *///
+ 686          ///*              =C_ERR：操作异常                                                   *///
+ 687          ///*Calls：                                                                          *///
+ 688          ///*Called By：                                                                      *///
+ 689          ///*Influence：                                                                      *///
+ 690          ///*Tips：函数正确执行后自动将需要应答的数据保存到通讯缓存相应地址           
+             -        *///
+ 691          ///*Others： 
+ 692          ///*Author:                                                                          *///
+ 693          ///***********************************************************************************///
+ 694          ///* 解密（加密的逆过程） *///
+ 695          uchar8 PrepaymentModule_DataDecription(uchar8 *P_DataPtr, uchar8 V_ucMACType, uchar8 *P_ucLen)
+ 696          {
+ 697   1              uchar8  i,j,V_ucTempLen;
+ 698   1              
+ 699   1              V_ucTempLen = (*P_ucLen) % 8;
+ 700   1      
+ 701   1              if( V_ucTempLen ) return C_ERR;
+ 702   1      
+ 703   1      ///* 验证一下MAC是否正确 *///
+ 704   1              if( C_ERR == PrepaymentModule_CommWriteESAMBinaryMAC(P_DataPtr, *P_ucLen, V_ucMACType, 0x01) )
+ 705   1              { return C_ERR; }
+ 706   1      
+C51 COMPILER V9.54   APPVIRTUALESAM                                                        11/18/2021 18:54:10 PAGE 13  
+
+ 707   1              V_ucTempLen = *P_ucLen / 8;
+ 708   1              LibPub_MemCopyBytes( P_DataPtr, &GA_uc7816CommBuffer[0], *P_ucLen); 
+ 709   1              
+ 710   1      ///* 先对BLOCKL解密 *///
+ 711   1              PrepaymentModule_GetWorkkey(C_KeyNum00);
+ 712   1              if( V_ucTempLen > 1)
+ 713   1              {
+ 714   2                      if( C_ERR == TripleDES_DeOrEncryption( C_KeyNumTp, &GA_uc7816CommBuffer[(V_ucTempLen-1)*8], DECRYPTION) 
+             -)
+ 715   2                      { return C_ERR; }
+ 716   2      
+ 717   2      ///* 对剩下的BLOCK进行异或处理 *///
+ 718   2                      for( i = V_ucTempLen-1; i > 0; i-- )
+ 719   2                      {
+ 720   3                              for( j = 0; j < 8; j++ )
+ 721   3                              {
+ 722   4                                      GA_uc7816CommBuffer[i*8+j] ^=  GA_uc7816CommBuffer[(i-1)*8+j];
+ 723   4                              }
+ 724   3                      } 
+ 725   2              }
+ 726   1      
+ 727   1      ///* 对第一组数据在进行一次解密 *///
+ 728   1              if( C_ERR == TripleDES_DeOrEncryption( C_KeyNumTp, &GA_uc7816CommBuffer[0], DECRYPTION) )
+ 729   1              { return C_ERR; }
+ 730   1              
+ 731   1      ///* 算一下长度，然后返回 *///
+ 732   1              for( i = (*P_ucLen); i > 0; i-- )
+ 733   1              {
+ 734   2                      if( 0x80 == GA_uc7816CommBuffer[i-1] ) break;
+ 735   2              }
+ 736   1              if( i == 0 ) return C_ERR; 
+ 737   1      
+ 738   1              *P_ucLen = i-1;
+ 739   1              LibPub_MemCopyBytes(  &GA_uc7816CommBuffer[0], P_DataPtr, *P_ucLen);
+ 740   1              
+ 741   1              return C_OK;
+ 742   1              
+ 743   1      }
+ 744          
+ 745          
+ 746          
+ 747          ///***********************************************************************************///
+ 748          ///*PrepaymentModule_Comm_Control                                                    *///
+ 749          ///*Description：远程控制命令                                                        *///
+ 750          ///*Input：*P_DataPoint为入口数据指针PA密码权限                                      *///
+ 751          ///*                                                                                 *///
+ 752          ///*                                                                                 *///
+ 753          ///*Output：返回值=C_OK：操作正常                                                    *///
+ 754          ///*              =C_ERR：操作异常                                                   *///
+ 755          ///*Calls：                                                                          *///
+ 756          ///*Called By：                                                                      *///
+ 757          ///*Influence：                                                                      *///
+ 758          ///*Tips：函数正确执行后自动将需要应答的数据保存到通讯缓存相应地址           
+             -        *///
+ 759          ///*Others：命令正确执行后将控制码写入E2CAddr_usRemoteContral，bit0：跳闸，bit1：报�
+             -�*///
+ 760          ///*bit2：保电，bit3：保电解除                                                                                                          *///
+ 761          ///*Author:chenshou                                                                  *///
+ 762          ///***********************************************************************************///
+ 763          /*Frame :PA P0 P1 P2 C0 C1 C2 C3 N1...Nm CS 16*///
+ 764          //uchar8 PrepaymentModule_Comm_Control(uchar8 *P_DataPtr)
+ 765          //{             
+C51 COMPILER V9.54   APPVIRTUALESAM                                                        11/18/2021 18:54:10 PAGE 14  
+
+ 766          //      uchar8 V_TimeBuff[6];
+ 767          //              
+ 768          //              ///*将系统时钟暂存到临时缓存*///
+ 769          //              LibPub_MemSetBytes(&V_TimeBuff[0], 0x99, 6);  
+ 770          //              
+ 771          //              ///*命令有效时间 - 系统时钟，若结果为正则执行操作*///因无时钟，强制命令�
+             -��效时间为999999999999，否则回失败
+ 772          //              if(LibPub_CompareData(P_DataPtr + 10, &V_TimeBuff[0], 6,CMP_MODE_HIGHT) != C_Equal)
+ 773          //              {  return       C_ERR; } 
+ 774          
+ 775          //              ///* 当前处于保电状态，发跳闸命令返回错 *///
+ 776          //              if( (GStr_Flag.ucRunState&F_RUN_KEEP_ELEC) && (*(P_DataPtr + 8) == 0x1A) )
+ 777          //              { return        C_ERR; }
+ 778          
+ 779          //              switch(*(P_DataPtr + 8))
+ 780          //              {
+ 781          //                      case  0x1A:     
+ 782          //                      {       
+ 783          //                              GStr_Flag.ucRunState |= F_RUN_COMM_RELAYOFF;
+ 784          //                      }break;///* 跳闸命令///
+ 785          //                      case  0x1C:     
+ 786          //                      {
+ 787          //                              GStr_Flag.ucRunState &= F_RUN_COMM_RELAYOFF;
+ 788          //                      }break;///* 直接合闸命令，清跳闸命令*///
+ 789          //                      case  0x3A:     
+ 790          //                      {
+ 791          //                              GStr_Flag.ucRunState |=F_RUN_KEEP_ELEC; 
+ 792          //                      }break;///* 保电命令 *///
+ 793          //                      case  0x3B:      
+ 794          //                      {
+ 795          //                              GStr_Flag.ucRunState &=~F_RUN_KEEP_ELEC;        
+ 796          //                      }break;///* 保电解除命令 *///
+ 797          //                      
+ 798          //                      default:{ return        C_ERR;  }
+ 799          //              }
+ 800          //              
+ 801          //              ///* 存一下状态字 *///
+ 802          //              if(_FAILED==LibPub_WriteDataToE2prom(LIB_E2P_RUN_STATE,0,&GStr_Flag.ucRunState))
+ 803          //              {  return       C_ERR;  }
+ 804          //              GStr_Flag.usCRC16=LibPub_CRC16_CCITT(&GStr_Flag.ucRunState,1);
+ 805          //              return  C_OK;  
+ 806          //}
+ 807          
+ 808          ///***********************************************************************************///
+ 809          ///*FunctionName: PrepaymentModule_GetWorkkey                                                                            *///
+ 810          ///*Description： 加密分散因子得到临时密钥                                         *///
+ 811          ///*Input：*                                                                                                    */// 
+ 812          ///*Output：                                                                                                    */// 
+ 813          ///*Calls：                                                                          *///
+ 814          ///*Called By：                                                                      *///
+ 815          ///*Influence：                                                                      *///
+ 816          ///*Tips                                                                                                                                         *///
+ 817          ///*Others：                                                                         *///
+ 818          ///*Author:chenshou                                                                  *///
+ 819          ///***********************************************************************************///
+ 820          uchar8 PrepaymentModule_GetWorkkey(uchar8 V_ucKeyNum)
+ 821          {
+ 822   1              uchar8 i ;
+ 823   1              
+ 824   1              ///* 获取分散因子。远程表分散因子存在GA_ucPcDiffusionFactor中 *///
+ 825   1              LibPub_MemCopyBytes( &GA_ucDisperFactor[0], &GA_ucDesTata[0], 0x08);
+ 826   1              
+C51 COMPILER V9.54   APPVIRTUALESAM                                                        11/18/2021 18:54:10 PAGE 15  
+
+ 827   1              ///* 3DES加密分散因子,得到临时密钥 *///
+ 828   1              if( C_ERR==TripleDES_DeOrEncryption( V_ucKeyNum, &GA_ucDesTata[0], ENCRYPTION))
+ 829   1              { return C_ERR; }
+ 830   1              
+ 831   1              LibPub_MemCopyBytes( &GA_ucDesTata[0], &GA_ucDesKey[0],  0x08);         ///* 左密钥 *///
+ 832   1              
+ 833   1              ///* 加密后的结果取反组成右密钥*///
+ 834   1              for (i = 0; i < 8; i++ )
+ 835   1              {
+ 836   2                      GA_ucDesKey[i+8] = ~GA_ucDesTata[i];
+ 837   2              }
+ 838   1              
+ 839   1      //      ///* 对取反后的分散因子进行加密再得到一组临时密钥 *///
+ 840   1      //      if( C_ERR == TripleDES_DeOrEncryption( V_ucKeyNum, &GA_ucDesTata[0], ENCRYPTION))
+ 841   1      //      { return C_ERR; }
+ 842   1      //               
+ 843   1      //      ///* 将两组密钥合在一起就得到了分散因子分散后的临时密钥 *///
+ 844   1      //      CopyData( &A_ucTempbuff[0], &GA_ucDesKey[0],  0x08); 
+ 845   1      //      CopyData( &GA_ucDesTata[0], &GA_ucDesKey[8],  0x08);
+ 846   1              
+ 847   1              return C_OK;
+ 848   1      } 
+ 849          
+ 850          /* 参数设置时验证MAC是否合适 */
+ 851          uchar8 PrepaymentModule_CommWriteESAMBinaryMAC(uchar8 *P_ucData, uchar8 V_ucLen, uchar8 V_ucHeadNum, uchar
+             -8 V_ucType)
+ 852          {
+ 853   1              uchar8 V_ucResult;
+ 854   1              /* 准备数据 命令头+数据*/
+ 855   1              GA_uc7816CommBuffer[0] = GT_ucVirtualEsam[V_ucHeadNum][0];
+ 856   1              GA_uc7816CommBuffer[1] = GT_ucVirtualEsam[V_ucHeadNum][1];
+ 857   1              GA_uc7816CommBuffer[2] = GT_ucVirtualEsam[V_ucHeadNum][2];
+ 858   1              GA_uc7816CommBuffer[3] = GT_ucVirtualEsam[V_ucHeadNum][3];
+ 859   1              GA_uc7816CommBuffer[4] = V_ucLen+4;     ///* 数据长度LC，数据长度+4字节MAC长度 *///
+ 860   1              LibPub_MemCopyBytes (P_ucData, &GA_uc7816CommBuffer[5], V_ucLen+4);     /* 数据+MAC */
+ 861   1              
+ 862   1              V_ucResult = Data_MAC( &GA_uc7816CommBuffer[0], V_ucLen+5, &GStr_VirtualEsamPara.ucRs485RandNum[0], V_ucT
+             -ype );
+ 863   1          if ( C_OK != V_ucResult)
+ 864   1              {
+ 865   2                      PrepaymentModule_Comm_MACErrNum();      ///*MAC错,次数+1 *///
+ 866   2              }
+ 867   1              return(V_ucResult);
+ 868   1      }
+ 869          ///***********************************************************************************///
+ 870          ///*PrepaymentModule_Comm_INTAUTH_Invalidation                                       *///
+ 871          ///*Description：身份认证失效                                                        *///
+ 872          ///*Input：*P_DataPoint为入口数据指针DI0                                             *///
+ 873          ///*                                                                                 *///
+ 874          ///*                                                                                 *///
+ 875          ///*Output：返回值=C_OK：操作正常                                                    *///
+ 876          ///*              =C_ERR：操作异常                                                   *///
+ 877          ///*Calls：                                                                          *///
+ 878          ///*Called By：                                                                      *///
+ 879          ///*Influence：                                                                      *///
+ 880          ///*Tips：函数正确执行后自动将需要应答的数据保存到通讯缓存相应地址           
+             -        *///
+ 881          ///*Others：                                                                         *///
+ 882          ///*Author:                                                                   *///
+ 883          ///***********************************************************************************///
+ 884          uchar8 PrepaymentModule_Comm_INTAUTH_Invalidation(uchar8 *P_DataPtr)
+ 885          {  
+C51 COMPILER V9.54   APPVIRTUALESAM                                                        11/18/2021 18:54:10 PAGE 16  
+
+ 886   1              if((GStr_Flag.ucRunState2&F_RUN_INTAUTHAvailabilityFlag) != F_RUN_INTAUTHAvailabilityFlag)///* 身份认�
+             -��超时 *///
+ 887   1              {
+ 888   2                      B_Err_IDAuthenFail = 1;  return C_ERR;     
+ 889   2              } 
+ 890   1              
+ 891   1          ///* 客户编号 *///
+ 892   1              LibPub_MemExchangeBytes(&GStr_MeterIFO.ucaUserID[0], P_DataPtr + 4, 6);
+ 893   1      
+ 894   1              ///* 返回剩余金额 *///
+ 895   1              LibPub_MemExchangeBytes( &GStr_Money.ucaRemainMoney[0], P_DataPtr + 10 ,4);
+ 896   1              
+ 897   1              ///*返回购电次数*///
+ 898   1              LibPub_MemExchangeBytes(&GStr_PRICE.ucPurchaseTimes[0], P_DataPtr + 14, 4);                                     
+ 899   1      
+ 900   1              ///* 返回密钥状态  *///
+ 901   1              if((GStr_Flag.ucRunState2&F_RUN_EsamKeyFlag)==F_RUN_EsamKeyFlag)
+ 902   1              {*(P_DataPtr + 18) = 0x01;}///私钥
+ 903   1              else {*(P_DataPtr + 18) = 0x00;}
+ 904   1              *(P_DataPtr + 19) = 0;
+ 905   1              *(P_DataPtr + 20) = 0;
+ 906   1              *(P_DataPtr + 21) = 1;
+ 907   1               
+ 908   1              ///* 清身份认证有效标志 *///
+ 909   1              PrepaymentModule_InValidation();  
+ 910   1      
+ 911   1              return C_OK; 
+ 912   1      }
+ 913          ///*============================================================================================*///
+ 914          ///* Function:          EsamRandom
+ 915          ///* Description:       取指定长度数据的随机数
+ 916          ///* Calls: 
+ 917          ///* Called By:         
+ 918          ///* Input:        
+ 919          ///* Output:            
+ 920          ///* Return: 
+ 921          ///* Others:             
+ 922          ///*============================================================================================*///
+ 923          uchar8 PrepaymentModule_GetChallenge(uchar8 *P_DataPtr, uchar8 V_DataLen)
+ 924          {
+ 925   1              uchar8 i;
+ 926   1              ushort16 V_usTempData;
+ 927   1              V_usTempData=TH0;
+ 928   1              V_usTempData<<=8;
+ 929   1              V_usTempData+=TL0;
+ 930   1              srand(V_usTempData);
+ 931   1              for( i = 0; i < V_DataLen; i++)
+ 932   1              {
+ 933   2                      P_DataPtr[i] = rand();
+ 934   2              }
+ 935   1              return C_OK;
+ 936   1      }
+ 937          
+ 938          ///*============================================================================================*///
+ 939          ///* Function:          
+ 940          ///* Description:       充值函数
+ 941          ///* Calls: 
+ 942          ///* Called By:         
+ 943          ///* Input:        V_ProcessType  01 开户充值  02充值 03钱包初始化
+ 944          ///* Output:            
+ 945          ///* Return: 
+ 946          ///* Others:             
+C51 COMPILER V9.54   APPVIRTUALESAM                                                        11/18/2021 18:54:10 PAGE 17  
+
+ 947          ///*============================================================================================*///
+ 948          uchar8 Money_Recharge( uchar8 V_ProcessType)
+ 949          { 
+ 950   1              uchar8 V_Buff[25];
+ 951   1              ulong32 V_ulBuff;
+ 952   1              uchar8 V_ucErrorType;
+ 953   1              
+ 954   1              V_ucErrorType = C_ERR;
+ 955   1              if((V_ProcessType==0x00)||(V_ProcessType>0x03))
+ 956   1              {return V_ucErrorType;}                          ///只能为 0x01  0x02 0x03
+ 957   1      
+ 958   1              LibPub_HEXtoBCDBytes(*(ulong32*)&GStr_AVAIL.ucRechangeMoney[0],&GStr_AVAIL.ucRechangeMoney[0],4);
+ 959   1          ///操作金额转换成BCD
+ 960   1              if( V_ProcessType == 0x03 )///钱包初始化
+ 961   1              {       
+ 962   2                      ///准备清零记录的数据
+ 963   2                      LibPub_MemCopyBytes(&GStr_Energy.ucaFw_Energy[0],&GStr_AVAIL.ucbeforeFwEnergy[0],4);///操作前的正�
+             -�电量保存用于事件记录
+ 964   2                      LibPub_MemCopyBytes(&GStr_Energy.ucaBk_Energy[0],&GStr_AVAIL.ucbeforeBkEnergy[0],4);///操作前的反�
+             -�电量保存用于事件记录
+ 965   2                      
+ 966   2                      ApiPwOn_MeterClear();
+ 967   2                      
+ 968   2                      ///准备购电记录数据///清零后保存剩余金额为0
+ 969   2                      LibPub_MemCopyBytes(&GStr_Money.ucaRemainMoney[0],&GStr_AVAIL.ucBuybeforeMoney[0],4);///操作前剩余�
+             -��额
+ 970   2      
+ 971   2                      // GV_ClearFlag=MoneyClear;
+ 972   2                      ///电表总清
+ 973   2                      LibPub_MemSetBytes( GStr_Money.ucaRemainMoney, 0x00, 6 );
+ 974   2                      LibPub_MemCopyBytes(GStr_AVAIL.ucRechangeMoney, &GStr_Money.ucaRemainMoney[0], 4);  //剩余金额等于
+             -购电金额
+ 975   2                      LibPub_MemSetBytes( GStr_Money.ucaTickMoney, 0x00, 6 );///透支金额清零
+ 976   2                      LibPub_MemCopyBytes(GStr_AVAIL.ucRechangeMoney, &GStr_PRICE.ucaPurchaseMoneyAll[0], 4);  //总购电金�
+             -��等于购电金额
+ 977   2                      LibPub_MemSetBytes( GStr_PRICE.ucPurchaseTimes, 0x00, 6 );///购电次数清零
+ 978   2                      LibPub_WriteDataToE2prom(LIB_E2P_Money,0,GStr_Money.ucaRemainMoney) ;  ///剩余金额透支金额写EE
+ 979   2                      LibPub_WriteDataToE2prom(LIB_E2P_Price, 0, &GStr_PRICE.ucaPrice[0]);//总购电金额和购电次数写E
+             -E
+ 980   2                      
+ 981   2                      ///* 清开户状态 *///
+ 982   2                      GStr_AVAIL.ucBackMonFlag &= ~B0000_0010;
+ 983   2                      GStr_AVAIL.usCRC16=LibPub_CRC16_CCITT((uchar8*)&GStr_AVAIL.us_IDAvailTimer,3);
+ 984   2                      if(_FAILED == LibPub_WriteDataToE2prom(LIB_E2P_AvailTimer,0,(uchar8*)&GStr_AVAIL.us_IDAvailTimer) )
+ 985   2                      { GStr_AVAIL.ucBackMonFlag |= B0000_0010; return V_ucErrorType; }
+ 986   2                      GStr_Flag.ucRunState2 &= ~F_RUN_OpenAccoutFlag ;
+ 987   2                      ///*清本地报警状态*///
+ 988   2                      LibPub_ReadDataFromE2prom(LIB_E2P_Money_Para, 0, &V_Buff[0]);
+ 989   2                      V_ulBuff = LibPub_Buffer4ToUlong32(&V_Buff[4]);
+ 990   2                      if(*(ulong32*)&GStr_AVAIL.ucRechangeMoney[0]<=V_ulBuff)  GStr_Flag.ucRunState1  |=F_RUN_L2_ALRAM;///*初
+             -始金额小于等于二级报警*///
+ 991   2                      if(*(ulong32*)&GStr_AVAIL.ucRechangeMoney[0]==0)   GStr_Flag.ucRunState1  |=F_RUN_REMAIND_ZERO  ;///*初
+             -始金额为0*///
+ 992   2                      GStr_Flag.ucRunState1 &= ~F_RUN_OVER_DRAFT;    ///清透支状态
+ 993   2                      ///* 清远程跳闸状态*///
+ 994   2                      GStr_Flag.ucRunState &= ~F_RUN_COMM_RELAYOFF; 
+ 995   2              GStr_Flag.ucRunState &= ~F_RUN_CLOSE_L2;                
+ 996   2                      GStr_Flag.ucRunState &= ~F_RUN_CLOSE_ZERO; 
+ 997   2                      GStr_Flag.ucRunState &= ~F_RUN_DISABLE_CLOSE; 
+ 998   2                      GStr_Flag.ucRunState &= ~F_RUN_OVER_DRAFTRELAY; 
+ 999   2                      ///请二级报警和过零合闸标志
+1000   2                      
+C51 COMPILER V9.54   APPVIRTUALESAM                                                        11/18/2021 18:54:10 PAGE 18  
+
+1001   2                      LibPub_WriteDataToE2prom(LIB_E2P_RUN_STATE,0,(uchar8*)&GStr_Flag.ucRunState) ;  
+1002   2                      
+1003   2      
+1004   2              if(!(GStr_Flag.ucMeterMode &F_FACTORY_MODE))///厂外模式在做事件记录
+1005   2                      {
+1006   3                               ApiEvent_WriteRecord(C_Clear);///做清零事件记录 ////总清之后做事件记录
+1007   3                      }
+1008   2                      ///准备购电记录的数据
+1009   2                              ApiEvent_WriteRecord(C_BuyMoney);///做购电时间记录
+1010   2                      ///待补充
+1011   2                      
+1012   2              }
+1013   1              else
+1014   1              {
+1015   2                      LibPub_MemSetBytes(V_Buff, 0x00, 6 );
+1016   2                      V_Buff[3]=0x01;
+1017   2                      LibPub_NBtyesBcdAdd(&GStr_PRICE.ucPurchaseTimes[0],V_Buff,4);///购电次数加1
+1018   2                      LibPub_MemSetBytes(V_Buff, 0x00, 6 );
+1019   2                      LibPub_MemCopyBytes(GStr_AVAIL.ucRechangeMoney, V_Buff, 4);  //购电金额转换成6字节，与透支�
+             -��额比较        
+1020   2                      LibPub_MemCopyBytes(&GStr_Money.ucaRemainMoney[0],GStr_AVAIL.ucBuybeforeMoney,4);//购电前剩余金额
+             -保存，用于事件记录
+1021   2                      if(_FALSE==LibPub_ZeroCheck(GStr_Money.ucaTickMoney,6))///有透支金额
+1022   2                      {
+1023   3                              if(C_LessThan!=LibPub_CompareData(V_Buff, GStr_Money.ucaTickMoney, 6 , CMP_MODE_HIGHT))///购电金额�
+             -��小于透支金额
+1024   3                              {
+1025   4                                      LibPub_NBytesBCDSub(V_Buff,GStr_Money.ucaTickMoney,6);
+1026   4                                      LibPub_MemSetBytes(GStr_Money.ucaTickMoney, 0x00, 6 );///透支金额清零
+1027   4                                      LibPub_MemCopyBytes(V_Buff, &GStr_Money.ucaRemainMoney[0], 4);  //剩余金额=购电金额-透支金�
+             -��
+1028   4                              }
+1029   3                              else
+1030   3                              {
+1031   4                                      LibPub_NBytesBCDSub(GStr_Money.ucaTickMoney,V_Buff,6); ///购电金额小于透支金额   ，透支�
+             -�额=透支金额-购电金额
+1032   4                                      LibPub_MemSetBytes(GStr_Money.ucaRemainMoney, 0x00, 6 );//剩余金额为0
+1033   4                              }
+1034   3                      }
+1035   2                      else///无透支金额
+1036   2                      {
+1037   3                              LibPub_NBtyesBcdAdd(&GStr_Money.ucaRemainMoney[0],V_Buff,6);  //无透支，剩余金额=原剩余金�
+             -�+购电金额
+1038   3                      }
+1039   2                      LibPub_NBtyesBcdAdd(GStr_PRICE.ucaPurchaseMoneyAll,GStr_AVAIL.ucRechangeMoney,4);///总购电金额累�
+             -�
+1040   2                      LibPub_WriteDataToE2prom(LIB_E2P_Price, 0, &GStr_PRICE.ucaPrice[0] );///购电次数及总购电金额�
+             -�EE
+1041   2                      LibPub_WriteDataToE2prom(LIB_E2P_Money, 0, GStr_Money.ucaRemainMoney );///剩余透支金额存EE
+1042   2                      
+1043   2              
+1044   2                  ApiEvent_WriteRecord(C_BuyMoney);///做购电事件记录
+1045   2      //              GStr_AVAIL.ucBackMonFlag|=B0000_0001;  ///退费标志置1
+1046   2                      
+1047   2              } 
+1048   1           
+1049   1              GStr_Money.usCRC16=LibPub_CRC16_CCITT(GStr_Money.ucaRemainMoney,GStr_MONEY_Type_LEN-2);
+1050   1              GStr_MeterIFO.usCRC16=LibPub_CRC16_CCITT(GStr_MeterIFO.ucaCommAddr,GStr_METER_IFO_Type_LEN-2);
+1051   1              GStr_PRICE.usCRC16=LibPub_CRC16_CCITT(&GStr_PRICE.ucaPrice[0],GStr_PRICE_Type_LEN-2);
+1052   1      
+1053   1              V_ucErrorType =C_OK;        
+1054   1      
+C51 COMPILER V9.54   APPVIRTUALESAM                                                        11/18/2021 18:54:10 PAGE 19  
+
+1055   1          return(V_ucErrorType);
+1056   1              
+1057   1      }
+C51 COMPILER V9.54   APPVIRTUALESAM                                                        11/18/2021 18:54:10 PAGE 20  
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+uint16_t . . . . . . . . . . . . . . .  TYPEDEF  -----  U_INT    -----  2
+IB_CON2. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00F3H  1
+COMM_BLE_STAT. . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+API_COMM_STATUS_OVERTIME . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+TB81 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00DBH  1
+P0 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0080H  1
+IB_CON3. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00F4H  1
+FP64 . . . . . . . . . . . . . . . . .  TYPEDEF  -----  FLOAT    -----  4
+TKCON. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A4H  1
+P1 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0090H  1
+IB_CON4. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00F5H  1
+PASLO. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E7H  1
+GStr_ENERGYDEC_Type. . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  26
+  ucaFw_EnergyDec. . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  13
+  ucaBk_EnergyDec. . . . . . . . . . .  MEMBER   -----  ARRAY    000DH  13
+P2 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A0H  1
+OSCLO. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00FEH  1
+IB_CON5. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00F6H  1
+_LibPub_Inverse. . . . . . . . . . . .  EXTERN   CODE   PROC     -----  -----
+GStr_EventRecordNum_Type . . . . . . .  TYPEDEF  -----  STRUCT   -----  26
+  ucEventTimes . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  24
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    0018H  2
+GStr_FLAG_Type . . . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  16
+  ucSystem . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0000H  1
+  ucMeterMode. . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0001H  1
+  ucPwOnState. . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0002H  1
+  ucRunState . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0003H  1
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    0004H  2
+  ucRunState2. . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0006H  1
+  ucRunState1. . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0007H  1
+  ucRunState3. . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0008H  1
+  ucDisp . . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0009H  1
+  ucFactoryKey . . . . . . . . . . . .  MEMBER   -----  U_CHAR   000AH  1
+  ucDispKey. . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   000BH  1
+  ucMoney. . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   000CH  1
+  ucPowerOnFlag. . . . . . . . . . . .  MEMBER   -----  U_CHAR   000DH  1
+  ucWrE2promSafeByte . . . . . . . . .  MEMBER   -----  U_CHAR   000EH  1
+  ucBLESTATFlag. . . . . . . . . . . .  MEMBER   -----  U_CHAR   000FH  1
+BOOLEAN. . . . . . . . . . . . . . . .  TYPEDEF  -----  U_CHAR   -----  1
+SM1_RXOV . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      009EH  1
+P3 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B0H  1
+AC . . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00D6H  1
+P4 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C0H  1
+SPCON. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A1H  1
+SBRTH. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   009CH  1
+P5 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E9H  1
+TRIPEMU_CALPARA_Type . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  114
+  ulaCalPara . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  112
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    0070H  2
+GU_SecurityErr . . . . . . . . . . . .  EXTERN   XDATA  UNION    -----  2
+LIB_E2P_Price_BAK. . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+EA . . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00AFH  1
+P6 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00EAH  1
+_PrepaymentModule_Comm_INTAUTH . . . .  PUBLIC   CODE   PROC     0000H  -----
+  P_ucDataPtr. . . . . . . . . . . . .  AUTO     XDATA  PTR      0000H  3
+  k. . . . . . . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0003H  1
+  V_ucBuffer . . . . . . . . . . . . .  AUTO     XDATA  ARRAY    0004H  3
+C51 COMPILER V9.54   APPVIRTUALESAM                                                        11/18/2021 18:54:10 PAGE 21  
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+  V_uctest . . . . . . . . . . . . . .  AUTO     XDATA  ARRAY    0007H  16
+GV_ucMACErrNum . . . . . . . . . . . .  PUBLIC   XDATA  U_CHAR   0000H  1
+GA_uc7816CommBuffer. . . . . . . . . .  EXTERN   XDATA  ARRAY    -----  250
+LIB_E2P_Display_Table. . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+GStr_DISPLAY_PARA_Type . . . . . . . .  TYPEDEF  -----  STRUCT   -----  129
+  ucFullDisp_Time. . . . . . . . . . .  MEMBER   -----  U_CHAR   0000H  1
+  ucDispDurTime. . . . . . . . . . . .  MEMBER   -----  U_CHAR   0001H  1
+  ucAutoDispNum. . . . . . . . . . . .  MEMBER   -----  U_CHAR   0002H  1
+  ucKeyDispNum . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0003H  1
+  usDisp_ParaCRC16 . . . . . . . . . .  MEMBER   -----  U_INT    0004H  2
+  ucAutoDisptable. . . . . . . . . . .  MEMBER   -----  ARRAY    0006H  30
+  ucKeyDisptable . . . . . . . . . . .  MEMBER   -----  ARRAY    0024H  30
+  usDisp_tableCRC16. . . . . . . . . .  MEMBER   -----  U_INT    0042H  2
+  ucBackLightTime. . . . . . . . . . .  MEMBER   -----  U_CHAR   0044H  1
+  ucRelayLEDTime . . . . . . . . . . .  MEMBER   -----  U_CHAR   0045H  1
+  ulDispUpdataTime . . . . . . . . . .  MEMBER   -----  U_LONG   0046H  4
+  usDispCnt. . . . . . . . . . . . . .  MEMBER   -----  U_INT    004AH  2
+  ulDisptimer. . . . . . . . . . . . .  MEMBER   -----  U_LONG   004CH  4
+  ucKeydelaytimer. . . . . . . . . . .  MEMBER   -----  U_CHAR   0050H  1
+  ucFirstKeyDisp . . . . . . . . . . .  MEMBER   -----  U_CHAR   0051H  1
+  ucDisp_0_flag. . . . . . . . . . . .  MEMBER   -----  U_CHAR   0052H  1
+  ucDisp_tongxin_Flag. . . . . . . . .  MEMBER   -----  U_CHAR   0053H  1
+  ucDisp_tongxin_Time. . . . . . . . .  MEMBER   -----  U_LONG   0054H  4
+  ucDispNum. . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0058H  1
+  ucLCDDrvDispBuf. . . . . . . . . . .  MEMBER   -----  ARRAY    0059H  40
+int32_t. . . . . . . . . . . . . . . .  TYPEDEF  -----  LONG     -----  4
+P7 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00EBH  1
+IB_DATA. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00EFH  1
+P8 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00ECH  1
+int16_t. . . . . . . . . . . . . . . .  TYPEDEF  -----  INT      -----  2
+SBRTL. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   009DH  1
+P9 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00EDH  1
+PBANKLO. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B7H  1
+_PrepaymentModule_GetWorkkey . . . . .  PUBLIC   CODE   PROC     0000H  -----
+  V_ucKeyNum . . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0000H  1
+  i. . . . . . . . . . . . . . . . . .  * REG *  DATA   U_CHAR   0007H  1
+GA_ucDesKey. . . . . . . . . . . . . .  EXTERN   XDATA  ARRAY    -----  16
+GStr_COUNTER_Type. . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  10
+  ucFactoryMode_Cnt. . . . . . . . . .  MEMBER   -----  U_INT    0000H  2
+  ucKeyRelayOn_Cnt . . . . . . . . . .  MEMBER   -----  U_INT    0002H  2
+  ucRelayDelay_Cnt . . . . . . . . . .  MEMBER   -----  U_CHAR   0004H  1
+  ucHoldMoney_Cnt. . . . . . . . . . .  MEMBER   -----  U_CHAR   0005H  1
+  ucPasswordErr_Cnt. . . . . . . . . .  MEMBER   -----  ARRAY    0006H  3
+  ucRelayon_Cnt. . . . . . . . . . . .  MEMBER   -----  U_CHAR   0009H  1
+_PrepaymentModule_DataDecription . . .  PUBLIC   CODE   PROC     0000H  -----
+  P_DataPtr. . . . . . . . . . . . . .  AUTO     XDATA  PTR      0000H  3
+  V_ucMACType. . . . . . . . . . . . .  AUTO     DATA   U_CHAR   0007H  1
+  P_ucLen. . . . . . . . . . . . . . .  AUTO     XDATA  PTR      0004H  3
+  i. . . . . . . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0007H  1
+  j. . . . . . . . . . . . . . . . . .  * REG *  DATA   U_CHAR   0007H  1
+  V_ucTempLen. . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0008H  1
+SPSTA. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A2H  1
+IEN0 . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A8H  1
+PWRCON1. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B3H  1
+ulong32. . . . . . . . . . . . . . . .  TYPEDEF  -----  U_LONG   -----  4
+EMUSR. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0095H  1
+IEN1 . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A9H  1
+C51 COMPILER V9.54   APPVIRTUALESAM                                                        11/18/2021 18:54:10 PAGE 22  
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+PWRCON2. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B4H  1
+DPH1 . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0085H  1
+P0_0 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0080H  1
+GA_ucDisperFactor. . . . . . . . . . .  PUBLIC   XDATA  ARRAY    0001H  8
+_LibPub_NBtyesBcdAdd . . . . . . . . .  EXTERN   CODE   PROC     -----  -----
+ushort16 . . . . . . . . . . . . . . .  TYPEDEF  -----  U_INT    -----  2
+P1_0 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0090H  1
+P0_1 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0081H  1
+ADCH . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C3H  1
+_Money_Recharge. . . . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+  V_ProcessType. . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0000H  1
+  V_Buff . . . . . . . . . . . . . . .  AUTO     XDATA  ARRAY    0001H  25
+  V_ulBuff . . . . . . . . . . . . . .  * REG *  DATA   U_LONG   0004H  4
+  V_ucErrorType. . . . . . . . . . . .  AUTO     XDATA  U_CHAR   001AH  1
+BLE_DRV_OPERATION_INDEX. . . . . . . .  TYPEDEF  -----  U_CHAR   -----  1
+LIB_E2P_SOFTI_J. . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+P2_0 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00A0H  1
+P1_1 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0091H  1
+P0_2 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0082H  1
+IPH0 . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00BAH  1
+DPL1 . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0084H  1
+size_t . . . . . . . . . . . . . . . .  TYPEDEF  -----  U_INT    -----  2
+LIB_E2P_FUN_CONFIG_BAK . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+GStr_MONITOR_Tpye. . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  63
+  ulTimer_ms . . . . . . . . . . . . .  MEMBER   -----  U_LONG   0000H  4
+  ulTimer_ms_old . . . . . . . . . . .  MEMBER   -----  U_LONG   0004H  4
+  ulTimerClrWDT. . . . . . . . . . . .  MEMBER   -----  U_LONG   0008H  4
+  ulTimerMin . . . . . . . . . . . . .  MEMBER   -----  U_LONG   000CH  4
+  ulTimer5ms . . . . . . . . . . . . .  MEMBER   -----  U_LONG   0010H  4
+  ucPowerOnTimer . . . . . . . . . . .  MEMBER   -----  U_CHAR   0014H  1
+  ulTimers . . . . . . . . . . . . . .  MEMBER   -----  U_LONG   0015H  4
+  ulUpDateUIPTime. . . . . . . . . . .  MEMBER   -----  U_LONG   0019H  4
+  ulSoftI_JTime. . . . . . . . . . . .  MEMBER   -----  U_LONG   001DH  4
+  usSoftI_JTimeCRC16 . . . . . . . . .  MEMBER   -----  U_INT    0021H  2
+  usPasswordErrTime. . . . . . . . . .  MEMBER   -----  ARRAY    0023H  8
+  ucCommSymbolTime . . . . . . . . . .  MEMBER   -----  U_CHAR   002BH  1
+  ucPowerLimitNum. . . . . . . . . . .  MEMBER   -----  U_CHAR   002CH  1
+  ulOverDemandCloseTime. . . . . . . .  MEMBER   -----  U_LONG   002DH  4
+  ulProgEventDelayTime . . . . . . . .  MEMBER   -----  U_LONG   0031H  4
+  ulReadRandom2DelayTime . . . . . . .  MEMBER   -----  U_LONG   0035H  4
+  ucBleAdvCnt. . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0039H  1
+  ucBleConnectCnt. . . . . . . . . . .  MEMBER   -----  U_CHAR   003AH  1
+  ulPulsewidth . . . . . . . . . . . .  MEMBER   -----  U_LONG   003BH  4
+P3_0 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00B0H  1
+P2_1 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00A1H  1
+P1_2 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0092H  1
+P0_3 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0083H  1
+IPH1 . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00BBH  1
+COMM_BLE_MAC . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+P4_0 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00C0H  1
+P3_1 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00B1H  1
+P2_2 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00A2H  1
+P1_3 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0093H  1
+P0_4 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0084H  1
+EXF0 . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E8H  1
+P4_1 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00C1H  1
+P3_2 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00B2H  1
+C51 COMPILER V9.54   APPVIRTUALESAM                                                        11/18/2021 18:54:10 PAGE 23  
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+P2_3 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00A3H  1
+P1_4 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0094H  1
+P0_5 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0085H  1
+PrepaymentModule_Comm_MACErrNum. . . .  PUBLIC   CODE   PROC     0000H  -----
+P4_2 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00C2H  1
+P3_3 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00B3H  1
+P2_4 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00A4H  1
+P1_5 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0095H  1
+P0_6 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0086H  1
+EXF2 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00CEH  1
+TKF0 . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A6H  1
+IPL0 . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B8H  1
+LIB_E2P_ENRGY_BAK. . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+P4_3 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00C3H  1
+P3_4 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00B4H  1
+P2_5 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00A5H  1
+P1_6 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0096H  1
+P0_7 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0087H  1
+REN1 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00DCH  1
+IPL1 . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B9H  1
+LIB_E2P_EventNum . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+long32 . . . . . . . . . . . . . . . .  TYPEDEF  -----  LONG     -----  4
+P4_4 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00C4H  1
+P3_5 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00B5H  1
+P2_6 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00A6H  1
+P1_7 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0097H  1
+TK0H . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E2H  1
+SUSLO. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   008EH  1
+P4_5 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00C5H  1
+P3_6 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00B6H  1
+P2_7 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00A7H  1
+TK1H . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E4H  1
+P4_6 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00C6H  1
+P3_7 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00B7H  1
+TK2H . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E6H  1
+LIB_E2P_Money_BAK. . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+short16. . . . . . . . . . . . . . . .  TYPEDEF  -----  INT      -----  2
+P4_7 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00C7H  1
+RI . . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0098H  1
+_srand . . . . . . . . . . . . . . . .  EXTERN   CODE   PROC     -----  -----
+E7816. . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00AAH  1
+CY . . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00D7H  1
+TK0L . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E1H  1
+API_COMM_STATUS_ERROR. . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+_LibPub_CrcCheck . . . . . . . . . . .  EXTERN   CODE   PROC     -----  -----
+TI . . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0099H  1
+EADR . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0091H  1
+TK1L . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E3H  1
+TK2L . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E5H  1
+SADEN1 . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00DBH  1
+SM10_FE1 . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00DFH  1
+SADEN2 . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00FBH  1
+LIB_E2P_EMU_CALPARA. . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+GStr_ENERGY_PULSE_Type . . . . . . . .  TYPEDEF  -----  STRUCT   -----  8
+  ucPulseAdd . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0000H  1
+  ucPulseAddBusy . . . . . . . . . . .  MEMBER   -----  U_CHAR   0001H  1
+  ucPulseStatu . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0002H  1
+C51 COMPILER V9.54   APPVIRTUALESAM                                                        11/18/2021 18:54:10 PAGE 24  
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+  ucPulseDecimal . . . . . . . . . . .  MEMBER   -----  U_CHAR   0003H  1
+  ucPulseDecSavePtr. . . . . . . . . .  MEMBER   -----  U_CHAR   0004H  1
+  ucPulseDecSaveNoFF . . . . . . . . .  MEMBER   -----  U_CHAR   0005H  1
+  ucaPulseRemain . . . . . . . . . . .  MEMBER   -----  ARRAY    0006H  2
+PS0L . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00BCH  1
+PT0L . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00B9H  1
+SADDR1 . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00DAH  1
+LIB_E2P_INDEX_MAX. . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+LIB_E2P_Display_Para . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+SM12_TXCOL1. . . . . . . . . . . . . .  ABSBIT   -----  BIT      00DDH  1
+PT1L . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00BBH  1
+SADDR2 . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00FAH  1
+RCAP2H . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00CBH  1
+COMM_BLE_MOD . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+_PrepaymentModule_GetChallenge . . . .  PUBLIC   CODE   PROC     0000H  -----
+  P_DataPtr. . . . . . . . . . . . . .  AUTO     XDATA  PTR      0000H  3
+  V_DataLen. . . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0003H  1
+  i. . . . . . . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0004H  1
+  V_usTempData . . . . . . . . . . . .  * REG *  DATA   U_INT    0006H  2
+PT2L . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00BDH  1
+SP . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0081H  1
+INT32S . . . . . . . . . . . . . . . .  TYPEDEF  -----  LONG     -----  4
+OV . . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00D2H  1
+EMU_COMM_TRIPCAL_TAB_Type. . . . . . .  TYPEDEF  -----  STRUCT   -----  4
+  ucCommDI1. . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0000H  1
+  ucEmuAddr. . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0001H  3
+LIB_E2P_EventNumPiont. . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+_LibPub_ZeroCheck. . . . . . . . . . .  EXTERN   CODE   PROC     -----  -----
+GStr_METER_IFO_Type. . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  27
+  ucaCommAddr. . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  6
+  ucaMeterID . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0006H  6
+  ucaUserID. . . . . . . . . . . . . .  MEMBER   -----  ARRAY    000CH  6
+  ucVoltageTrans . . . . . . . . . . .  MEMBER   -----  ARRAY    0012H  3
+  ucCurrentTrans . . . . . . . . . . .  MEMBER   -----  ARRAY    0015H  3
+  ucBpsVal . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0018H  1
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    0019H  2
+RCAP2L . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00CAH  1
+_LibPub_1BCD_2_1HEX. . . . . . . . . .  EXTERN   CODE   PROC     -----  -----
+INT32U . . . . . . . . . . . . . . . .  TYPEDEF  -----  U_LONG   -----  4
+INT16S . . . . . . . . . . . . . . . .  TYPEDEF  -----  INT      -----  2
+rand . . . . . . . . . . . . . . . . .  EXTERN   CODE   PROC     -----  -----
+_LibPub_IsBCD. . . . . . . . . . . . .  EXTERN   CODE   PROC     -----  -----
+INT16U . . . . . . . . . . . . . . . .  TYPEDEF  -----  U_INT    -----  2
+PX4L . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00B8H  1
+C_T2 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00C9H  1
+SFINE2 . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00DEH  1
+TRIPEMU_UIPKms_Type. . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  6
+  ulaKmsuip. . . . . . . . . . . . . .  MEMBER   -----  U_LONG   0000H  4
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    0004H  2
+_LibPub_WriteDataToE2prom. . . . . . .  EXTERN   CODE   PROC     -----  -----
+GStr_BLE_GROUP_Type. . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  26
+  ucBleMAC . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  6
+  ucBleName. . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0006H  12
+  ucBleKey . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0012H  3
+  usAdvTime. . . . . . . . . . . . . .  MEMBER   -----  U_INT    0015H  2
+  ucBleTPL . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0017H  1
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    0018H  2
+C51 COMPILER V9.54   APPVIRTUALESAM                                                        11/18/2021 18:54:10 PAGE 25  
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+COMM_BLE_MFV . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+GStr_EventNumPiont_Type. . . . . . . .  TYPEDEF  -----  STRUCT   -----  8
+  uc_Num . . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  6
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    0006H  2
+_Data_MAC. . . . . . . . . . . . . . .  EXTERN   CODE   PROC     -----  -----
+IRCON1 . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00ADH  1
+IRCON2 . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00AFH  1
+GStr_Comm_MAP. . . . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  14
+  ucaDataId. . . . . . . . . . . . . .  MEMBER   -----  U_LONG   0000H  4
+  ucaRamAdd. . . . . . . . . . . . . .  MEMBER   -----  PTR      0004H  3
+  IsWrite. . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0007H  1
+  ucaE2pIndex. . . . . . . . . . . . .  MEMBER   -----  U_INT    0008H  2
+  ucaE2offset. . . . . . . . . . . . .  MEMBER   -----  U_CHAR   000AH  1
+  ucaDataLen . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   000BH  1
+  IsBCD. . . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   000CH  1
+  EEIsHEX. . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   000DH  1
+API_COMM_STATUS_IDLE . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+EXCON1 . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00ABH  1
+SBUF . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0099H  1
+EXCON2 . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00ACH  1
+PCON . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0087H  1
+B32_B08. . . . . . . . . . . . . . . .  * TAG *  -----  UNION    -----  4
+  B08. . . . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  4
+  B16. . . . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  4
+  B32. . . . . . . . . . . . . . . . .  MEMBER   -----  U_LONG   0000H  4
+AUXC . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00F1H  1
+COMM_BLE_TPL . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+GStr_UART_COMM_Type. . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  423
+  ucCommChStatus . . . . . . . . . . .  MEMBER   -----  U_CHAR   0000H  1
+  ucCommRevStep. . . . . . . . . . . .  MEMBER   -----  U_CHAR   0001H  1
+  ucCommRevLen . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0002H  1
+  ucCommSndLen . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0003H  1
+  ucCommSndCnt . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0004H  1
+  ucCommAddrType . . . . . . . . . . .  MEMBER   -----  U_CHAR   0005H  1
+  ucCommError. . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0006H  1
+  ulCommTimeInit . . . . . . . . . . .  MEMBER   -----  U_LONG   0007H  4
+  ulCommRcvByteOverTime. . . . . . . .  MEMBER   -----  U_LONG   000BH  4
+  ulCommSndByteOverTime. . . . . . . .  MEMBER   -----  U_LONG   000FH  4
+  ulCommRspOverTime. . . . . . . . . .  MEMBER   -----  U_LONG   0013H  4
+  ucaCommRXBuff. . . . . . . . . . . .  MEMBER   -----  ARRAY    0017H  200
+  ucaCommTXBuff. . . . . . . . . . . .  MEMBER   -----  ARRAY    00DFH  200
+GStr_ENERGY_Type . . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  10
+  ucaFw_Energy . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  4
+  ucaBk_Energy . . . . . . . . . . . .  MEMBER   -----  ARRAY    0004H  4
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    0008H  2
+GU_B32_B08_Type. . . . . . . . . . . .  TYPEDEF  -----  UNION    -----  4
+  B08. . . . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  4
+  B16. . . . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  4
+  B32. . . . . . . . . . . . . . . . .  MEMBER   -----  U_LONG   0000H  4
+SCON . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0098H  1
+TK0BASEH . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D4H  1
+TMOD . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0089H  1
+TCON . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0088H  1
+IENX . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00AAH  1
+IB_OFFSET. . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00EEH  1
+TK1BASEH . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D6H  1
+SBRT1H . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00DCH  1
+C51 COMPILER V9.54   APPVIRTUALESAM                                                        11/18/2021 18:54:10 PAGE 26  
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+TK2BASEH . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00DFH  1
+SBRT2H . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00FCH  1
+_PrepaymentModule_Comm_TimeAvailableIn  PUBLIC   CODE   PROC     0000H  -----
+  P_DataPtr. . . . . . . . . . . . . .  AUTO     XDATA  PTR      0000H  3
+  V_Buffer . . . . . . . . . . . . . .  AUTO     XDATA  ARRAY    0003H  3
+RSTSTAT. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B1H  1
+PrepaymentModule_Comm_ClrMACErrNum . .  PUBLIC   CODE   PROC     0000H  -----
+LIB_E2P_Password . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+TK0BASEL . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D3H  1
+LIB_E2P_BLE_PARA . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+LIB_E2P_RUN_STATE. . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+TK1BASEL . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D5H  1
+SBRT1L . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00DDH  1
+COMM_BLE_TTP . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+TK2BASEL . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D7H  1
+SBRT2L . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00FDH  1
+API_COMM_STATUS_SEND . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+_LibPub_CRC16_CCITT. . . . . . . . . .  EXTERN   CODE   PROC     -----  -----
+SM0_FE . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      009FH  1
+CLKCON . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B2H  1
+API_COMM_STATUS_RECV_OK. . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+SM2_TXCOL. . . . . . . . . . . . . . .  ABSBIT   -----  BIT      009DH  1
+LDOCON . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B5H  1
+B. . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00F0H  1
+PrepaymentModule_InValidation. . . . .  PUBLIC   CODE   PROC     0000H  -----
+API_COMM_STATUS_RECV . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+_LibPub_HEXtoBCDBytes. . . . . . . . .  EXTERN   CODE   PROC     -----  -----
+GStr_MeterIFO. . . . . . . . . . . . .  EXTERN   XDATA  STRUCT   -----  27
+CP_RL2 . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00C8H  1
+LIB_E2P_EMU_UIPKms . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+_LibPub_DECtoHEXBytes. . . . . . . . .  EXTERN   CODE   PROC     -----  -----
+GStr_UIP_GROUP_Type. . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  68
+  ulVoltage. . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  16
+  ulCurrent. . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0010H  16
+  ulPower. . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0020H  16
+  ulFactory. . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0030H  16
+  ulFrequency. . . . . . . . . . . . .  MEMBER   -----  U_LONG   0040H  4
+ApiRelay_ControlProcess. . . . . . . .  EXTERN   CODE   PROC     -----  -----
+ENUM_API_COMM_STATUS . . . . . . . . .  TYPEDEF  -----  U_CHAR   -----  1
+ACC. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E0H  1
+ES0. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00ACH  1
+ET0. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00A9H  1
+ApiRelay_SubtractMoneyRelayJudge . . .  EXTERN   CODE   PROC     -----  -----
+GT_ucVirtualEsam . . . . . . . . . . .  EXTERN   CODE   ARRAY    -----  104
+ET1. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00ABH  1
+TF0. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      008DH  1
+ET2. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00ADH  1
+TF1. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      008FH  1
+RI1. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00D8H  1
+RB8. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      009AH  1
+TF2. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00CFH  1
+TH0. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   008CH  1
+INSCON . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0086H  1
+TH1. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   008DH  1
+uchar8 . . . . . . . . . . . . . . . .  TYPEDEF  -----  U_CHAR   -----  1
+TI1. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00D9H  1
+TB8. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      009BH  1
+C51 COMPILER V9.54   APPVIRTUALESAM                                                        11/18/2021 18:54:10 PAGE 27  
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+TH2. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00CDH  1
+LIB_E2P_EMU_CALPARA_BAK. . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+GStr_Monitor . . . . . . . . . . . . .  EXTERN   XDATA  STRUCT   -----  63
+uint8_t. . . . . . . . . . . . . . . .  TYPEDEF  -----  U_CHAR   -----  1
+P. . . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00D0H  1
+GStr_Energy. . . . . . . . . . . . . .  EXTERN   XDATA  STRUCT   -----  10
+GStr_UIP_DISPLAY_Type. . . . . . . . .  TYPEDEF  -----  STRUCT   -----  135
+  ucVoltage. . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  4
+  ucVoltageA . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0004H  4
+  ucVoltageB . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0008H  4
+  ucVoltageC . . . . . . . . . . . . .  MEMBER   -----  ARRAY    000CH  4
+  ucCOMMVoltage. . . . . . . . . . . .  MEMBER   -----  ARRAY    0010H  4
+  ucCOMMVoltageA . . . . . . . . . . .  MEMBER   -----  ARRAY    0014H  4
+  ucCOMMVoltageB . . . . . . . . . . .  MEMBER   -----  ARRAY    0018H  4
+  ucCOMMVoltageC . . . . . . . . . . .  MEMBER   -----  ARRAY    001CH  4
+  ucCurrent. . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0020H  4
+  ucCurrentA . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0024H  4
+  ucCurrentB . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0028H  4
+  ucCurrentC . . . . . . . . . . . . .  MEMBER   -----  ARRAY    002CH  4
+  ucCOMMCurrent. . . . . . . . . . . .  MEMBER   -----  ARRAY    0030H  4
+  ucCOMMCurrentA . . . . . . . . . . .  MEMBER   -----  ARRAY    0034H  4
+  ucCOMMCurrentB . . . . . . . . . . .  MEMBER   -----  ARRAY    0038H  4
+  ucCOMMCurrentC . . . . . . . . . . .  MEMBER   -----  ARRAY    003CH  4
+  ucPower. . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0040H  4
+  ucPowerA . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0044H  4
+  ucPowerB . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0048H  4
+  ucPowerC . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    004CH  4
+  ucCOMMPower. . . . . . . . . . . . .  MEMBER   -----  ARRAY    0050H  4
+  ucCOMMPowerA . . . . . . . . . . . .  MEMBER   -----  ARRAY    0054H  4
+  ucCOMMPowerB . . . . . . . . . . . .  MEMBER   -----  ARRAY    0058H  4
+  ucCOMMPowerC . . . . . . . . . . . .  MEMBER   -----  ARRAY    005CH  4
+  ucFactory. . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0060H  4
+  ucFactoryA . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0064H  4
+  ucFactoryB . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0068H  4
+  ucFactoryC . . . . . . . . . . . . .  MEMBER   -----  ARRAY    006CH  4
+  ucCOMMFactory. . . . . . . . . . . .  MEMBER   -----  ARRAY    0070H  4
+  ucCOMMFactoryA . . . . . . . . . . .  MEMBER   -----  ARRAY    0074H  4
+  ucCOMMFactoryB . . . . . . . . . . .  MEMBER   -----  ARRAY    0078H  4
+  ucCOMMFactoryC . . . . . . . . . . .  MEMBER   -----  ARRAY    007CH  4
+  ucFrequency. . . . . . . . . . . . .  MEMBER   -----  ARRAY    0080H  4
+  ucMeterConst . . . . . . . . . . . .  MEMBER   -----  ARRAY    0084H  3
+TL0. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   008AH  1
+_TripleDES_DeOrEncryption. . . . . . .  EXTERN   CODE   PROC     -----  -----
+GStr_AVAIL . . . . . . . . . . . . . .  EXTERN   XDATA  STRUCT   -----  41
+EX4. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00A8H  1
+TL1. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   008BH  1
+FLASHCON . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A7H  1
+_PrepaymentModule_Comm_INTAUTH_Invalid  PUBLIC   CODE   PROC     0000H  -----
+  P_DataPtr. . . . . . . . . . . . . .  AUTO     XDATA  PTR      0000H  3
+LIB_E2P_Money_Para . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+TL2. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00CCH  1
+LIB_E2P_ENERGY_DECPULSE_BK . . . . . .  E_CONST  -----  U_CHAR   -----  1
+LIB_E2P_AvailTimer . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+RS0. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00D3H  1
+ADCDH. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C5H  1
+LIB_E2P_Price. . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+GStr_AVAIL_Type. . . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  41
+C51 COMPILER V9.54   APPVIRTUALESAM                                                        11/18/2021 18:54:10 PAGE 28  
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+  us_IDAvailTimer. . . . . . . . . . .  MEMBER   -----  U_INT    0000H  2
+  ucBackMonFlag. . . . . . . . . . . .  MEMBER   -----  U_CHAR   0002H  1
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    0003H  2
+  ulAutRemainingTime . . . . . . . . .  MEMBER   -----  U_LONG   0005H  4
+  ucRechangeMoney. . . . . . . . . . .  MEMBER   -----  ARRAY    0009H  4
+  ucBuybeforeMoney . . . . . . . . . .  MEMBER   -----  ARRAY    000DH  4
+  ucbeforeFwEnergy . . . . . . . . . .  MEMBER   -----  ARRAY    0011H  4
+  ucbeforeBkEnergy . . . . . . . . . .  MEMBER   -----  ARRAY    0015H  4
+  ucE2Key. . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0019H  16
+GU_BoolWordVariable. . . . . . . . . .  TYPEDEF  -----  UNION    -----  2
+  BYTE . . . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  2
+  BIT. . . . . . . . . . . . . . . . .  MEMBER   -----  STRUCT   0000H  2
+TR0. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      008CH  1
+RS1. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00D4H  1
+PWMCON . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   009FH  1
+GStr_PRICE . . . . . . . . . . . . . .  EXTERN   XDATA  STRUCT   -----  14
+TR1. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      008EH  1
+char8. . . . . . . . . . . . . . . . .  TYPEDEF  -----  CHAR     -----  1
+TR2. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00CAH  1
+int8_t . . . . . . . . . . . . . . . .  TYPEDEF  -----  CHAR     -----  1
+ADCDL. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C4H  1
+ADT. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C2H  1
+LIB_E2P_INDEX. . . . . . . . . . . . .  TYPEDEF  -----  U_CHAR   -----  1
+GStr_PRICE_Type. . . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  14
+  ucaPrice . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  4
+  ucaPurchaseMoneyAll. . . . . . . . .  MEMBER   -----  ARRAY    0004H  4
+  ucPurchaseTimes. . . . . . . . . . .  MEMBER   -----  ARRAY    0008H  4
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    000CH  2
+DPH. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0083H  1
+_PrepaymentModule_Comm_OpenAccout. . .  PUBLIC   CODE   PROC     0000H  -----
+  P_DataPtr. . . . . . . . . . . . . .  AUTO     XDATA  PTR      0000H  3
+  DI1. . . . . . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0003H  1
+  i. . . . . . . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0004H  1
+  k. . . . . . . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0005H  1
+  V_Buff . . . . . . . . . . . . . . .  AUTO     XDATA  ARRAY    0006H  25
+  V_ulBuff . . . . . . . . . . . . . .  AUTO     XDATA  ARRAY    001FH  8
+  V_ucUserIdMac. . . . . . . . . . . .  AUTO     XDATA  ARRAY    0027H  10
+  V_unlMoneyMac. . . . . . . . . . . .  AUTO     XDATA  ARRAY    0031H  16
+  V_unlTempBuff. . . . . . . . . . . .  AUTO     XDATA  UNION    0041H  4
+GStr_VirtualEsamPara . . . . . . . . .  PUBLIC   XDATA  STRUCT   0009H  64
+GStr_Flag. . . . . . . . . . . . . . .  EXTERN   XDATA  STRUCT   -----  16
+DPL. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0082H  1
+SBUF1. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D9H  1
+_PrepaymentModule_Comm_HandBackMoney .  PUBLIC   CODE   PROC     0000H  -----
+  P_DataPtr. . . . . . . . . . . . . .  AUTO     XDATA  PTR      0000H  3
+  V_unlTemp. . . . . . . . . . . . . .  AUTO     XDATA  UNION    0003H  4
+  V_ulTemp . . . . . . . . . . . . . .  AUTO     XDATA  U_LONG   0007H  4
+COMM_BLE_EADV. . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+LIB_E2P_FUN_CONFIG . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+EXEN2. . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00CBH  1
+SBUF2. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00F9H  1
+LIB_E2P_ENERGY_DECPULSE_FW . . . . . .  E_CONST  -----  U_CHAR   -----  1
+SM11_RXOV1 . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00DEH  1
+PADCL. . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00BEH  1
+REN. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      009CH  1
+SCON1. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D8H  1
+STATUS . . . . . . . . . . . . . . . .  TYPEDEF  -----  U_CHAR   -----  1
+C51 COMPILER V9.54   APPVIRTUALESAM                                                        11/18/2021 18:54:10 PAGE 29  
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+LCDCON1. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D1H  1
+ADCON. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C1H  1
+SCON2. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00F8H  1
+TCON1. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   008FH  1
+LIB_E2P_EventValidPiont. . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+LIB_E2P_ENRGY. . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+_LibPub_Buffer4ToUlong32 . . . . . . .  EXTERN   CODE   PROC     -----  -----
+LCDCON2. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D2H  1
+EDTAH. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0092H  1
+T2MOD. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C9H  1
+T2CON. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C8H  1
+_LibPub_Buffer2ToUshort16. . . . . . .  EXTERN   CODE   PROC     -----  -----
+_LibPub_CompareData. . . . . . . . . .  EXTERN   CODE   PROC     -----  -----
+GStr_FUN_CONFIG_Type . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  16
+  ucFunCurrentVal. . . . . . . . . . .  MEMBER   -----  U_CHAR   0000H  1
+  ucFunMeterConst. . . . . . . . . . .  MEMBER   -----  U_CHAR   0001H  1
+  ucRes. . . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0002H  12
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    000EH  2
+GStr_EventParaData . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  5
+  V_usEventID. . . . . . . . . . . . .  MEMBER   -----  U_INT    0000H  2
+  V_usEventAddr. . . . . . . . . . . .  MEMBER   -----  U_INT    0002H  2
+  V_ucEventLenth . . . . . . . . . . .  MEMBER   -----  U_CHAR   0004H  1
+LIB_E2P_Money. . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+_LibPub_MemCopyBytes . . . . . . . . .  EXTERN   CODE   PROC     -----  -----
+EDTAL. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0094H  1
+GA_ucDesTata . . . . . . . . . . . . .  EXTERN   XDATA  ARRAY    -----  8
+GStr_EEPROM_MAP. . . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  8
+  ucE2pAddressIndex. . . . . . . . . .  MEMBER   -----  U_INT    0000H  2
+  usE2pAddress . . . . . . . . . . . .  MEMBER   -----  U_INT    0002H  2
+  ucE2pSize. . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0004H  1
+  ucE2pLen . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0005H  1
+  ucIsCRC. . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0006H  1
+  ucIsBak. . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0007H  1
+EDTAM. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0093H  1
+TK0DIFH. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00BCH  1
+SADEN. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   009BH  1
+wchar_t. . . . . . . . . . . . . . . .  TYPEDEF  -----  CHAR     -----  1
+ApiPwOn_MeterClear . . . . . . . . . .  EXTERN   CODE   PROC     -----  -----
+LIB_E2P_METER_INFO . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+_LibPub_ReadDataFromE2prom . . . . . .  EXTERN   CODE   PROC     -----  -----
+GStr_Money . . . . . . . . . . . . . .  EXTERN   XDATA  STRUCT   -----  14
+TK1DIFH. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00BEH  1
+PBANK. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B6H  1
+GStr_EventValidPiont_Type. . . . . . .  TYPEDEF  -----  STRUCT   -----  8
+  uc_Point . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  6
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    0006H  2
+TK2DIFH. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A5H  1
+EADTP. . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00AEH  1
+SADDR. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   009AH  1
+TK0DIFL. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00CFH  1
+LIB_E2P_ENERGY_DECPULSE_WS . . . . . .  E_CONST  -----  U_CHAR   -----  1
+_LibPub_NBytesBCDSub . . . . . . . . .  EXTERN   CODE   PROC     -----  -----
+GStr_MONEY_Type. . . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  14
+  ucaRemainMoney . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  6
+  ucaTickMoney . . . . . . . . . . . .  MEMBER   -----  ARRAY    0006H  6
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    000CH  2
+TK1DIFL. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00BDH  1
+C51 COMPILER V9.54   APPVIRTUALESAM                                                        11/18/2021 18:54:10 PAGE 30  
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+TK2DIFL. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00BFH  1
+_ApiEvent_WriteRecord. . . . . . . . .  EXTERN   CODE   PROC     -----  -----
+P7816L . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00BAH  1
+LPDCON1. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C6H  1
+LIB_E2P_EMU_UIPKms_BAK . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+GStr_MoneyPara . . . . . . . . . . . .  EXTERN   XDATA  STRUCT   -----  25
+LPDCON2. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C7H  1
+MAX_BLE_INDEX. . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+LIB_E2P_SecretKey. . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+F0 . . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00D5H  1
+IRDAT. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00AEH  1
+EMU_Read_TRIPCAL_TAB_Type. . . . . . .  TYPEDEF  -----  STRUCT   -----  5
+  ucCommDI1. . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0000H  1
+  ucEmuAddr. . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0001H  4
+_LibPub_MemExchangeBytes . . . . . . .  EXTERN   CODE   PROC     -----  -----
+F1 . . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00D1H  1
+EMUIE. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0096H  1
+SFINE. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   009EH  1
+XPAGE. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00F7H  1
+Gstr_VirtualEsam . . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  64
+  ucTempKey. . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  16
+  ucDisKey . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0010H  16
+  ucComplexKey . . . . . . . . . . . .  MEMBER   -----  ARRAY    0020H  16
+  ucRs485RandNum . . . . . . . . . . .  MEMBER   -----  ARRAY    0030H  8
+  ucRs485RandNum2. . . . . . . . . . .  MEMBER   -----  ARRAY    0038H  8
+GStr_MONEY_PARA_Type . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  25
+  ucaAlarmMoneyL1. . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  4
+  ucaAlarmMoneyL2. . . . . . . . . . .  MEMBER   -----  ARRAY    0004H  4
+  ucaMaxMoneyLimit . . . . . . . . . .  MEMBER   -----  ARRAY    0008H  4
+  ucaTickMoneyLimit. . . . . . . . . .  MEMBER   -----  ARRAY    000CH  4
+  ucaAllowcloseMoney . . . . . . . . .  MEMBER   -----  ARRAY    0010H  4
+  ucaOverLoadVal . . . . . . . . . . .  MEMBER   -----  ARRAY    0014H  3
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    0017H  2
+INT8S. . . . . . . . . . . . . . . . .  TYPEDEF  -----  CHAR     -----  1
+EMUIF. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0097H  1
+API_COMM_STATUS_FRAME_OK . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+_PrepaymentModule_CommWriteESAMBinaryMACPUBLIC   CODE   PROC     0000H  -----
+  P_ucData . . . . . . . . . . . . . .  AUTO     DATA   PTR      0001H  3
+  V_ucLen. . . . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0003H  1
+  V_ucHeadNum. . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0004H  1
+  V_ucType . . . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0005H  1
+  V_ucResult . . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0006H  1
+INT8U. . . . . . . . . . . . . . . . .  TYPEDEF  -----  U_CHAR   -----  1
+PSW. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D0H  1
+_LibPub_MemSetBytes. . . . . . . . . .  EXTERN   CODE   PROC     -----  -----
+FP32 . . . . . . . . . . . . . . . . .  TYPEDEF  -----  FLOAT    -----  4
+uint32_t . . . . . . . . . . . . . . .  TYPEDEF  -----  U_LONG   -----  4
+_PrepaymentModule_Comm_ModifyKey . . .  PUBLIC   CODE   PROC     0000H  -----
+  P_DataPtr. . . . . . . . . . . . . .  AUTO     XDATA  PTR      0000H  3
+  i. . . . . . . . . . . . . . . . . .  * REG *  DATA   U_CHAR   0007H  1
+  V_ucTempBuff . . . . . . . . . . . .  AUTO     XDATA  ARRAY    0003H  16
+API_COMM_STATUS_FRAME. . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+RB81 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00DAH  1
+SPDAT. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A3H  1
+IB_CON1. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00F2H  1
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+C51 COMPILER V9.54   APPVIRTUALESAM                                                        11/18/2021 18:54:10 PAGE 31  
+
+   CODE SIZE        =   6481    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =     73     180
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

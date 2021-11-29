@@ -1,0 +1,1120 @@
+C51 COMPILER V9.54   APPRELAYCONTROL                                                       11/18/2021 18:53:12 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE APPRELAYCONTROL
+OBJECT MODULE PLACED IN .\AppRelayControl.obj
+COMPILER INVOKED BY: C:\Program Files (x86)\Keil_v5 FMSH\C51\BIN\C51.EXE ..\SourceFiles\APP\AppRelayControl.c LARGE OBJE
+                    -CTADVANCED OPTIMIZE(8,SPEED) BROWSE DEFINE(DDSY666) DEBUG SYMBOLS PRINT(.\AppRelayControl.lst) OBJECT(.\AppRelayControl.
+                    -obj)
+
+line level    source
+
+   1          /*******************************************************************************************************
+   2          **** Copyright：  (c)Copyright 2019,浙江正泰仪器仪表有限责任公司,电能表应用研发     
+             -                  
+   3          ****                            All rights reserved.                                                 
+   4          **** FileName:    AppRelayControl.c                                                                 
+   5          **** Brief:       继电器控制                                                       
+   6          **** Author:      peter.he@chint.com                                                                 
+   7          **** Version:     V1.0                                                                               
+   8          **** Date:        2016-7-14                                                                          
+   9          ****                                                                                                 
+  10          **** note:修改历史记录列表，每条修改记录应包括修改日期、修改者                  
+             -                        
+  11          **** 1.  Author:                                                                                     
+  12          ****     Version:                                                                                    
+  13          ****     Date :                                                                                      
+  14          **** 2.  Author:                                                                                     
+  15          ****     Version:                                                                                       
+  16          ****     Date:
+  17          ****                                                                                        
+  18          ****  addtogroup:Library                                                             
+  19          **********************************************************************************************************
+             -/
+  20          
+  21          /*--------------------------------- 文件功能说明 ---------------------------------------------------
+             -----*/
+  22          /*
+  23           *  该文件所有函数的前缀为 ApiMoney_
+  24           *  文件主函数和对外函数需放在文件的首部，并且主函数需要放在第一个位置;
+  25           *  函数注释采用标准模板，函数内部注释采用//;
+  26           *  对于注释较多的部分，可以增加一个注释符，然后详细说明放在文件的尾部;
+  27           *--------------------------------- 文件功能说明 ---------------------------------------------------
+             -----*/
+  28           
+  29          /**有形参的函数格式:*/
+  30          /*------------------------------------------------------------------------------------------------------*/
+  31          /**
+  32           *  @brief    xx任务处理函数
+  33           *
+  34           *  @param    xx :
+  35           *
+  36           *  @return   xx
+  37           *
+  38           *  @note     xx
+  39           *
+  40           */
+  41          /*------------------------------------------------------------------------------------------------------*/
+  42          /**无形参的函数格式:*/
+  43          /*------------------------------------------------------------------------------------------------------*/
+  44          /**
+  45           *  @brief    上电所有口线配置成初始状态，后面可根据需要开启和配置
+  46           *
+  47           *  @return   xx
+  48           *
+C51 COMPILER V9.54   APPRELAYCONTROL                                                       11/18/2021 18:53:12 PAGE 2   
+
+  49           *  @note     xx
+  50           *
+  51           */
+  52          /*------------------------------------------------------------------------------------------------------*/
+  53           
+  54           
+  55          /*----------------< 包含文件 >----------------------------------*/
+  56          #include "..\SourceFiles\PUB\Include.h"
+  57          
+  58          /*----------------< 宏定义区 >----------------------------------*/
+  59          
+  60          
+  61          /*----------------< 常量定义 >----------------------------------*/
+  62          
+  63          
+  64          /*----------------< 变量定义 >----------------------------------*/
+  65          
+  66          
+  67          /*----------------< 函数声明 >----------------------------------*/
+  68          void ApiRelay_ControlProcess(void);             
+  69          void ApiRelay_SubtractMoneyRelayJudge(void);
+  70          void Api_PowerLoadLimitedCheck(void);
+  71          
+  72          /*----------------< 函数定义 >----------------------------------*/
+  73          
+  74          /*------------------------------------------------------------------------------------------------------*/
+  75          /**
+  76           *  @brief    继电器控制函数
+  77           *
+  78           *  @return   xx
+  79           *
+  80           *  @note     xx
+  81           *  ///待补充
+  82           *  /
+  83          /*------------------------------------------------------------------------------------------------------*/
+  84           void ApiRelay_ControlProcess(void)
+  85          {
+  86   1      
+  87   1              if(     GStr_Flag.ucRunState3 &F_RUN_LowVoltage )
+  88   1              {
+  89   2      //              if(F_KEY_ACKTION_DOWN!=(GStr_Flag.ucFactoryKey&F_KEY_ACKTION_DOWN))
+  90   2                      if((GStr_Flag.ucMeterMode&F_FACTORY_MODE)!=F_FACTORY_MODE)
+  91   2                      {
+  92   3                              return;
+  93   3                      }
+  94   2              }
+  95   1              if(GStr_Counter.ucRelayDelay_Cnt)
+  96   1              {
+  97   2                      return;
+  98   2              }
+  99   1              if((GStr_Flag.ucRunState1&F_RUN_OVER_DEMAND)||((GStr_Flag.ucRunState1&F_RUN_L2_ALRAM)&&(0==(GStr_Flag.ucR
+             -unState&F_RUN_CLOSE_L2)))
+ 100   1                      ||((GStr_Flag.ucRunState1&F_RUN_REMAIND_ZERO)&&(0==(GStr_Flag.ucRunState&F_RUN_CLOSE_ZERO)))||(GStr_Flag
+             -.ucRunState&F_RUN_OVER_DRAFTRELAY)
+ 101   1                   ||(GStr_Flag.ucRunState&F_RUN_DISABLE_CLOSE)||(GStr_Flag.ucRunState&F_RUN_COMM_RELAYOFF))
+ 102   1              ///过载、过二级报警、过零、透支过限值、不允许合闸状态
+ 103   1              {
+ 104   2                      if(GStr_Flag.ucRunState1&F_RUN_OVER_DEMAND)  ///过载直接跳闸不受保电限制
+ 105   2                      {       
+ 106   3                              RelayDrv_Openrelay();
+ 107   3                              GStr_Counter.ucRelayDelay_Cnt = RelayOnce_Delaytimer;///3s置位
+ 108   3                              LibPub_MemSetBytes(GA_ucRelayOperCode,0xFF,4);///过载拉闸的操作者代码为FFFFFFFF
+C51 COMPILER V9.54   APPRELAYCONTROL                                                       11/18/2021 18:53:12 PAGE 3   
+
+ 109   3                              ApiEvent_WriteRecord(C_OpenRelay);///做拉闸事件记录
+ 110   3                              GStr_Flag.ucRunState1 &=~F_RUN_OVER_DEMAND;///跳闸后请过载标志
+ 111   3                              GStr_Flag.ucRunState2 |=F_RUN_RELAY_STATE;
+ 112   3                              GStr_Flag.ucRunState1 |=F_RUN_OVER_DEMAND_CLOSE; ///过载跳闸后，自动恢复合闸标志，该状
+             -态下可以发送合闸命令和保电命令。
+ 113   3                      }
+ 114   2                      else if(GStr_Flag.ucRunState1&F_RUN_OVER_DEMAND_CLOSE)///处于超负荷自动合闸时间内,若发生�
+             -��他跳闸事件，不操作
+ 115   2                      {
+ 116   3                              if(!(GStr_Flag.ucRunState2&F_RUN_RELAY_STATE))///如果是合闸状态
+ 117   3                              {
+ 118   4                                      RelayDrv_Openrelay();
+ 119   4                                      GStr_Counter.ucRelayDelay_Cnt = RelayOnce_Delaytimer;///3s置位
+ 120   4                                      LibPub_MemSetBytes(GA_ucRelayOperCode,0xFF,4);///过载拉闸的操作者代码为FFFFFFFF
+ 121   4                                      ApiEvent_WriteRecord(C_OpenRelay);///做拉闸事件记录
+ 122   4                                      GStr_Flag.ucRunState2 |=F_RUN_RELAY_STATE;
+ 123   4                              }
+ 124   3      //                      else
+ 125   3      //                      {
+ 126   3      //                              RelayDrv_Openrelay();
+ 127   3      //                      }
+ 128   3                      }
+ 129   2                      else
+ 130   2                      {
+ 131   3                              if(F_RUN_KEEP_ELEC!=(GStr_Flag.ucRunState&F_RUN_KEEP_ELEC))///其他情况下保电不动作
+ 132   3                              {
+ 133   4                                      if((!(GStr_Flag.ucRunState2&F_RUN_RELAY_STATE))
+ 134   4                                              ||((GStr_Flag.ucRunState2&F_RUN_RELAY_STATE)&&(GStr_Flag.ucRunState2&F_RUN_Current_State)))
+ 135   4                                      ///处于合闸状态  或者处于跳闸状态但仍有0.01kwh脉冲出现
+ 136   4                                      {
+ 137   5                                              RelayDrv_Openrelay();
+ 138   5                                              GStr_Counter.ucRelayDelay_Cnt = RelayOnce_Delaytimer;///3s置位
+ 139   5                                              if(!(GStr_Flag.ucRunState&F_RUN_COMM_RELAYOFF))///不是通信跳闸//这里也不是过载跳闸，�
+             -��下的即为费控跳闸
+ 140   5                                              {
+ 141   6                                                      LibPub_MemSetBytes(GA_ucRelayOperCode,0xFF,4);///费控拉闸的操作者代码为FFFFFFFF
+ 142   6                                              }
+ 143   5                                              ApiEvent_WriteRecord(C_OpenRelay);///做拉闸事件记录
+ 144   5                                              GStr_Flag.ucRunState2 |=F_RUN_RELAY_STATE;
+ 145   5                                              GStr_Flag.ucRunState2 &=~ F_RUN_Current_State;///跳闸之后走字标志清零，如再置1，说明
+             -跳闸失败
+ 146   5                                      }
+ 147   4                              }
+ 148   3                              else    //保电发合闸命令
+ 149   3                              {
+ 150   4                                      if(GStr_Flag.ucRunState2&F_RUN_RELAY_STATE)///如果是跳闸状态，发合闸命令
+ 151   4                                      {
+ 152   5                                              RelayDrv_Closerelay()   ;
+ 153   5                                              GStr_Counter.ucRelayDelay_Cnt = RelayOnce_Delaytimer;///3s置位
+ 154   5                                              ApiEvent_WriteRecord(C_CloseRelay);///做拉闸事件记录
+ 155   5                                              GStr_Flag.ucRunState &=~F_RUN_COMM_RELAYOFF;  ///清通信跳闸
+ 156   5                                              GStr_Flag.ucRunState2 &=~F_RUN_RELAY_STATE;///清继电器跳闸标志  
+ 157   5                                              LibPub_WriteDataToE2prom(LIB_E2P_RUN_STATE,0,&GStr_Flag.ucRunState);    
+ 158   5                                      }
+ 159   4      //                              else
+ 160   4      //                              {
+ 161   4      //                                      RelayDrv_Closerelay()   ;///拉合闸总线防止继电器状态错误不做事件记录
+ 162   4      //                              }
+ 163   4                              }
+ 164   3                      }
+ 165   2      
+ 166   2              }
+C51 COMPILER V9.54   APPRELAYCONTROL                                                       11/18/2021 18:53:12 PAGE 4   
+
+ 167   1              else
+ 168   1              {       
+ 169   2                      if(GStr_Flag.ucRunState1&F_RUN_OVER_DEMAND_CLOSE)  ///如果是过载跳闸后的恢复合闸状态，
+ 170   2                      {
+ 171   3                              if(!(GStr_Flag.ucRunState2&F_RUN_RELAY_STATE))///如果是合闸状态
+ 172   3                              {
+ 173   4                                      RelayDrv_Openrelay();
+ 174   4                                      GStr_Counter.ucRelayDelay_Cnt = RelayOnce_Delaytimer;///3s置位
+ 175   4                                      LibPub_MemSetBytes(GA_ucRelayOperCode,0xFF,4);///过载拉闸的操作者代码为FFFFFFFF
+ 176   4                                      ApiEvent_WriteRecord(C_OpenRelay);///做拉闸事件记录
+ 177   4                                      GStr_Flag.ucRunState2 |=F_RUN_RELAY_STATE;
+ 178   4                              }
+ 179   3      //                      else
+ 180   3      //                      {
+ 181   3      //                              RelayDrv_Openrelay();                   
+ 182   3      //                      }
+ 183   3                              
+ 184   3                      }
+ 185   2                      else 
+ 186   2                      {
+ 187   3                              if(GStr_Flag.ucRunState2&F_RUN_RELAY_STATE)///如果是跳闸状态，发合闸命令
+ 188   3                              {
+ 189   4                                      GStr_Flag.ucRunState &=~F_RUN_COMM_RELAYOFF;  ///清通信跳闸
+ 190   4                                      GStr_Flag.ucRunState2 &=~F_RUN_RELAY_STATE;///清继电器跳闸标志  
+ 191   4                                      RelayDrv_Closerelay();
+ 192   4                                      GStr_Counter.ucRelayDelay_Cnt = RelayOnce_Delaytimer;///3s置位
+ 193   4                                      #if ( METER_TYPE == METER_TYPE_DTSY666)
+                                              ///处理外控
+                                              #endif
+ 196   4                                      ApiEvent_WriteRecord(C_CloseRelay);///做合闸事件记录
+ 197   4                              }
+ 198   3                              else
+ 199   3                              {
+ 200   4      //                              if(GStr_Flag.ucRelayOnFlag)
+ 201   4      //                              {
+ 202   4      //                                      GStr_Flag.ucRelayOnFlag=0;
+ 203   4      //                                      RelayDrv_Closerelay()   ;//防止继电器状态错，恢复一下继电器///不做事件记录
+ 204   4      //                                      GStr_Counter.ucRelayDelay_Cnt = RelayOnce_Delaytimer;///3s置位
+ 205   4      ////                                    ApiEvent_WriteRecord(C_CloseRelay);///做合闸事件记录
+ 206   4      //                              }
+ 207   4      //                              #if ( METER_TYPE == METER_TYPE_DTSY666)
+ 208   4      //                              ///处理外控
+ 209   4      //                              #endif
+ 210   4                              }
+ 211   3                      }
+ 212   2              }
+ 213   1              
+ 214   1              if(GStr_Flag.ucRunState2&F_RUN_RELAY_STATE) 
+ 215   1              {
+ 216   2                      GStr_Flag.ucRunState|=F_RUN_RELAY_STATE_EE;
+ 217   2                      LibPub_WriteDataToE2prom(LIB_E2P_RUN_STATE,0,&GStr_Flag.ucRunState);
+ 218   2              }
+ 219   1              else
+ 220   1              {
+ 221   2                      GStr_Flag.ucRunState&=~F_RUN_RELAY_STATE_EE;
+ 222   2                      LibPub_WriteDataToE2prom(LIB_E2P_RUN_STATE,0,&GStr_Flag.ucRunState);
+ 223   2              }
+ 224   1      }
+ 225          
+ 226          ///***********************************************************************************///
+ 227          ///*SubtractMoneyRelayJudge                                                          *///
+ 228          ///*Description：根据剩余金额和透支金额判断报警状态和继电器状态                   
+C51 COMPILER V9.54   APPRELAYCONTROL                                                       11/18/2021 18:53:12 PAGE 5   
+
+             -      *///
+ 229          ///*Input：                                                                          *///      
+ 230          ///*                                                                                 *///
+ 231          ///*                                                                                 *///
+ 232          ///*Output：返回值 无                                                                *///
+ 233          ///*                                                                                 *///
+ 234          ///*Calls：                                                                          *///
+ 235          ///*Called By：                                                                      *///
+ 236          ///*Influence：                                                                      *///
+ 237          ///*Tips：                                                                           *///
+ 238          ///*Others：                                                                         *///
+ 239          ///*Author:chenshou                                                                  *///
+ 240          ///***********************************************************************************///               
+ 241          void ApiRelay_SubtractMoneyRelayJudge(void)
+ 242          {
+ 243   1              uchar8  V_Buff[25];
+ 244   1              uchar8  V_B_OverDraftLockRelayflag;
+ 245   1              uchar8  V_B_OverDraftLockRelayflag1;
+ 246   1              ulong32 V_ulBuff[2];
+ 247   1              
+ 248   1              V_B_OverDraftLockRelayflag = 0;
+ 249   1              V_B_OverDraftLockRelayflag1 = 0;
+ 250   1              ///* 报警金额1(0-3)、报警金额2(4-7)、囤积金额(8-11)、透支金额(12-15)、合闸允许金
+             -额(16-19)、过载功率(20-23) *///
+ 251   1              LibPub_ReadDataFromE2prom( LIB_E2P_Money_Para,0,&V_Buff[0]);
+ 252   1              
+ 253   1              ///*判断透支金额
+ 254   1              if( GStr_Flag.ucRunState&F_RUN_OVER_DRAFTRELAY )///*透支溢出标志*///
+ 255   1              {
+ 256   2                      V_ulBuff[0]= LibPub_Buffer4ToUlong32(&V_Buff[16]);   ///合闸允许金额
+ 257   2                      V_ulBuff[1]=LibPub_Buffer4ToUlong32(&GStr_Money.ucaRemainMoney[0]);///剩余金额
+ 258   2                      if(V_ulBuff[1])
+ 259   2                      {
+ 260   3                              if(V_ulBuff[0]>=V_ulBuff[1])///*剩余金额<=合闸允许金额则继续跳闸*///
+ 261   3                      {
+ 262   4                              V_B_OverDraftLockRelayflag = 1;    ///*置透支溢出锁死标志*///
+ 263   4                                      if(GStr_Flag.ucRunState &F_RUN_DISABLE_CLOSE)  V_B_OverDraftLockRelayflag1=1;
+ 264   4                      }
+ 265   3                              else //合闸允许金额<剩余金额
+ 266   3                              {
+ 267   4                                      V_B_OverDraftLockRelayflag=0;
+ 268   4                                      V_B_OverDraftLockRelayflag1=0;
+ 269   4                                      GStr_Flag.ucRunState&=~F_RUN_OVER_DRAFTRELAY;///清透支超限和不允许合闸标志
+ 270   4                                      GStr_Flag.ucRunState&=~F_RUN_DISABLE_CLOSE;///清透支超限和不允许合闸标志
+ 271   4                              }
+ 272   3                      }
+ 273   2                      else
+ 274   2                  {
+ 275   3                      V_B_OverDraftLockRelayflag = 1;    ///*充值完以后剩余金额小于0置透支溢出锁死标志
+             -*///
+ 276   3                              if(GStr_Flag.ucRunState &F_RUN_DISABLE_CLOSE)V_B_OverDraftLockRelayflag1=1;
+ 277   3                  }
+ 278   2              }
+ 279   1              
+ 280   1              ///*判断报警金额
+ 281   1              V_ulBuff[0]= LibPub_Buffer4ToUlong32(&V_Buff[0]);///一级报警金额
+ 282   1              V_ulBuff[1]=LibPub_Buffer4ToUlong32(&GStr_Money.ucaRemainMoney[0]);///剩余金额
+ 283   1              if(V_ulBuff[0]>=V_ulBuff[1])///*报警金额1是否大于剩余金额*///
+ 284   1              {
+ 285   2                      GStr_Flag.ucRunState1 |=F_RUN_L1_ALRAM;  ///*置1级报警标志*///
+ 286   2                      V_ulBuff[0]= LibPub_Buffer4ToUlong32(&V_Buff[4]);///二级报警金额
+ 287   2                      if(V_ulBuff[0]>=V_ulBuff[1])///*报警金额2是否大于剩余金额*///
+C51 COMPILER V9.54   APPRELAYCONTROL                                                       11/18/2021 18:53:12 PAGE 6   
+
+ 288   2                      {
+ 289   3                              if((GStr_Flag.ucRunState1&F_RUN_L2_ALRAM) == 0)
+ 290   3                              {
+ 291   4                                      GStr_Flag.ucRunState1 |= F_RUN_L2_ALRAM;               ///*置2级报警标志*///
+ 292   4      //                              (*(ulong32 *)&GA_ucDelayOperCode[0]) = 0xFFFFFFFF; ///*这里要跳闸了，操作者代码是FFFFFF
+             -FF*///
+ 293   4                              }
+ 294   3                              if(V_ulBuff[1] == 0)    ///*剩余金额为零，有透支*///
+ 295   3                              {
+ 296   4                                      if((GStr_Flag.ucRunState1&F_RUN_REMAIND_ZERO) == 0)
+ 297   4                                      {
+ 298   5                                              GStr_Flag.ucRunState1 |= F_RUN_REMAIND_ZERO; ///*置剩余金额为0标志*///
+ 299   5      //                                      (*(ulong32 *)&GA_ucDelayOperCode[0]) = 0xFFFFFFFF; ///*这里要跳闸了，操作者代码是FFFFF
+             -FFF*///
+ 300   5                                      }
+ 301   4                                      V_ulBuff[0]= LibPub_Buffer4ToUlong32(&GStr_Money.ucaTickMoney[0]);///透支金额
+ 302   4                                      if(V_ulBuff[0]!=0)///*透支金额不为0///
+ 303   4                                      {
+ 304   5                                              if((GStr_Flag.ucRunState1&F_RUN_OVER_DRAFT) == 0)
+ 305   5                                              {
+ 306   6                                                      GStr_Flag.ucRunState1 |=F_RUN_OVER_DRAFT ;///置透支状态
+ 307   6                                              }
+ 308   5                                      }
+ 309   4                                      else
+ 310   4                                      {
+ 311   5                                              GStr_Flag.ucRunState1 &=~F_RUN_OVER_DRAFT;
+ 312   5                                      }
+ 313   4                      V_ulBuff[1]= LibPub_Buffer4ToUlong32(&V_Buff[12]);   ///透支金额门限
+ 314   4                                      if(V_ulBuff[0]>= V_ulBuff[1])///*透支金额是否大于透支门限金额*///
+ 315   4                              {
+ 316   5                                      GStr_Flag.ucRunState |= F_RUN_OVER_DRAFTRELAY;     ///*置透支溢出标志*///
+ 317   5      //                              (*(ulong32 *)&GA_ucDelayOperCode[0]) = 0xFFFFFFFF; ///*这里要跳闸了，操作者代码�
+             -�FFFFFFFF*///
+ 318   5                              }
+ 319   4                                      else
+ 320   4                                      {
+ 321   5                                              GStr_Flag.ucRunState &= ~F_RUN_OVER_DRAFTRELAY;          ///*清透支溢出标志*///  
+ 322   5                                      }
+ 323   4                              }
+ 324   3                              else
+ 325   3                          {
+ 326   4                                      GStr_Flag.ucRunState1 &= ~F_RUN_OVER_DRAFT;            ///*清透支标志*///
+ 327   4                                      GStr_Flag.ucRunState &= ~F_RUN_OVER_DRAFTRELAY;                   ///*清透支溢出标志*///
+ 328   4                                      GStr_Flag.ucRunState1 &= ~F_RUN_REMAIND_ZERO; 
+ 329   4                                      GStr_Flag.ucRunState &=~F_RUN_DISABLE_CLOSE;       ///请不允许合闸标志
+ 330   4                          }
+ 331   3                      }
+ 332   2                      else
+ 333   2                      {
+ 334   3                              GStr_Flag.ucRunState1 &= 0xE1;  ///*清掉除1级报警外的所有报警*///           
+ 335   3                      }
+ 336   2              } 
+ 337   1              else
+ 338   1              {
+ 339   2                      GStr_Flag.ucRunState1 &= 0xE0;  ///*清掉所有的报警*///
+ 340   2                      GStr_Flag.ucRunState &=~F_RUN_DISABLE_CLOSE;       ///请不允许合闸标志
+ 341   2              }
+ 342   1              
+ 343   1              if(V_B_OverDraftLockRelayflag == 1)
+ 344   1              {
+ 345   2                      GStr_Flag.ucRunState |= F_RUN_OVER_DRAFTRELAY;      ///*置透支溢出标志*///
+ 346   2              }
+C51 COMPILER V9.54   APPRELAYCONTROL                                                       11/18/2021 18:53:12 PAGE 7   
+
+ 347   1              if(V_B_OverDraftLockRelayflag1 == 1)
+ 348   1              {
+ 349   2                      GStr_Flag.ucRunState |=F_RUN_DISABLE_CLOSE;                     ///*充值后若未达到合闸允许金额限值则不能
+             -合闸*///
+ 350   2              }
+ 351   1              
+ 352   1              if(GStr_Flag.ucRunState& F_RUN_OVER_DRAFTRELAY)
+ 353   1              {
+ 354   2                      GStr_Flag.ucRunState |=F_RUN_DISABLE_CLOSE;
+ 355   2              }
+ 356   1              LibPub_WriteDataToE2prom(LIB_E2P_RUN_STATE,0,&GStr_Flag.ucRunState);    
+ 357   1      //      ApiRelay_ControlProcess();
+ 358   1      //      if(GV_ucInitOperateRelay==0x00)
+ 359   1      //      {
+ 360   1      //              RelayServe(&GStr_ControlWord_CH2,C_AARelay_CH2);           
+ 361   1      //              //RelayServe(&GStr_ControlWordOUT,C_55OutsideRelay);
+ 362   1      //              GV_ucRelayDelayTimer=C_RelayDelayTimer;
+ 363   1      //      }
+ 364   1      //      else
+ 365   1      //      {
+ 366   1      //              GV_ucInitOperateRelay=0x00;
+ 367   1      //      }
+ 368   1              //操作继电器  需补充
+ 369   1      
+ 370   1      }
+ 371          /*------------------------------------------------------------------------------------------------------*/
+ 372          /**
+ 373           *  @brief    功率超限跳闸检测   1S一次
+ 374                        低电压检测
+ 375           *
+ 376           *  @return   xx
+ 377           *
+ 378           *  @note     xx
+ 379           *  ///待补充
+ 380           *  /
+ 381          /*------------------------------------------------------------------------------------------------------*/
+ 382          void Api_PowerLoadLimitedCheck(void)
+ 383          {
+ 384   1              ulong32 v_ulTemp;
+ 385   1              uchar8  v_ucTemp[4];
+ 386   1              
+ 387   1              #if(METER_TYPE!=METER_TYPE_DTSY666)
+ 388   1              if(GStr_UIPGroup.ulVoltage[0]<=1650)///220V的75%为低电压标志
+ 389   1              #else
+                      if((GStr_UIPGroup.ulVoltage[0]<=1650)&&(GStr_UIPGroup.ulVoltage[1]<=1650)&&(GStr_UIPGroup.ulVoltage[2]<=1
+             -650))///220V的75%为低电压标志
+                      #endif
+ 392   1              {
+ 393   2                      GStr_Flag.ucRunState3 |=F_RUN_LowVoltage;  ///低于75%Un标志
+ 394   2              }
+ 395   1              else
+ 396   1              {
+ 397   2                      GStr_Flag.ucRunState3 &=~F_RUN_LowVoltage;  
+ 398   2              }
+ 399   1      
+ 400   1              #if(METER_TYPE==METER_TYPE_DTSY666)
+                      if( (GStr_UIPGroup.ulVoltage[0] >= API_Relayact_Voltage)||(GStr_UIPGroup.ulVoltage[1] >= API_Relayact_Vol
+             -tage)||(GStr_UIPGroup.ulVoltage[2] >= API_Relayact_Voltage) ) ///高于API_Relayact_Voltage
+                      {
+                              GStr_Flag.ucRunState3 |= F_RUN_Relayact_Voltage;  //电压高于API_Relayact_Voltage，则置F_RUN_Relay
+             -act_Voltage标志
+                      }
+C51 COMPILER V9.54   APPRELAYCONTROL                                                       11/18/2021 18:53:12 PAGE 8   
+
+                      else
+                      {
+                              GStr_Flag.ucRunState3 &= ~F_RUN_Relayact_Voltage;  
+                      }
+                      #endif
+ 410   1      
+ 411   1              if(_FALSE==LibPub_ZeroCheck(&GStr_MoneyPara.ucaOverLoadVal[0], 3))
+ 412   1              {       
+ 413   2                              v_ucTemp[0]=0;
+ 414   2                              LibPub_MemCopyBytes( &GStr_MoneyPara.ucaOverLoadVal[0], &v_ucTemp[1],3);
+ 415   2                              v_ulTemp=LibPub_DECtoHEXBytes(v_ucTemp,4);///过载功率转换成HEX
+ 416   2                              #if(METER_TYPE==METER_TYPE_DTSY666)
+                                      if((GStr_UIPGroup.ulPower[0]>=v_ulTemp) ||(GStr_UIPGroup.ulPower[1]>=v_ulTemp)||(GStr_UIPGroup.ulPower[
+             -2]>=v_ulTemp) ) ///分相功率大于等于过载功率
+                                      #else
+ 419   2                              if(GStr_UIPGroup.ulPower[0]>=v_ulTemp)
+ 420   2                              #endif  
+ 421   2                              { 
+ 422   3                                      GStr_Monitor.ucPowerLimitNum++;   
+ 423   3                              }
+ 424   2                              else
+ 425   2                              { 
+ 426   3                                      GStr_Monitor.ucPowerLimitNum = 0; 
+ 427   3                              }
+ 428   2                      ///1s判定一次，若10次均大于过载功率  则直接拉闸
+ 429   2                              if( GStr_Monitor.ucPowerLimitNum >= 10 )                                                                
+ 430   2                              {
+ 431   3                                      GStr_Monitor.ucPowerLimitNum = 0;
+ 432   3      
+ 433   3                                      GStr_Flag.ucRunState1 |=F_RUN_OVER_DEMAND;  ///置过载跳闸标志
+ 434   3                                      ApiRelay_ControlProcess();
+ 435   3                                      GStr_Monitor.ulOverDemandCloseTime=LibPub_GetTimerBeat();///过载跳闸后去系统时间
+ 436   3                      //              (*(ulong32 *)&GA_ucDelayOperCode[0]) = 0xFFFFFFFF;                    ///*操作者代码*///           
+ 437   3      
+ 438   3                              }        
+ 439   2              }
+ 440   1              else///过载功率为0，不开启过载功能
+ 441   1              {
+ 442   2                              GStr_Flag.ucRunState1 &=~F_RUN_OVER_DEMAND;
+ 443   2              }
+ 444   1      }
+C51 COMPILER V9.54   APPRELAYCONTROL                                                       11/18/2021 18:53:12 PAGE 9   
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+uint16_t . . . . . . . . . . . . . . .  TYPEDEF  -----  U_INT    -----  2
+IB_CON2. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00F3H  1
+COMM_BLE_STAT. . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+API_COMM_STATUS_OVERTIME . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+TB81 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00DBH  1
+P0 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0080H  1
+IB_CON3. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00F4H  1
+FP64 . . . . . . . . . . . . . . . . .  TYPEDEF  -----  FLOAT    -----  4
+TKCON. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A4H  1
+P1 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0090H  1
+IB_CON4. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00F5H  1
+PASLO. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E7H  1
+GStr_ENERGYDEC_Type. . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  26
+  ucaFw_EnergyDec. . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  13
+  ucaBk_EnergyDec. . . . . . . . . . .  MEMBER   -----  ARRAY    000DH  13
+P2 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A0H  1
+OSCLO. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00FEH  1
+IB_CON5. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00F6H  1
+GStr_EventRecordNum_Type . . . . . . .  TYPEDEF  -----  STRUCT   -----  26
+  ucEventTimes . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  24
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    0018H  2
+GStr_FLAG_Type . . . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  16
+  ucSystem . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0000H  1
+  ucMeterMode. . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0001H  1
+  ucPwOnState. . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0002H  1
+  ucRunState . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0003H  1
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    0004H  2
+  ucRunState2. . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0006H  1
+  ucRunState1. . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0007H  1
+  ucRunState3. . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0008H  1
+  ucDisp . . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0009H  1
+  ucFactoryKey . . . . . . . . . . . .  MEMBER   -----  U_CHAR   000AH  1
+  ucDispKey. . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   000BH  1
+  ucMoney. . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   000CH  1
+  ucPowerOnFlag. . . . . . . . . . . .  MEMBER   -----  U_CHAR   000DH  1
+  ucWrE2promSafeByte . . . . . . . . .  MEMBER   -----  U_CHAR   000EH  1
+  ucBLESTATFlag. . . . . . . . . . . .  MEMBER   -----  U_CHAR   000FH  1
+BOOLEAN. . . . . . . . . . . . . . . .  TYPEDEF  -----  U_CHAR   -----  1
+SM1_RXOV . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      009EH  1
+P3 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B0H  1
+AC . . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00D6H  1
+P4 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C0H  1
+SPCON. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A1H  1
+SBRTH. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   009CH  1
+P5 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E9H  1
+LIB_E2P_Price_BAK. . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+EA . . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00AFH  1
+P6 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00EAH  1
+LIB_E2P_Display_Table. . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+GStr_DISPLAY_PARA_Type . . . . . . . .  TYPEDEF  -----  STRUCT   -----  129
+  ucFullDisp_Time. . . . . . . . . . .  MEMBER   -----  U_CHAR   0000H  1
+  ucDispDurTime. . . . . . . . . . . .  MEMBER   -----  U_CHAR   0001H  1
+  ucAutoDispNum. . . . . . . . . . . .  MEMBER   -----  U_CHAR   0002H  1
+  ucKeyDispNum . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0003H  1
+  usDisp_ParaCRC16 . . . . . . . . . .  MEMBER   -----  U_INT    0004H  2
+  ucAutoDisptable. . . . . . . . . . .  MEMBER   -----  ARRAY    0006H  30
+  ucKeyDisptable . . . . . . . . . . .  MEMBER   -----  ARRAY    0024H  30
+C51 COMPILER V9.54   APPRELAYCONTROL                                                       11/18/2021 18:53:12 PAGE 10  
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+  usDisp_tableCRC16. . . . . . . . . .  MEMBER   -----  U_INT    0042H  2
+  ucBackLightTime. . . . . . . . . . .  MEMBER   -----  U_CHAR   0044H  1
+  ucRelayLEDTime . . . . . . . . . . .  MEMBER   -----  U_CHAR   0045H  1
+  ulDispUpdataTime . . . . . . . . . .  MEMBER   -----  U_LONG   0046H  4
+  usDispCnt. . . . . . . . . . . . . .  MEMBER   -----  U_INT    004AH  2
+  ulDisptimer. . . . . . . . . . . . .  MEMBER   -----  U_LONG   004CH  4
+  ucKeydelaytimer. . . . . . . . . . .  MEMBER   -----  U_CHAR   0050H  1
+  ucFirstKeyDisp . . . . . . . . . . .  MEMBER   -----  U_CHAR   0051H  1
+  ucDisp_0_flag. . . . . . . . . . . .  MEMBER   -----  U_CHAR   0052H  1
+  ucDisp_tongxin_Flag. . . . . . . . .  MEMBER   -----  U_CHAR   0053H  1
+  ucDisp_tongxin_Time. . . . . . . . .  MEMBER   -----  U_LONG   0054H  4
+  ucDispNum. . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0058H  1
+  ucLCDDrvDispBuf. . . . . . . . . . .  MEMBER   -----  ARRAY    0059H  40
+int32_t. . . . . . . . . . . . . . . .  TYPEDEF  -----  LONG     -----  4
+P7 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00EBH  1
+IB_DATA. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00EFH  1
+P8 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00ECH  1
+int16_t. . . . . . . . . . . . . . . .  TYPEDEF  -----  INT      -----  2
+SBRTL. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   009DH  1
+P9 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00EDH  1
+PBANKLO. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B7H  1
+GStr_COUNTER_Type. . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  9
+  ucFactoryMode_Cnt. . . . . . . . . .  MEMBER   -----  U_INT    0000H  2
+  ucKeyRelayOn_Cnt . . . . . . . . . .  MEMBER   -----  U_INT    0002H  2
+  ucRelayDelay_Cnt . . . . . . . . . .  MEMBER   -----  U_CHAR   0004H  1
+  ucHoldMoney_Cnt. . . . . . . . . . .  MEMBER   -----  U_CHAR   0005H  1
+  ucPasswordErr_Cnt. . . . . . . . . .  MEMBER   -----  ARRAY    0006H  3
+SPSTA. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A2H  1
+IEN0 . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A8H  1
+PWRCON1. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B3H  1
+ulong32. . . . . . . . . . . . . . . .  TYPEDEF  -----  U_LONG   -----  4
+EMUSR. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0095H  1
+IEN1 . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A9H  1
+PWRCON2. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B4H  1
+DPH1 . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0085H  1
+P0_0 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0080H  1
+ushort16 . . . . . . . . . . . . . . .  TYPEDEF  -----  U_INT    -----  2
+P1_0 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0090H  1
+P0_1 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0081H  1
+ADCH . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C3H  1
+BLE_DRV_OPERATION_INDEX. . . . . . . .  TYPEDEF  -----  U_CHAR   -----  1
+LIB_E2P_SOFTI_J. . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+P2_0 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00A0H  1
+P1_1 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0091H  1
+P0_2 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0082H  1
+IPH0 . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00BAH  1
+DPL1 . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0084H  1
+size_t . . . . . . . . . . . . . . . .  TYPEDEF  -----  U_INT    -----  2
+LIB_E2P_FUN_CONFIG_BAK . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+GStr_MONITOR_Tpye. . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  59
+  ulTimer_ms . . . . . . . . . . . . .  MEMBER   -----  U_LONG   0000H  4
+  ulTimer_ms_old . . . . . . . . . . .  MEMBER   -----  U_LONG   0004H  4
+  ulTimerClrWDT. . . . . . . . . . . .  MEMBER   -----  U_LONG   0008H  4
+  ulTimerMin . . . . . . . . . . . . .  MEMBER   -----  U_LONG   000CH  4
+  ulTimer5ms . . . . . . . . . . . . .  MEMBER   -----  U_LONG   0010H  4
+  ucPowerOnTimer . . . . . . . . . . .  MEMBER   -----  U_CHAR   0014H  1
+  ulTimers . . . . . . . . . . . . . .  MEMBER   -----  U_LONG   0015H  4
+C51 COMPILER V9.54   APPRELAYCONTROL                                                       11/18/2021 18:53:12 PAGE 11  
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+  ulUpDateUIPTime. . . . . . . . . . .  MEMBER   -----  U_LONG   0019H  4
+  ulSoftI_JTime. . . . . . . . . . . .  MEMBER   -----  U_LONG   001DH  4
+  usSoftI_JTimeCRC16 . . . . . . . . .  MEMBER   -----  U_INT    0021H  2
+  usPasswordErrTime. . . . . . . . . .  MEMBER   -----  ARRAY    0023H  8
+  ucCommSymbolTime . . . . . . . . . .  MEMBER   -----  U_CHAR   002BH  1
+  ucPowerLimitNum. . . . . . . . . . .  MEMBER   -----  U_CHAR   002CH  1
+  ulOverDemandCloseTime. . . . . . . .  MEMBER   -----  U_LONG   002DH  4
+  ulProgEventDelayTime . . . . . . . .  MEMBER   -----  U_LONG   0031H  4
+  ulReadRandom2DelayTime . . . . . . .  MEMBER   -----  U_LONG   0035H  4
+  ucBleAdvCnt. . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0039H  1
+  ucBleConnectCnt. . . . . . . . . . .  MEMBER   -----  U_CHAR   003AH  1
+P3_0 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00B0H  1
+P2_1 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00A1H  1
+P1_2 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0092H  1
+P0_3 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0083H  1
+IPH1 . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00BBH  1
+COMM_BLE_MAC . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+P4_0 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00C0H  1
+P3_1 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00B1H  1
+P2_2 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00A2H  1
+P1_3 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0093H  1
+P0_4 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0084H  1
+EXF0 . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E8H  1
+P4_1 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00C1H  1
+P3_2 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00B2H  1
+P2_3 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00A3H  1
+P1_4 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0094H  1
+P0_5 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0085H  1
+P4_2 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00C2H  1
+P3_3 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00B3H  1
+P2_4 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00A4H  1
+P1_5 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0095H  1
+P0_6 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0086H  1
+EXF2 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00CEH  1
+TKF0 . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A6H  1
+IPL0 . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B8H  1
+LIB_E2P_ENRGY_BAK. . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+P4_3 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00C3H  1
+P3_4 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00B4H  1
+P2_5 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00A5H  1
+P1_6 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0096H  1
+P0_7 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0087H  1
+REN1 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00DCH  1
+IPL1 . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B9H  1
+LIB_E2P_EventNum . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+long32 . . . . . . . . . . . . . . . .  TYPEDEF  -----  LONG     -----  4
+P4_4 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00C4H  1
+P3_5 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00B5H  1
+P2_6 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00A6H  1
+P1_7 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0097H  1
+TK0H . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E2H  1
+SUSLO. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   008EH  1
+P4_5 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00C5H  1
+P3_6 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00B6H  1
+P2_7 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00A7H  1
+TK1H . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E4H  1
+P4_6 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00C6H  1
+C51 COMPILER V9.54   APPRELAYCONTROL                                                       11/18/2021 18:53:12 PAGE 12  
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+P3_7 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00B7H  1
+TK2H . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E6H  1
+LIB_E2P_Money_BAK. . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+short16. . . . . . . . . . . . . . . .  TYPEDEF  -----  INT      -----  2
+P4_7 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00C7H  1
+RI . . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0098H  1
+E7816. . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00AAH  1
+CY . . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00D7H  1
+TK0L . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E1H  1
+API_COMM_STATUS_ERROR. . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+TI . . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0099H  1
+EADR . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0091H  1
+TK1L . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E3H  1
+TK2L . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E5H  1
+SADEN1 . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00DBH  1
+SM10_FE1 . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00DFH  1
+SADEN2 . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00FBH  1
+LIB_E2P_EMU_CALPARA. . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+GStr_ENERGY_PULSE_Type . . . . . . . .  TYPEDEF  -----  STRUCT   -----  8
+  ucPulseAdd . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0000H  1
+  ucPulseAddBusy . . . . . . . . . . .  MEMBER   -----  U_CHAR   0001H  1
+  ucPulseStatu . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0002H  1
+  ucPulseDecimal . . . . . . . . . . .  MEMBER   -----  U_CHAR   0003H  1
+  ucPulseDecSavePtr. . . . . . . . . .  MEMBER   -----  U_CHAR   0004H  1
+  ucPulseDecSaveNoFF . . . . . . . . .  MEMBER   -----  U_CHAR   0005H  1
+  ucaPulseRemain . . . . . . . . . . .  MEMBER   -----  ARRAY    0006H  2
+PS0L . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00BCH  1
+PT0L . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00B9H  1
+SADDR1 . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00DAH  1
+LIB_E2P_INDEX_MAX. . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+LIB_E2P_Display_Para . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+SM12_TXCOL1. . . . . . . . . . . . . .  ABSBIT   -----  BIT      00DDH  1
+PT1L . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00BBH  1
+SADDR2 . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00FAH  1
+RCAP2H . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00CBH  1
+COMM_BLE_MOD . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+PT2L . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00BDH  1
+SP . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0081H  1
+INT32S . . . . . . . . . . . . . . . .  TYPEDEF  -----  LONG     -----  4
+OV . . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00D2H  1
+LIB_E2P_EventNumPiont. . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+_LibPub_ZeroCheck. . . . . . . . . . .  EXTERN   CODE   PROC     -----  -----
+GStr_METER_IFO_Type. . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  27
+  ucaCommAddr. . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  6
+  ucaMeterID . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0006H  6
+  ucaUserID. . . . . . . . . . . . . .  MEMBER   -----  ARRAY    000CH  6
+  ucVoltageTrans . . . . . . . . . . .  MEMBER   -----  ARRAY    0012H  3
+  ucCurrentTrans . . . . . . . . . . .  MEMBER   -----  ARRAY    0015H  3
+  ucBpsVal . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0018H  1
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    0019H  2
+RCAP2L . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00CAH  1
+INT32U . . . . . . . . . . . . . . . .  TYPEDEF  -----  U_LONG   -----  4
+INT16S . . . . . . . . . . . . . . . .  TYPEDEF  -----  INT      -----  2
+RelayDrv_Closerelay. . . . . . . . . .  EXTERN   CODE   PROC     -----  -----
+INT16U . . . . . . . . . . . . . . . .  TYPEDEF  -----  U_INT    -----  2
+PX4L . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00B8H  1
+C_T2 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00C9H  1
+C51 COMPILER V9.54   APPRELAYCONTROL                                                       11/18/2021 18:53:12 PAGE 13  
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+SFINE2 . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00DEH  1
+_LibPub_WriteDataToE2prom. . . . . . .  EXTERN   CODE   PROC     -----  -----
+GStr_BLE_GROUP_Type. . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  26
+  ucBleMAC . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  6
+  ucBleName. . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0006H  12
+  ucBleKey . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0012H  3
+  usAdvTime. . . . . . . . . . . . . .  MEMBER   -----  U_INT    0015H  2
+  ucBleTPL . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0017H  1
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    0018H  2
+COMM_BLE_MFV . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+GStr_EventNumPiont_Type. . . . . . . .  TYPEDEF  -----  STRUCT   -----  8
+  uc_Num . . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  6
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    0006H  2
+IRCON1 . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00ADH  1
+IRCON2 . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00AFH  1
+GStr_Comm_MAP. . . . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  14
+  ucaDataId. . . . . . . . . . . . . .  MEMBER   -----  U_LONG   0000H  4
+  ucaRamAdd. . . . . . . . . . . . . .  MEMBER   -----  PTR      0004H  3
+  IsWrite. . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0007H  1
+  ucaE2pIndex. . . . . . . . . . . . .  MEMBER   -----  U_INT    0008H  2
+  ucaE2offset. . . . . . . . . . . . .  MEMBER   -----  U_CHAR   000AH  1
+  ucaDataLen . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   000BH  1
+  IsBCD. . . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   000CH  1
+  EEIsHEX. . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   000DH  1
+API_COMM_STATUS_IDLE . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+EXCON1 . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00ABH  1
+SBUF . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0099H  1
+EXCON2 . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00ACH  1
+PCON . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0087H  1
+B32_B08. . . . . . . . . . . . . . . .  * TAG *  -----  UNION    -----  4
+  B08. . . . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  4
+  B16. . . . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  4
+  B32. . . . . . . . . . . . . . . . .  MEMBER   -----  U_LONG   0000H  4
+AUXC . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00F1H  1
+COMM_BLE_TPL . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+GStr_UART_COMM_Type. . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  423
+  ucCommChStatus . . . . . . . . . . .  MEMBER   -----  U_CHAR   0000H  1
+  ucCommRevStep. . . . . . . . . . . .  MEMBER   -----  U_CHAR   0001H  1
+  ucCommRevLen . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0002H  1
+  ucCommSndLen . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0003H  1
+  ucCommSndCnt . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0004H  1
+  ucCommAddrType . . . . . . . . . . .  MEMBER   -----  U_CHAR   0005H  1
+  ucCommError. . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0006H  1
+  ulCommTimeInit . . . . . . . . . . .  MEMBER   -----  U_LONG   0007H  4
+  ulCommRcvByteOverTime. . . . . . . .  MEMBER   -----  U_LONG   000BH  4
+  ulCommSndByteOverTime. . . . . . . .  MEMBER   -----  U_LONG   000FH  4
+  ulCommRspOverTime. . . . . . . . . .  MEMBER   -----  U_LONG   0013H  4
+  ucaCommRXBuff. . . . . . . . . . . .  MEMBER   -----  ARRAY    0017H  200
+  ucaCommTXBuff. . . . . . . . . . . .  MEMBER   -----  ARRAY    00DFH  200
+GStr_ENERGY_Type . . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  10
+  ucaFw_Energy . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  4
+  ucaBk_Energy . . . . . . . . . . . .  MEMBER   -----  ARRAY    0004H  4
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    0008H  2
+GU_B32_B08_Type. . . . . . . . . . . .  TYPEDEF  -----  UNION    -----  4
+  B08. . . . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  4
+  B16. . . . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  4
+  B32. . . . . . . . . . . . . . . . .  MEMBER   -----  U_LONG   0000H  4
+C51 COMPILER V9.54   APPRELAYCONTROL                                                       11/18/2021 18:53:12 PAGE 14  
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+SCON . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0098H  1
+TK0BASEH . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D4H  1
+TMOD . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0089H  1
+TCON . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0088H  1
+IENX . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00AAH  1
+IB_OFFSET. . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00EEH  1
+TK1BASEH . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D6H  1
+SBRT1H . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00DCH  1
+TK2BASEH . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00DFH  1
+SBRT2H . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00FCH  1
+RSTSTAT. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B1H  1
+LIB_E2P_Password . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+TK0BASEL . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D3H  1
+LIB_E2P_BLE_PARA . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+LIB_E2P_RUN_STATE. . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+TK1BASEL . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D5H  1
+SBRT1L . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00DDH  1
+COMM_BLE_TTP . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+EMU_EPADR_Type . . . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  5
+  ucEmuAddr. . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0000H  1
+  ulEmuRegData . . . . . . . . . . . .  MEMBER   -----  U_LONG   0001H  4
+TK2BASEL . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D7H  1
+SBRT2L . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00FDH  1
+API_COMM_STATUS_SEND . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+SM0_FE . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      009FH  1
+CLKCON . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B2H  1
+API_COMM_STATUS_RECV_OK. . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+Api_PowerLoadLimitedCheck. . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+  v_ulTemp . . . . . . . . . . . . . .  * REG *  DATA   U_LONG   0004H  4
+  v_ucTemp . . . . . . . . . . . . . .  AUTO     XDATA  ARRAY    0000H  4
+SM2_TXCOL. . . . . . . . . . . . . . .  ABSBIT   -----  BIT      009DH  1
+LDOCON . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B5H  1
+B. . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00F0H  1
+API_COMM_STATUS_RECV . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+RelayDrv_Openrelay . . . . . . . . . .  EXTERN   CODE   PROC     -----  -----
+EMU_CALPARA_Type . . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  22
+  ulaCalPara . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  20
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    0014H  2
+CP_RL2 . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00C8H  1
+LIB_E2P_EMU_UIPKms . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+_LibPub_DECtoHEXBytes. . . . . . . . .  EXTERN   CODE   PROC     -----  -----
+GStr_UIP_GROUP_Type. . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  68
+  ulVoltage. . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  16
+  ulCurrent. . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0010H  16
+  ulPower. . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0020H  16
+  ulFactory. . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0030H  16
+  ulFrequency. . . . . . . . . . . . .  MEMBER   -----  U_LONG   0040H  4
+ApiRelay_ControlProcess. . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+ENUM_API_COMM_STATUS . . . . . . . . .  TYPEDEF  -----  U_CHAR   -----  1
+LibPub_GetTimerBeat. . . . . . . . . .  EXTERN   CODE   PROC     -----  -----
+GStr_Counter . . . . . . . . . . . . .  EXTERN   XDATA  STRUCT   -----  9
+ACC. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E0H  1
+ES0. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00ACH  1
+ET0. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00A9H  1
+ApiRelay_SubtractMoneyRelayJudge . . .  PUBLIC   CODE   PROC     0000H  -----
+  V_Buff . . . . . . . . . . . . . . .  AUTO     XDATA  ARRAY    0000H  25
+  V_B_OverDraftLockRelayflag . . . . .  AUTO     XDATA  U_CHAR   0019H  1
+C51 COMPILER V9.54   APPRELAYCONTROL                                                       11/18/2021 18:53:12 PAGE 15  
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+  V_B_OverDraftLockRelayflag1. . . . .  AUTO     XDATA  U_CHAR   001AH  1
+  V_ulBuff . . . . . . . . . . . . . .  AUTO     XDATA  ARRAY    001BH  8
+ET1. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00ABH  1
+TF0. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      008DH  1
+ET2. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00ADH  1
+TF1. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      008FH  1
+RI1. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00D8H  1
+RB8. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      009AH  1
+TF2. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00CFH  1
+TH0. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   008CH  1
+INSCON . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0086H  1
+TH1. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   008DH  1
+uchar8 . . . . . . . . . . . . . . . .  TYPEDEF  -----  U_CHAR   -----  1
+TI1. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00D9H  1
+TB8. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      009BH  1
+TH2. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00CDH  1
+LIB_E2P_EMU_CALPARA_BAK. . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+GStr_Monitor . . . . . . . . . . . . .  EXTERN   XDATA  STRUCT   -----  59
+uint8_t. . . . . . . . . . . . . . . .  TYPEDEF  -----  U_CHAR   -----  1
+P. . . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00D0H  1
+GStr_UIP_DISPLAY_Type. . . . . . . . .  TYPEDEF  -----  STRUCT   -----  135
+  ucVoltage. . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  4
+  ucVoltageA . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0004H  4
+  ucVoltageB . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0008H  4
+  ucVoltageC . . . . . . . . . . . . .  MEMBER   -----  ARRAY    000CH  4
+  ucCOMMVoltage. . . . . . . . . . . .  MEMBER   -----  ARRAY    0010H  4
+  ucCOMMVoltageA . . . . . . . . . . .  MEMBER   -----  ARRAY    0014H  4
+  ucCOMMVoltageB . . . . . . . . . . .  MEMBER   -----  ARRAY    0018H  4
+  ucCOMMVoltageC . . . . . . . . . . .  MEMBER   -----  ARRAY    001CH  4
+  ucCurrent. . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0020H  4
+  ucCurrentA . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0024H  4
+  ucCurrentB . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0028H  4
+  ucCurrentC . . . . . . . . . . . . .  MEMBER   -----  ARRAY    002CH  4
+  ucCOMMCurrent. . . . . . . . . . . .  MEMBER   -----  ARRAY    0030H  4
+  ucCOMMCurrentA . . . . . . . . . . .  MEMBER   -----  ARRAY    0034H  4
+  ucCOMMCurrentB . . . . . . . . . . .  MEMBER   -----  ARRAY    0038H  4
+  ucCOMMCurrentC . . . . . . . . . . .  MEMBER   -----  ARRAY    003CH  4
+  ucPower. . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0040H  4
+  ucPowerA . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0044H  4
+  ucPowerB . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0048H  4
+  ucPowerC . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    004CH  4
+  ucCOMMPower. . . . . . . . . . . . .  MEMBER   -----  ARRAY    0050H  4
+  ucCOMMPowerA . . . . . . . . . . . .  MEMBER   -----  ARRAY    0054H  4
+  ucCOMMPowerB . . . . . . . . . . . .  MEMBER   -----  ARRAY    0058H  4
+  ucCOMMPowerC . . . . . . . . . . . .  MEMBER   -----  ARRAY    005CH  4
+  ucFactory. . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0060H  4
+  ucFactoryA . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0064H  4
+  ucFactoryB . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0068H  4
+  ucFactoryC . . . . . . . . . . . . .  MEMBER   -----  ARRAY    006CH  4
+  ucCOMMFactory. . . . . . . . . . . .  MEMBER   -----  ARRAY    0070H  4
+  ucCOMMFactoryA . . . . . . . . . . .  MEMBER   -----  ARRAY    0074H  4
+  ucCOMMFactoryB . . . . . . . . . . .  MEMBER   -----  ARRAY    0078H  4
+  ucCOMMFactoryC . . . . . . . . . . .  MEMBER   -----  ARRAY    007CH  4
+  ucFrequency. . . . . . . . . . . . .  MEMBER   -----  ARRAY    0080H  4
+  ucMeterConst . . . . . . . . . . . .  MEMBER   -----  ARRAY    0084H  3
+TL0. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   008AH  1
+EX4. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00A8H  1
+C51 COMPILER V9.54   APPRELAYCONTROL                                                       11/18/2021 18:53:12 PAGE 16  
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+TL1. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   008BH  1
+FLASHCON . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A7H  1
+LIB_E2P_Money_Para . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+TL2. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00CCH  1
+LIB_E2P_ENERGY_DECPULSE_BK . . . . . .  E_CONST  -----  U_CHAR   -----  1
+LIB_E2P_AvailTimer . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+RS0. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00D3H  1
+ADCDH. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C5H  1
+LIB_E2P_Price. . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+GStr_AVAIL_Type. . . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  41
+  us_IDAvailTimer. . . . . . . . . . .  MEMBER   -----  U_INT    0000H  2
+  ucBackMonFlag. . . . . . . . . . . .  MEMBER   -----  U_CHAR   0002H  1
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    0003H  2
+  ulAutRemainingTime . . . . . . . . .  MEMBER   -----  U_LONG   0005H  4
+  ucRechangeMoney. . . . . . . . . . .  MEMBER   -----  ARRAY    0009H  4
+  ucBuybeforeMoney . . . . . . . . . .  MEMBER   -----  ARRAY    000DH  4
+  ucbeforeFwEnergy . . . . . . . . . .  MEMBER   -----  ARRAY    0011H  4
+  ucbeforeBkEnergy . . . . . . . . . .  MEMBER   -----  ARRAY    0015H  4
+  ucE2Key. . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0019H  16
+GU_BoolWordVariable. . . . . . . . . .  TYPEDEF  -----  UNION    -----  2
+  BYTE . . . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  2
+  BIT. . . . . . . . . . . . . . . . .  MEMBER   -----  STRUCT   0000H  2
+TR0. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      008CH  1
+RS1. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00D4H  1
+PWMCON . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   009FH  1
+TR1. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      008EH  1
+char8. . . . . . . . . . . . . . . . .  TYPEDEF  -----  CHAR     -----  1
+TR2. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00CAH  1
+GA_ucRelayOperCode . . . . . . . . . .  EXTERN   XDATA  ARRAY    -----  4
+int8_t . . . . . . . . . . . . . . . .  TYPEDEF  -----  CHAR     -----  1
+ADCDL. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C4H  1
+ADT. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C2H  1
+LIB_E2P_INDEX. . . . . . . . . . . . .  TYPEDEF  -----  U_CHAR   -----  1
+GStr_PRICE_Type. . . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  14
+  ucaPrice . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  4
+  ucaPurchaseMoneyAll. . . . . . . . .  MEMBER   -----  ARRAY    0004H  4
+  ucPurchaseTimes. . . . . . . . . . .  MEMBER   -----  ARRAY    0008H  4
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    000CH  2
+DPH. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0083H  1
+GStr_Flag. . . . . . . . . . . . . . .  EXTERN   XDATA  STRUCT   -----  16
+DPL. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0082H  1
+GStr_UIPGroup. . . . . . . . . . . . .  EXTERN   XDATA  STRUCT   -----  68
+SBUF1. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D9H  1
+COMM_BLE_EADV. . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+LIB_E2P_FUN_CONFIG . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+EXEN2. . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00CBH  1
+SBUF2. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00F9H  1
+EMU_COMM_CAL_TAB_Type. . . . . . . . .  TYPEDEF  -----  STRUCT   -----  2
+  ucCommDI1. . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0000H  1
+  ucEmuAddr. . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0001H  1
+LIB_E2P_ENERGY_DECPULSE_FW . . . . . .  E_CONST  -----  U_CHAR   -----  1
+SM11_RXOV1 . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00DEH  1
+PADCL. . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00BEH  1
+REN. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      009CH  1
+SCON1. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D8H  1
+STATUS . . . . . . . . . . . . . . . .  TYPEDEF  -----  U_CHAR   -----  1
+LCDCON1. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D1H  1
+C51 COMPILER V9.54   APPRELAYCONTROL                                                       11/18/2021 18:53:12 PAGE 17  
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+ADCON. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C1H  1
+SCON2. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00F8H  1
+TCON1. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   008FH  1
+LIB_E2P_EventValidPiont. . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+LIB_E2P_ENRGY. . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+_LibPub_Buffer4ToUlong32 . . . . . . .  EXTERN   CODE   PROC     -----  -----
+LCDCON2. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D2H  1
+EDTAH. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0092H  1
+T2MOD. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C9H  1
+T2CON. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C8H  1
+EMU_UIPKms_Type. . . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  14
+  ulaKmsuip. . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  12
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    000CH  2
+GStr_FUN_CONFIG_Type . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  16
+  ucFunCurrentVal. . . . . . . . . . .  MEMBER   -----  U_CHAR   0000H  1
+  ucFunMeterConst. . . . . . . . . . .  MEMBER   -----  U_CHAR   0001H  1
+  ucRes. . . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0002H  12
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    000EH  2
+GStr_EventParaData . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  5
+  V_usEventID. . . . . . . . . . . . .  MEMBER   -----  U_INT    0000H  2
+  V_usEventAddr. . . . . . . . . . . .  MEMBER   -----  U_INT    0002H  2
+  V_ucEventLenth . . . . . . . . . . .  MEMBER   -----  U_CHAR   0004H  1
+LIB_E2P_Money. . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+_LibPub_MemCopyBytes . . . . . . . . .  EXTERN   CODE   PROC     -----  -----
+EDTAL. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0094H  1
+GStr_EEPROM_MAP. . . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  8
+  ucE2pAddressIndex. . . . . . . . . .  MEMBER   -----  U_INT    0000H  2
+  usE2pAddress . . . . . . . . . . . .  MEMBER   -----  U_INT    0002H  2
+  ucE2pSize. . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0004H  1
+  ucE2pLen . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0005H  1
+  ucIsCRC. . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0006H  1
+  ucIsBak. . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0007H  1
+EDTAM. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0093H  1
+TK0DIFH. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00BCH  1
+SADEN. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   009BH  1
+wchar_t. . . . . . . . . . . . . . . .  TYPEDEF  -----  CHAR     -----  1
+LIB_E2P_METER_INFO . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+_LibPub_ReadDataFromE2prom . . . . . .  EXTERN   CODE   PROC     -----  -----
+GStr_Money . . . . . . . . . . . . . .  EXTERN   XDATA  STRUCT   -----  14
+TK1DIFH. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00BEH  1
+PBANK. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B6H  1
+GStr_EventValidPiont_Type. . . . . . .  TYPEDEF  -----  STRUCT   -----  8
+  uc_Point . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  6
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    0006H  2
+TK2DIFH. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A5H  1
+EADTP. . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00AEH  1
+SADDR. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   009AH  1
+TK0DIFL. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00CFH  1
+LIB_E2P_ENERGY_DECPULSE_WS . . . . . .  E_CONST  -----  U_CHAR   -----  1
+GStr_MONEY_Type. . . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  14
+  ucaRemainMoney . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  6
+  ucaTickMoney . . . . . . . . . . . .  MEMBER   -----  ARRAY    0006H  6
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    000CH  2
+TK1DIFL. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00BDH  1
+TK2DIFL. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00BFH  1
+_ApiEvent_WriteRecord. . . . . . . . .  EXTERN   CODE   PROC     -----  -----
+P7816L . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00BAH  1
+C51 COMPILER V9.54   APPRELAYCONTROL                                                       11/18/2021 18:53:12 PAGE 18  
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+LPDCON1. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C6H  1
+LIB_E2P_EMU_UIPKms_BAK . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+GStr_MoneyPara . . . . . . . . . . . .  EXTERN   XDATA  STRUCT   -----  25
+LPDCON2. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C7H  1
+MAX_BLE_INDEX. . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+LIB_E2P_SecretKey. . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+F0 . . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00D5H  1
+IRDAT. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00AEH  1
+F1 . . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00D1H  1
+EMUIE. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0096H  1
+SFINE. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   009EH  1
+XPAGE. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00F7H  1
+Gstr_VirtualEsam . . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  64
+  ucTempKey. . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  16
+  ucDisKey . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0010H  16
+  ucComplexKey . . . . . . . . . . . .  MEMBER   -----  ARRAY    0020H  16
+  ucRs485RandNum . . . . . . . . . . .  MEMBER   -----  ARRAY    0030H  8
+  ucRs485RandNum2. . . . . . . . . . .  MEMBER   -----  ARRAY    0038H  8
+GStr_MONEY_PARA_Type . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  25
+  ucaAlarmMoneyL1. . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  4
+  ucaAlarmMoneyL2. . . . . . . . . . .  MEMBER   -----  ARRAY    0004H  4
+  ucaMaxMoneyLimit . . . . . . . . . .  MEMBER   -----  ARRAY    0008H  4
+  ucaTickMoneyLimit. . . . . . . . . .  MEMBER   -----  ARRAY    000CH  4
+  ucaAllowcloseMoney . . . . . . . . .  MEMBER   -----  ARRAY    0010H  4
+  ucaOverLoadVal . . . . . . . . . . .  MEMBER   -----  ARRAY    0014H  3
+  usCRC16. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    0017H  2
+INT8S. . . . . . . . . . . . . . . . .  TYPEDEF  -----  CHAR     -----  1
+EMUIF. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0097H  1
+API_COMM_STATUS_FRAME_OK . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+INT8U. . . . . . . . . . . . . . . . .  TYPEDEF  -----  U_CHAR   -----  1
+PSW. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D0H  1
+_LibPub_MemSetBytes. . . . . . . . . .  EXTERN   CODE   PROC     -----  -----
+FP32 . . . . . . . . . . . . . . . . .  TYPEDEF  -----  FLOAT    -----  4
+uint32_t . . . . . . . . . . . . . . .  TYPEDEF  -----  U_LONG   -----  4
+API_COMM_STATUS_FRAME. . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+RB81 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00DAH  1
+SPDAT. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A3H  1
+IB_CON1. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00F2H  1
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   1255    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----      39
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
