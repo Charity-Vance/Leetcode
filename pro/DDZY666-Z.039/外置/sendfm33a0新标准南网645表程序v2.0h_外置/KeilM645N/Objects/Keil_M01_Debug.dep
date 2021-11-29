@@ -1,0 +1,608 @@
+Dependencies for Project 'Keil_M01', Target 'Debug': (DO NOT MODIFY !)
+F (..\cpu\FM32L0XX\Drivers\Source\fm32l0xx_uart.c)(0x59223914)(-c --cpu Cortex-M0 -D__MICROLIB -g -O0 --apcs=interwork --split_sections --signed_chars -I..\CM0 -I..\cpu\FM32L0XX\Device\Include -I..\cpu\FM32L0XX\Drivers\Include --diag_suppress=1296,550-I d:\Users\ybliuzy\Desktop\提交测试\V8\sendfm33a0新标准南网645表程序v2.0e_内置\KeilM645N\RTE-I C:\Keil_v5\ARM\PACK\Keil\FM32LXX_DFP\0.0.6\Device\Include-I C:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="517" -D__A04 -D__DEBUG-o .\objects\fm32l0xx_uart.o --omf_browse .\objects\fm32l0xx_uart.crf --depend .\objects\fm32l0xx_uart.d)
+F (..\cpu\FM32L0XX\Drivers\Source\fm32l0xx_spi.c)(0x59223914)(-c --cpu Cortex-M0 -D__MICROLIB -g -O0 --apcs=interwork --split_sections --signed_chars -I..\CM0 -I..\cpu\FM32L0XX\Device\Include -I..\cpu\FM32L0XX\Drivers\Include --diag_suppress=1296,550-I d:\Users\ybliuzy\Desktop\提交测试\V8\sendfm33a0新标准南网645表程序v2.0e_内置\KeilM645N\RTE-I C:\Keil_v5\ARM\PACK\Keil\FM32LXX_DFP\0.0.6\Device\Include-I C:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="517" -D__A04 -D__DEBUG-o .\objects\fm32l0xx_spi.o --omf_browse .\objects\fm32l0xx_spi.crf --depend .\objects\fm32l0xx_spi.d)
+I (..\cpu\FM32L0XX\Device\Include\FM32L0XX.h)(0x59293E82)
+I (..\cpu\FM32L0XX\Device\Include\core_cm0plus.h)(0x59223914)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x55DB2B80)
+I (..\cpu\FM32L0XX\Device\Include\core_cminstr.h)(0x59223914)
+I (..\cpu\FM32L0XX\Device\Include\core_cmfunc.h)(0x59223914)
+I (..\cpu\FM32L0XX\Device\Include\system_FM32L0XX.h)(0x594BB048)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_uart.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_rcc.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_gpio.h)(0x59672200)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_iwdg.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_nvmif.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_dma.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_spi.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_btim.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_scu.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_i2c.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_anac.h)(0x592673CE)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_rtc.h)(0x59223914)
+F (..\cpu\FM32L0XX\Drivers\Source\fm32l0xx_scu.c)(0x59223914)(-c --cpu Cortex-M0 -D__MICROLIB -g -O0 --apcs=interwork --split_sections --signed_chars -I..\CM0 -I..\cpu\FM32L0XX\Device\Include -I..\cpu\FM32L0XX\Drivers\Include --diag_suppress=1296,550-I d:\Users\ybliuzy\Desktop\提交测试\V8\sendfm33a0新标准南网645表程序v2.0e_内置\KeilM645N\RTE-I C:\Keil_v5\ARM\PACK\Keil\FM32LXX_DFP\0.0.6\Device\Include-I C:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="517" -D__A04 -D__DEBUG-o .\objects\fm32l0xx_scu.o --omf_browse .\objects\fm32l0xx_scu.crf --depend .\objects\fm32l0xx_scu.d)
+I (..\cpu\FM32L0XX\Device\Include\FM32L0XX.h)(0x59293E82)
+I (..\cpu\FM32L0XX\Device\Include\core_cm0plus.h)(0x59223914)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x55DB2B80)
+I (..\cpu\FM32L0XX\Device\Include\core_cminstr.h)(0x59223914)
+I (..\cpu\FM32L0XX\Device\Include\core_cmfunc.h)(0x59223914)
+I (..\cpu\FM32L0XX\Device\Include\system_FM32L0XX.h)(0x594BB048)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_uart.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_rcc.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_gpio.h)(0x59672200)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_iwdg.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_nvmif.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_dma.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_spi.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_btim.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_scu.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_i2c.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_anac.h)(0x592673CE)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_rtc.h)(0x59223914)
+F (..\cpu\FM32L0XX\Drivers\Source\fm32l0xx_rtc.c)(0x59223914)(-c --cpu Cortex-M0 -D__MICROLIB -g -O0 --apcs=interwork --split_sections --signed_chars -I..\CM0 -I..\cpu\FM32L0XX\Device\Include -I..\cpu\FM32L0XX\Drivers\Include --diag_suppress=1296,550-I d:\Users\ybliuzy\Desktop\提交测试\V8\sendfm33a0新标准南网645表程序v2.0e_内置\KeilM645N\RTE-I C:\Keil_v5\ARM\PACK\Keil\FM32LXX_DFP\0.0.6\Device\Include-I C:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="517" -D__A04 -D__DEBUG-o .\objects\fm32l0xx_rtc.o --omf_browse .\objects\fm32l0xx_rtc.crf --depend .\objects\fm32l0xx_rtc.d)
+I (..\cpu\FM32L0XX\Device\Include\FM32L0XX.h)(0x59293E82)
+I (..\cpu\FM32L0XX\Device\Include\core_cm0plus.h)(0x59223914)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x55DB2B80)
+I (..\cpu\FM32L0XX\Device\Include\core_cminstr.h)(0x59223914)
+I (..\cpu\FM32L0XX\Device\Include\core_cmfunc.h)(0x59223914)
+I (..\cpu\FM32L0XX\Device\Include\system_FM32L0XX.h)(0x594BB048)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_uart.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_rcc.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_gpio.h)(0x59672200)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_iwdg.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_nvmif.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_dma.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_spi.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_btim.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_scu.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_i2c.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_anac.h)(0x592673CE)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_rtc.h)(0x59223914)
+F (..\cpu\FM32L0XX\Drivers\Source\fm32l0xx_rcc.c)(0x592673CE)(-c --cpu Cortex-M0 -D__MICROLIB -g -O0 --apcs=interwork --split_sections --signed_chars -I..\CM0 -I..\cpu\FM32L0XX\Device\Include -I..\cpu\FM32L0XX\Drivers\Include --diag_suppress=1296,550-I d:\Users\ybliuzy\Desktop\提交测试\V8\sendfm33a0新标准南网645表程序v2.0e_内置\KeilM645N\RTE-I C:\Keil_v5\ARM\PACK\Keil\FM32LXX_DFP\0.0.6\Device\Include-I C:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="517" -D__A04 -D__DEBUG-o .\objects\fm32l0xx_rcc.o --omf_browse .\objects\fm32l0xx_rcc.crf --depend .\objects\fm32l0xx_rcc.d)
+I (..\cpu\FM32L0XX\Device\Include\FM32L0XX.h)(0x59293E82)
+I (..\cpu\FM32L0XX\Device\Include\core_cm0plus.h)(0x59223914)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x55DB2B80)
+I (..\cpu\FM32L0XX\Device\Include\core_cminstr.h)(0x59223914)
+I (..\cpu\FM32L0XX\Device\Include\core_cmfunc.h)(0x59223914)
+I (..\cpu\FM32L0XX\Device\Include\system_FM32L0XX.h)(0x594BB048)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_uart.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_rcc.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_gpio.h)(0x59672200)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_iwdg.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_nvmif.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_dma.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_spi.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_btim.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_scu.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_i2c.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_anac.h)(0x592673CE)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_rtc.h)(0x59223914)
+F (..\cpu\FM32L0XX\Drivers\Source\fm32l0xx_nvmif.c)(0x59223914)(-c --cpu Cortex-M0 -D__MICROLIB -g -O0 --apcs=interwork --split_sections --signed_chars -I..\CM0 -I..\cpu\FM32L0XX\Device\Include -I..\cpu\FM32L0XX\Drivers\Include --diag_suppress=1296,550-I d:\Users\ybliuzy\Desktop\提交测试\V8\sendfm33a0新标准南网645表程序v2.0e_内置\KeilM645N\RTE-I C:\Keil_v5\ARM\PACK\Keil\FM32LXX_DFP\0.0.6\Device\Include-I C:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="517" -D__A04 -D__DEBUG-o .\objects\fm32l0xx_nvmif.o --omf_browse .\objects\fm32l0xx_nvmif.crf --depend .\objects\fm32l0xx_nvmif.d)
+I (..\cpu\FM32L0XX\Device\Include\FM32L0XX.h)(0x59293E82)
+I (..\cpu\FM32L0XX\Device\Include\core_cm0plus.h)(0x59223914)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x55DB2B80)
+I (..\cpu\FM32L0XX\Device\Include\core_cminstr.h)(0x59223914)
+I (..\cpu\FM32L0XX\Device\Include\core_cmfunc.h)(0x59223914)
+I (..\cpu\FM32L0XX\Device\Include\system_FM32L0XX.h)(0x594BB048)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_uart.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_rcc.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_gpio.h)(0x59672200)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_iwdg.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_nvmif.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_dma.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_spi.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_btim.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_scu.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_i2c.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_anac.h)(0x592673CE)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_rtc.h)(0x59223914)
+F (..\cpu\FM32L0XX\Drivers\Source\fm32l0xx_iwdg.c)(0x59223914)(-c --cpu Cortex-M0 -D__MICROLIB -g -O0 --apcs=interwork --split_sections --signed_chars -I..\CM0 -I..\cpu\FM32L0XX\Device\Include -I..\cpu\FM32L0XX\Drivers\Include --diag_suppress=1296,550-I d:\Users\ybliuzy\Desktop\提交测试\V8\sendfm33a0新标准南网645表程序v2.0e_内置\KeilM645N\RTE-I C:\Keil_v5\ARM\PACK\Keil\FM32LXX_DFP\0.0.6\Device\Include-I C:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="517" -D__A04 -D__DEBUG-o .\objects\fm32l0xx_iwdg.o --omf_browse .\objects\fm32l0xx_iwdg.crf --depend .\objects\fm32l0xx_iwdg.d)
+I (..\cpu\FM32L0XX\Device\Include\FM32L0XX.h)(0x59293E82)
+I (..\cpu\FM32L0XX\Device\Include\core_cm0plus.h)(0x59223914)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x55DB2B80)
+I (..\cpu\FM32L0XX\Device\Include\core_cminstr.h)(0x59223914)
+I (..\cpu\FM32L0XX\Device\Include\core_cmfunc.h)(0x59223914)
+I (..\cpu\FM32L0XX\Device\Include\system_FM32L0XX.h)(0x594BB048)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_uart.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_rcc.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_gpio.h)(0x59672200)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_iwdg.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_nvmif.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_dma.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_spi.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_btim.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_scu.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_i2c.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_anac.h)(0x592673CE)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_rtc.h)(0x59223914)
+F (..\cpu\FM32L0XX\Drivers\Source\fm32l0xx_i2c.c)(0x59223914)(-c --cpu Cortex-M0 -D__MICROLIB -g -O0 --apcs=interwork --split_sections --signed_chars -I..\CM0 -I..\cpu\FM32L0XX\Device\Include -I..\cpu\FM32L0XX\Drivers\Include --diag_suppress=1296,550-I d:\Users\ybliuzy\Desktop\提交测试\V8\sendfm33a0新标准南网645表程序v2.0e_内置\KeilM645N\RTE-I C:\Keil_v5\ARM\PACK\Keil\FM32LXX_DFP\0.0.6\Device\Include-I C:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="517" -D__A04 -D__DEBUG-o .\objects\fm32l0xx_i2c.o --omf_browse .\objects\fm32l0xx_i2c.crf --depend .\objects\fm32l0xx_i2c.d)
+F (..\cpu\FM32L0XX\Drivers\Source\fm32l0xx_gpio.c)(0x59672160)(-c --cpu Cortex-M0 -D__MICROLIB -g -O0 --apcs=interwork --split_sections --signed_chars -I..\CM0 -I..\cpu\FM32L0XX\Device\Include -I..\cpu\FM32L0XX\Drivers\Include --diag_suppress=1296,550-I d:\Users\ybliuzy\Desktop\提交测试\V8\sendfm33a0新标准南网645表程序v2.0e_内置\KeilM645N\RTE-I C:\Keil_v5\ARM\PACK\Keil\FM32LXX_DFP\0.0.6\Device\Include-I C:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="517" -D__A04 -D__DEBUG-o .\objects\fm32l0xx_gpio.o --omf_browse .\objects\fm32l0xx_gpio.crf --depend .\objects\fm32l0xx_gpio.d)
+I (..\cpu\FM32L0XX\Device\Include\FM32L0XX.h)(0x59293E82)
+I (..\cpu\FM32L0XX\Device\Include\core_cm0plus.h)(0x59223914)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x55DB2B80)
+I (..\cpu\FM32L0XX\Device\Include\core_cminstr.h)(0x59223914)
+I (..\cpu\FM32L0XX\Device\Include\core_cmfunc.h)(0x59223914)
+I (..\cpu\FM32L0XX\Device\Include\system_FM32L0XX.h)(0x594BB048)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_uart.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_rcc.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_gpio.h)(0x59672200)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_iwdg.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_nvmif.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_dma.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_spi.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_btim.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_scu.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_i2c.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_anac.h)(0x592673CE)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_rtc.h)(0x59223914)
+F (..\cpu\FM32L0XX\Drivers\Source\fm32l0xx_dma.c)(0x59223914)(-c --cpu Cortex-M0 -D__MICROLIB -g -O0 --apcs=interwork --split_sections --signed_chars -I..\CM0 -I..\cpu\FM32L0XX\Device\Include -I..\cpu\FM32L0XX\Drivers\Include --diag_suppress=1296,550-I d:\Users\ybliuzy\Desktop\提交测试\V8\sendfm33a0新标准南网645表程序v2.0e_内置\KeilM645N\RTE-I C:\Keil_v5\ARM\PACK\Keil\FM32LXX_DFP\0.0.6\Device\Include-I C:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="517" -D__A04 -D__DEBUG-o .\objects\fm32l0xx_dma.o --omf_browse .\objects\fm32l0xx_dma.crf --depend .\objects\fm32l0xx_dma.d)
+I (..\cpu\FM32L0XX\Device\Include\FM32L0XX.h)(0x59293E82)
+I (..\cpu\FM32L0XX\Device\Include\core_cm0plus.h)(0x59223914)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x55DB2B80)
+I (..\cpu\FM32L0XX\Device\Include\core_cminstr.h)(0x59223914)
+I (..\cpu\FM32L0XX\Device\Include\core_cmfunc.h)(0x59223914)
+I (..\cpu\FM32L0XX\Device\Include\system_FM32L0XX.h)(0x594BB048)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_uart.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_rcc.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_gpio.h)(0x59672200)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_iwdg.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_nvmif.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_dma.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_spi.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_btim.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_scu.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_i2c.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_anac.h)(0x592673CE)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_rtc.h)(0x59223914)
+F (..\cpu\FM32L0XX\Drivers\Source\fm32l0xx_anac.c)(0x59223914)(-c --cpu Cortex-M0 -D__MICROLIB -g -O0 --apcs=interwork --split_sections --signed_chars -I..\CM0 -I..\cpu\FM32L0XX\Device\Include -I..\cpu\FM32L0XX\Drivers\Include --diag_suppress=1296,550-I d:\Users\ybliuzy\Desktop\提交测试\V8\sendfm33a0新标准南网645表程序v2.0e_内置\KeilM645N\RTE-I C:\Keil_v5\ARM\PACK\Keil\FM32LXX_DFP\0.0.6\Device\Include-I C:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="517" -D__A04 -D__DEBUG-o .\objects\fm32l0xx_anac.o --omf_browse .\objects\fm32l0xx_anac.crf --depend .\objects\fm32l0xx_anac.d)
+I (..\cpu\FM32L0XX\Device\Include\FM32L0XX.h)(0x59293E82)
+I (..\cpu\FM32L0XX\Device\Include\core_cm0plus.h)(0x59223914)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x55DB2B80)
+I (..\cpu\FM32L0XX\Device\Include\core_cminstr.h)(0x59223914)
+I (..\cpu\FM32L0XX\Device\Include\core_cmfunc.h)(0x59223914)
+I (..\cpu\FM32L0XX\Device\Include\system_FM32L0XX.h)(0x594BB048)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_uart.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_rcc.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_gpio.h)(0x59672200)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_iwdg.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_nvmif.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_dma.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_spi.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_btim.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_scu.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_i2c.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_anac.h)(0x592673CE)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_rtc.h)(0x59223914)
+F (..\cpu\FM32L0XX\Device\Source\system_fm32l0xx_active.c)(0x59223914)(-c --cpu Cortex-M0 -D__MICROLIB -g -O0 --apcs=interwork --split_sections --signed_chars -I..\CM0 -I..\cpu\FM32L0XX\Device\Include -I..\cpu\FM32L0XX\Drivers\Include --diag_suppress=1296,550-I d:\Users\ybliuzy\Desktop\提交测试\V8\sendfm33a0新标准南网645表程序v2.0e_内置\KeilM645N\RTE-I C:\Keil_v5\ARM\PACK\Keil\FM32LXX_DFP\0.0.6\Device\Include-I C:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="517" -D__A04 -D__DEBUG-o .\objects\system_fm32l0xx_active.o --omf_browse .\objects\system_fm32l0xx_active.crf --depend .\objects\system_fm32l0xx_active.d)
+I (..\cpu\FM32L0XX\Device\Include\fm32l0xx.h)(0x59293E82)
+I (..\cpu\FM32L0XX\Device\Include\core_cm0plus.h)(0x59223914)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x55DB2B80)
+I (..\cpu\FM32L0XX\Device\Include\core_cminstr.h)(0x59223914)
+I (..\cpu\FM32L0XX\Device\Include\core_cmfunc.h)(0x59223914)
+I (..\cpu\FM32L0XX\Device\Include\system_FM32L0XX.h)(0x594BB048)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_uart.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_rcc.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_gpio.h)(0x59672200)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_iwdg.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_nvmif.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_dma.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_spi.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_btim.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_scu.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_i2c.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_anac.h)(0x592673CE)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_rtc.h)(0x59223914)
+I (..\cpu\FM32L0XX\Device\Include\system_fm32l0xx_active_config.h)(0x59223914)
+F (..\cpu\FM32L0XX\Device\Source\system_fm32l0xx_lowpower.c)(0x59223914)(-c --cpu Cortex-M0 -D__MICROLIB -g -O0 --apcs=interwork --split_sections --signed_chars -I..\CM0 -I..\cpu\FM32L0XX\Device\Include -I..\cpu\FM32L0XX\Drivers\Include --diag_suppress=1296,550-I d:\Users\ybliuzy\Desktop\提交测试\V8\sendfm33a0新标准南网645表程序v2.0e_内置\KeilM645N\RTE-I C:\Keil_v5\ARM\PACK\Keil\FM32LXX_DFP\0.0.6\Device\Include-I C:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="517" -D__A04 -D__DEBUG-o .\objects\system_fm32l0xx_lowpower.o --omf_browse .\objects\system_fm32l0xx_lowpower.crf --depend .\objects\system_fm32l0xx_lowpower.d)
+I (..\cpu\FM32L0XX\Device\Include\fm32l0xx.h)(0x59293E82)
+I (..\cpu\FM32L0XX\Device\Include\core_cm0plus.h)(0x59223914)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x55DB2B80)
+I (..\cpu\FM32L0XX\Device\Include\core_cminstr.h)(0x59223914)
+I (..\cpu\FM32L0XX\Device\Include\core_cmfunc.h)(0x59223914)
+I (..\cpu\FM32L0XX\Device\Include\system_FM32L0XX.h)(0x594BB048)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_uart.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_rcc.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_gpio.h)(0x59672200)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_iwdg.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_nvmif.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_dma.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_spi.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_btim.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_scu.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_i2c.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_anac.h)(0x592673CE)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_rtc.h)(0x59223914)
+I (..\cpu\FM32L0XX\Device\Include\system_fm32l0xx_lowpower_config.h)(0x59223914)
+F (..\cpu\FM32L0XX\Device\Source\system_FM32L0XX3.c)(0x5A9FACA6)(-c --cpu Cortex-M0 -D__MICROLIB -g -O0 --apcs=interwork --split_sections --signed_chars -I..\CM0 -I..\cpu\FM32L0XX\Device\Include -I..\cpu\FM32L0XX\Drivers\Include --diag_suppress=1296,550-I d:\Users\ybliuzy\Desktop\提交测试\V8\sendfm33a0新标准南网645表程序v2.0e_内置\KeilM645N\RTE-I C:\Keil_v5\ARM\PACK\Keil\FM32LXX_DFP\0.0.6\Device\Include-I C:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="517" -D__A04 -D__DEBUG-o .\objects\system_fm32l0xx3.o --omf_browse .\objects\system_fm32l0xx3.crf --depend .\objects\system_fm32l0xx3.d)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x55DB2B80)
+I (C:\Keil_v5\ARM\ARMCC\include\stdio.h)(0x55DB2B76)
+I (..\cpu\FM32L0XX\Device\Include\FM32L0XX.h)(0x59293E82)
+I (..\cpu\FM32L0XX\Device\Include\core_cm0plus.h)(0x59223914)
+I (..\cpu\FM32L0XX\Device\Include\core_cminstr.h)(0x59223914)
+I (..\cpu\FM32L0XX\Device\Include\core_cmfunc.h)(0x59223914)
+I (..\cpu\FM32L0XX\Device\Include\system_FM32L0XX.h)(0x594BB048)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_uart.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_rcc.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_gpio.h)(0x59672200)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_iwdg.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_nvmif.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_dma.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_spi.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_btim.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_scu.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_i2c.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_anac.h)(0x592673CE)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_rtc.h)(0x59223914)
+F (..\cpu\FM32L0XX\Device\Source\ARM\startup_FM32L0XX.s)(0x59269E3E)(--cpu Cortex-M0 -g --apcs=interwork --pd "__MICROLIB SETA 1"-I d:\Users\ybliuzy\Desktop\提交测试\V8\sendfm33a0新标准南网645表程序v2.0e_内置\KeilM645N\RTE-I C:\Keil_v5\ARM\PACK\Keil\FM32LXX_DFP\0.0.6\Device\Include-I C:\Keil_v5\ARM\CMSIS\Include--pd "__UVISION_VERSION SETA 517" --pd "__A04 SETA 1"--list .\listings\startup_fm32l0xx.lst --xref -o .\objects\startup_fm32l0xx.o --depend .\objects\startup_fm32l0xx.d)
+F (..\CM0\event.c)(0x60C35650)(-c --cpu Cortex-M0 -D__MICROLIB -g -O0 --apcs=interwork --split_sections --signed_chars -I..\CM0 -I..\cpu\FM32L0XX\Device\Include -I..\cpu\FM32L0XX\Drivers\Include --diag_suppress=1296,550-I d:\Users\ybliuzy\Desktop\提交测试\V8\sendfm33a0新标准南网645表程序v2.0e_内置\KeilM645N\RTE-I C:\Keil_v5\ARM\PACK\Keil\FM32LXX_DFP\0.0.6\Device\Include-I C:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="517" -D__A04 -D__DEBUG-o .\objects\event.o --omf_browse .\objects\event.crf --depend .\objects\event.d)
+I (..\CM0\ex_func.h)(0x60C8018F)
+I (..\CM0\define4.h)(0x61406177)
+I (..\CM0\bintohex.h)(0x5956F2A2)
+I (..\cpu\FM32L0XX\Device\Include\FM32L0XX.h)(0x59293E82)
+I (..\cpu\FM32L0XX\Device\Include\core_cm0plus.h)(0x59223914)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x55DB2B80)
+I (..\cpu\FM32L0XX\Device\Include\core_cminstr.h)(0x59223914)
+I (..\cpu\FM32L0XX\Device\Include\core_cmfunc.h)(0x59223914)
+I (..\cpu\FM32L0XX\Device\Include\system_FM32L0XX.h)(0x594BB048)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_uart.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_rcc.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_gpio.h)(0x59672200)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_iwdg.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_nvmif.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_dma.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_spi.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_btim.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_scu.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_i2c.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_anac.h)(0x592673CE)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_rtc.h)(0x59223914)
+I (..\CM0\ex_var.h)(0x60DBB697)
+I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x55DB2B78)
+F (..\CM0\Factory.c)(0x614061B3)(-c --cpu Cortex-M0 -D__MICROLIB -g -O0 --apcs=interwork --split_sections --signed_chars -I..\CM0 -I..\cpu\FM32L0XX\Device\Include -I..\cpu\FM32L0XX\Drivers\Include --diag_suppress=1296,550-I d:\Users\ybliuzy\Desktop\提交测试\V8\sendfm33a0新标准南网645表程序v2.0e_内置\KeilM645N\RTE-I C:\Keil_v5\ARM\PACK\Keil\FM32LXX_DFP\0.0.6\Device\Include-I C:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="517" -D__A04 -D__DEBUG-o .\objects\factory.o --omf_browse .\objects\factory.crf --depend .\objects\factory.d)
+I (..\CM0\ex_var.h)(0x60DBB697)
+I (..\CM0\define4.h)(0x61406177)
+I (..\CM0\bintohex.h)(0x5956F2A2)
+I (..\cpu\FM32L0XX\Device\Include\FM32L0XX.h)(0x59293E82)
+I (..\cpu\FM32L0XX\Device\Include\core_cm0plus.h)(0x59223914)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x55DB2B80)
+I (..\cpu\FM32L0XX\Device\Include\core_cminstr.h)(0x59223914)
+I (..\cpu\FM32L0XX\Device\Include\core_cmfunc.h)(0x59223914)
+I (..\cpu\FM32L0XX\Device\Include\system_FM32L0XX.h)(0x594BB048)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_uart.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_rcc.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_gpio.h)(0x59672200)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_iwdg.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_nvmif.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_dma.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_spi.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_btim.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_scu.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_i2c.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_anac.h)(0x592673CE)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_rtc.h)(0x59223914)
+I (..\CM0\ex_func.h)(0x60C8018F)
+I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x55DB2B78)
+F (..\CM0\i2c.c)(0x61406370)(-c --cpu Cortex-M0 -D__MICROLIB -g -O0 --apcs=interwork --split_sections --signed_chars -I..\CM0 -I..\cpu\FM32L0XX\Device\Include -I..\cpu\FM32L0XX\Drivers\Include --diag_suppress=1296,550-I d:\Users\ybliuzy\Desktop\提交测试\V8\sendfm33a0新标准南网645表程序v2.0e_内置\KeilM645N\RTE-I C:\Keil_v5\ARM\PACK\Keil\FM32LXX_DFP\0.0.6\Device\Include-I C:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="517" -D__A04 -D__DEBUG-o .\objects\i2c.o --omf_browse .\objects\i2c.crf --depend .\objects\i2c.d)
+I (..\CM0\ex_var.h)(0x60DBB697)
+I (..\CM0\define4.h)(0x61406177)
+I (..\CM0\bintohex.h)(0x5956F2A2)
+I (..\cpu\FM32L0XX\Device\Include\FM32L0XX.h)(0x59293E82)
+I (..\cpu\FM32L0XX\Device\Include\core_cm0plus.h)(0x59223914)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x55DB2B80)
+I (..\cpu\FM32L0XX\Device\Include\core_cminstr.h)(0x59223914)
+I (..\cpu\FM32L0XX\Device\Include\core_cmfunc.h)(0x59223914)
+I (..\cpu\FM32L0XX\Device\Include\system_FM32L0XX.h)(0x594BB048)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_uart.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_rcc.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_gpio.h)(0x59672200)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_iwdg.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_nvmif.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_dma.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_spi.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_btim.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_scu.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_i2c.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_anac.h)(0x592673CE)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_rtc.h)(0x59223914)
+I (..\CM0\ex_func.h)(0x60C8018F)
+I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x55DB2B78)
+F (..\CM0\init.c)(0x60C8027C)(-c --cpu Cortex-M0 -D__MICROLIB -g -O0 --apcs=interwork --split_sections --signed_chars -I..\CM0 -I..\cpu\FM32L0XX\Device\Include -I..\cpu\FM32L0XX\Drivers\Include --diag_suppress=1296,550-I d:\Users\ybliuzy\Desktop\提交测试\V8\sendfm33a0新标准南网645表程序v2.0e_内置\KeilM645N\RTE-I C:\Keil_v5\ARM\PACK\Keil\FM32LXX_DFP\0.0.6\Device\Include-I C:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="517" -D__A04 -D__DEBUG-o .\objects\init.o --omf_browse .\objects\init.crf --depend .\objects\init.d)
+I (..\CM0\ex_func.h)(0x60C8018F)
+I (..\CM0\define4.h)(0x61406177)
+I (..\CM0\bintohex.h)(0x5956F2A2)
+I (..\cpu\FM32L0XX\Device\Include\FM32L0XX.h)(0x59293E82)
+I (..\cpu\FM32L0XX\Device\Include\core_cm0plus.h)(0x59223914)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x55DB2B80)
+I (..\cpu\FM32L0XX\Device\Include\core_cminstr.h)(0x59223914)
+I (..\cpu\FM32L0XX\Device\Include\core_cmfunc.h)(0x59223914)
+I (..\cpu\FM32L0XX\Device\Include\system_FM32L0XX.h)(0x594BB048)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_uart.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_rcc.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_gpio.h)(0x59672200)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_iwdg.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_nvmif.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_dma.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_spi.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_btim.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_scu.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_i2c.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_anac.h)(0x592673CE)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_rtc.h)(0x59223914)
+I (..\CM0\ex_var.h)(0x60DBB697)
+I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x55DB2B78)
+F (..\CM0\interrupt.c)(0x6139B55D)(-c --cpu Cortex-M0 -D__MICROLIB -g -O0 --apcs=interwork --split_sections --signed_chars -I..\CM0 -I..\cpu\FM32L0XX\Device\Include -I..\cpu\FM32L0XX\Drivers\Include --diag_suppress=1296,550-I d:\Users\ybliuzy\Desktop\提交测试\V8\sendfm33a0新标准南网645表程序v2.0e_内置\KeilM645N\RTE-I C:\Keil_v5\ARM\PACK\Keil\FM32LXX_DFP\0.0.6\Device\Include-I C:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="517" -D__A04 -D__DEBUG-o .\objects\interrupt.o --omf_browse .\objects\interrupt.crf --depend .\objects\interrupt.d)
+I (..\CM0\ex_var.h)(0x60DBB697)
+I (..\CM0\define4.h)(0x61406177)
+I (..\CM0\bintohex.h)(0x5956F2A2)
+I (..\cpu\FM32L0XX\Device\Include\FM32L0XX.h)(0x59293E82)
+I (..\cpu\FM32L0XX\Device\Include\core_cm0plus.h)(0x59223914)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x55DB2B80)
+I (..\cpu\FM32L0XX\Device\Include\core_cminstr.h)(0x59223914)
+I (..\cpu\FM32L0XX\Device\Include\core_cmfunc.h)(0x59223914)
+I (..\cpu\FM32L0XX\Device\Include\system_FM32L0XX.h)(0x594BB048)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_uart.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_rcc.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_gpio.h)(0x59672200)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_iwdg.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_nvmif.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_dma.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_spi.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_btim.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_scu.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_i2c.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_anac.h)(0x592673CE)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_rtc.h)(0x59223914)
+I (..\CM0\ex_func.h)(0x60C8018F)
+I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x55DB2B78)
+I (C:\Keil_v5\ARM\ARMCC\include\stdio.h)(0x55DB2B76)
+F (..\CM0\iokey.c)(0x60C31F30)(-c --cpu Cortex-M0 -D__MICROLIB -g -O0 --apcs=interwork --split_sections --signed_chars -I..\CM0 -I..\cpu\FM32L0XX\Device\Include -I..\cpu\FM32L0XX\Drivers\Include --diag_suppress=1296,550-I d:\Users\ybliuzy\Desktop\提交测试\V8\sendfm33a0新标准南网645表程序v2.0e_内置\KeilM645N\RTE-I C:\Keil_v5\ARM\PACK\Keil\FM32LXX_DFP\0.0.6\Device\Include-I C:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="517" -D__A04 -D__DEBUG-o .\objects\iokey.o --omf_browse .\objects\iokey.crf --depend .\objects\iokey.d)
+I (..\CM0\ex_func.h)(0x60C8018F)
+I (..\CM0\define4.h)(0x61406177)
+I (..\CM0\bintohex.h)(0x5956F2A2)
+I (..\cpu\FM32L0XX\Device\Include\FM32L0XX.h)(0x59293E82)
+I (..\cpu\FM32L0XX\Device\Include\core_cm0plus.h)(0x59223914)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x55DB2B80)
+I (..\cpu\FM32L0XX\Device\Include\core_cminstr.h)(0x59223914)
+I (..\cpu\FM32L0XX\Device\Include\core_cmfunc.h)(0x59223914)
+I (..\cpu\FM32L0XX\Device\Include\system_FM32L0XX.h)(0x594BB048)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_uart.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_rcc.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_gpio.h)(0x59672200)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_iwdg.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_nvmif.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_dma.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_spi.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_btim.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_scu.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_i2c.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_anac.h)(0x592673CE)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_rtc.h)(0x59223914)
+I (..\CM0\ex_var.h)(0x60DBB697)
+I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x55DB2B78)
+F (..\CM0\LCD.c)(0x6139AF3F)(-c --cpu Cortex-M0 -D__MICROLIB -g -O0 --apcs=interwork --split_sections --signed_chars -I..\CM0 -I..\cpu\FM32L0XX\Device\Include -I..\cpu\FM32L0XX\Drivers\Include --diag_suppress=1296,550-I d:\Users\ybliuzy\Desktop\提交测试\V8\sendfm33a0新标准南网645表程序v2.0e_内置\KeilM645N\RTE-I C:\Keil_v5\ARM\PACK\Keil\FM32LXX_DFP\0.0.6\Device\Include-I C:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="517" -D__A04 -D__DEBUG-o .\objects\lcd.o --omf_browse .\objects\lcd.crf --depend .\objects\lcd.d)
+I (..\CM0\ex_func.h)(0x60C8018F)
+I (..\CM0\define4.h)(0x61406177)
+I (..\CM0\bintohex.h)(0x5956F2A2)
+I (..\cpu\FM32L0XX\Device\Include\FM32L0XX.h)(0x59293E82)
+I (..\cpu\FM32L0XX\Device\Include\core_cm0plus.h)(0x59223914)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x55DB2B80)
+I (..\cpu\FM32L0XX\Device\Include\core_cminstr.h)(0x59223914)
+I (..\cpu\FM32L0XX\Device\Include\core_cmfunc.h)(0x59223914)
+I (..\cpu\FM32L0XX\Device\Include\system_FM32L0XX.h)(0x594BB048)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_uart.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_rcc.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_gpio.h)(0x59672200)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_iwdg.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_nvmif.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_dma.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_spi.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_btim.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_scu.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_i2c.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_anac.h)(0x592673CE)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_rtc.h)(0x59223914)
+I (..\CM0\ex_var.h)(0x60DBB697)
+I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x55DB2B78)
+F (..\CM0\mainproc.c)(0x605E956C)(-c --cpu Cortex-M0 -D__MICROLIB -g -O0 --apcs=interwork --split_sections --signed_chars -I..\CM0 -I..\cpu\FM32L0XX\Device\Include -I..\cpu\FM32L0XX\Drivers\Include --diag_suppress=1296,550-I d:\Users\ybliuzy\Desktop\提交测试\V8\sendfm33a0新标准南网645表程序v2.0e_内置\KeilM645N\RTE-I C:\Keil_v5\ARM\PACK\Keil\FM32LXX_DFP\0.0.6\Device\Include-I C:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="517" -D__A04 -D__DEBUG-o .\objects\mainproc.o --omf_browse .\objects\mainproc.crf --depend .\objects\mainproc.d)
+I (..\CM0\variable4.h)(0x60C805AC)
+I (..\cpu\FM32L0XX\Device\Include\FM32L0XX.h)(0x59293E82)
+I (..\cpu\FM32L0XX\Device\Include\core_cm0plus.h)(0x59223914)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x55DB2B80)
+I (..\cpu\FM32L0XX\Device\Include\core_cminstr.h)(0x59223914)
+I (..\cpu\FM32L0XX\Device\Include\core_cmfunc.h)(0x59223914)
+I (..\cpu\FM32L0XX\Device\Include\system_FM32L0XX.h)(0x594BB048)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_uart.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_rcc.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_gpio.h)(0x59672200)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_iwdg.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_nvmif.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_dma.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_spi.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_btim.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_scu.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_i2c.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_anac.h)(0x592673CE)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_rtc.h)(0x59223914)
+I (..\CM0\define4.h)(0x61406177)
+I (..\CM0\bintohex.h)(0x5956F2A2)
+I (C:\Keil_v5\ARM\ARMCC\include\stdarg.h)(0x55DB2B7E)
+I (..\CM0\ex_func.h)(0x60C8018F)
+I (..\CM0\ex_var.h)(0x60DBB697)
+I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x55DB2B78)
+I (C:\Keil_v5\ARM\ARMCC\include\stdio.h)(0x55DB2B76)
+F (..\CM0\money.c)(0x614063CB)(-c --cpu Cortex-M0 -D__MICROLIB -g -O0 --apcs=interwork --split_sections --signed_chars -I..\CM0 -I..\cpu\FM32L0XX\Device\Include -I..\cpu\FM32L0XX\Drivers\Include --diag_suppress=1296,550-I d:\Users\ybliuzy\Desktop\提交测试\V8\sendfm33a0新标准南网645表程序v2.0e_内置\KeilM645N\RTE-I C:\Keil_v5\ARM\PACK\Keil\FM32LXX_DFP\0.0.6\Device\Include-I C:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="517" -D__A04 -D__DEBUG-o .\objects\money.o --omf_browse .\objects\money.crf --depend .\objects\money.d)
+I (..\CM0\ex_func.h)(0x60C8018F)
+I (..\CM0\define4.h)(0x61406177)
+I (..\CM0\bintohex.h)(0x5956F2A2)
+I (..\cpu\FM32L0XX\Device\Include\FM32L0XX.h)(0x59293E82)
+I (..\cpu\FM32L0XX\Device\Include\core_cm0plus.h)(0x59223914)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x55DB2B80)
+I (..\cpu\FM32L0XX\Device\Include\core_cminstr.h)(0x59223914)
+I (..\cpu\FM32L0XX\Device\Include\core_cmfunc.h)(0x59223914)
+I (..\cpu\FM32L0XX\Device\Include\system_FM32L0XX.h)(0x594BB048)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_uart.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_rcc.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_gpio.h)(0x59672200)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_iwdg.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_nvmif.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_dma.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_spi.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_btim.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_scu.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_i2c.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_anac.h)(0x592673CE)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_rtc.h)(0x59223914)
+I (..\CM0\ex_var.h)(0x60DBB697)
+I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x55DB2B78)
+F (..\CM0\rtc.c)(0x60C802F2)(-c --cpu Cortex-M0 -D__MICROLIB -g -O0 --apcs=interwork --split_sections --signed_chars -I..\CM0 -I..\cpu\FM32L0XX\Device\Include -I..\cpu\FM32L0XX\Drivers\Include --diag_suppress=1296,550-I d:\Users\ybliuzy\Desktop\提交测试\V8\sendfm33a0新标准南网645表程序v2.0e_内置\KeilM645N\RTE-I C:\Keil_v5\ARM\PACK\Keil\FM32LXX_DFP\0.0.6\Device\Include-I C:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="517" -D__A04 -D__DEBUG-o .\objects\rtc.o --omf_browse .\objects\rtc.crf --depend .\objects\rtc.d)
+I (..\CM0\ex_var.h)(0x60DBB697)
+I (..\CM0\define4.h)(0x61406177)
+I (..\CM0\bintohex.h)(0x5956F2A2)
+I (..\cpu\FM32L0XX\Device\Include\FM32L0XX.h)(0x59293E82)
+I (..\cpu\FM32L0XX\Device\Include\core_cm0plus.h)(0x59223914)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x55DB2B80)
+I (..\cpu\FM32L0XX\Device\Include\core_cminstr.h)(0x59223914)
+I (..\cpu\FM32L0XX\Device\Include\core_cmfunc.h)(0x59223914)
+I (..\cpu\FM32L0XX\Device\Include\system_FM32L0XX.h)(0x594BB048)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_uart.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_rcc.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_gpio.h)(0x59672200)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_iwdg.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_nvmif.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_dma.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_spi.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_btim.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_scu.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_i2c.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_anac.h)(0x592673CE)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_rtc.h)(0x59223914)
+I (..\CM0\ex_func.h)(0x60C8018F)
+I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x55DB2B78)
+I (..\CM0\Cpu_card.h)(0x6035B274)
+F (..\CM0\tariff.c)(0x6088D19E)(-c --cpu Cortex-M0 -D__MICROLIB -g -O0 --apcs=interwork --split_sections --signed_chars -I..\CM0 -I..\cpu\FM32L0XX\Device\Include -I..\cpu\FM32L0XX\Drivers\Include --diag_suppress=1296,550-I d:\Users\ybliuzy\Desktop\提交测试\V8\sendfm33a0新标准南网645表程序v2.0e_内置\KeilM645N\RTE-I C:\Keil_v5\ARM\PACK\Keil\FM32LXX_DFP\0.0.6\Device\Include-I C:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="517" -D__A04 -D__DEBUG-o .\objects\tariff.o --omf_browse .\objects\tariff.crf --depend .\objects\tariff.d)
+I (..\CM0\ex_func.h)(0x60C8018F)
+I (..\CM0\define4.h)(0x61406177)
+I (..\CM0\bintohex.h)(0x5956F2A2)
+I (..\cpu\FM32L0XX\Device\Include\FM32L0XX.h)(0x59293E82)
+I (..\cpu\FM32L0XX\Device\Include\core_cm0plus.h)(0x59223914)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x55DB2B80)
+I (..\cpu\FM32L0XX\Device\Include\core_cminstr.h)(0x59223914)
+I (..\cpu\FM32L0XX\Device\Include\core_cmfunc.h)(0x59223914)
+I (..\cpu\FM32L0XX\Device\Include\system_FM32L0XX.h)(0x594BB048)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_uart.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_rcc.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_gpio.h)(0x59672200)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_iwdg.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_nvmif.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_dma.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_spi.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_btim.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_scu.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_i2c.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_anac.h)(0x592673CE)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_rtc.h)(0x59223914)
+I (..\CM0\ex_var.h)(0x60DBB697)
+I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x55DB2B78)
+F (..\CM0\u7816.c)(0x6139BD39)(-c --cpu Cortex-M0 -D__MICROLIB -g -O0 --apcs=interwork --split_sections --signed_chars -I..\CM0 -I..\cpu\FM32L0XX\Device\Include -I..\cpu\FM32L0XX\Drivers\Include --diag_suppress=1296,550-I d:\Users\ybliuzy\Desktop\提交测试\V8\sendfm33a0新标准南网645表程序v2.0e_内置\KeilM645N\RTE-I C:\Keil_v5\ARM\PACK\Keil\FM32LXX_DFP\0.0.6\Device\Include-I C:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="517" -D__A04 -D__DEBUG-o .\objects\u7816.o --omf_browse .\objects\u7816.crf --depend .\objects\u7816.d)
+I (..\CM0\ex_var.h)(0x60DBB697)
+I (..\CM0\define4.h)(0x61406177)
+I (..\CM0\bintohex.h)(0x5956F2A2)
+I (..\cpu\FM32L0XX\Device\Include\FM32L0XX.h)(0x59293E82)
+I (..\cpu\FM32L0XX\Device\Include\core_cm0plus.h)(0x59223914)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x55DB2B80)
+I (..\cpu\FM32L0XX\Device\Include\core_cminstr.h)(0x59223914)
+I (..\cpu\FM32L0XX\Device\Include\core_cmfunc.h)(0x59223914)
+I (..\cpu\FM32L0XX\Device\Include\system_FM32L0XX.h)(0x594BB048)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_uart.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_rcc.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_gpio.h)(0x59672200)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_iwdg.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_nvmif.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_dma.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_spi.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_btim.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_scu.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_i2c.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_anac.h)(0x592673CE)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_rtc.h)(0x59223914)
+I (..\CM0\ex_func.h)(0x60C8018F)
+I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x55DB2B78)
+I (..\CM0\Cpu_card.h)(0x6035B274)
+F (..\CM0\uartx.c)(0x61406408)(-c --cpu Cortex-M0 -D__MICROLIB -g -O0 --apcs=interwork --split_sections --signed_chars -I..\CM0 -I..\cpu\FM32L0XX\Device\Include -I..\cpu\FM32L0XX\Drivers\Include --diag_suppress=1296,550-I d:\Users\ybliuzy\Desktop\提交测试\V8\sendfm33a0新标准南网645表程序v2.0e_内置\KeilM645N\RTE-I C:\Keil_v5\ARM\PACK\Keil\FM32LXX_DFP\0.0.6\Device\Include-I C:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="517" -D__A04 -D__DEBUG-o .\objects\uartx.o --omf_browse .\objects\uartx.crf --depend .\objects\uartx.d)
+I (..\CM0\ex_var.h)(0x60DBB697)
+I (..\CM0\define4.h)(0x61406177)
+I (..\CM0\bintohex.h)(0x5956F2A2)
+I (..\cpu\FM32L0XX\Device\Include\FM32L0XX.h)(0x59293E82)
+I (..\cpu\FM32L0XX\Device\Include\core_cm0plus.h)(0x59223914)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x55DB2B80)
+I (..\cpu\FM32L0XX\Device\Include\core_cminstr.h)(0x59223914)
+I (..\cpu\FM32L0XX\Device\Include\core_cmfunc.h)(0x59223914)
+I (..\cpu\FM32L0XX\Device\Include\system_FM32L0XX.h)(0x594BB048)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_uart.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_rcc.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_gpio.h)(0x59672200)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_iwdg.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_nvmif.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_dma.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_spi.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_btim.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_scu.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_i2c.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_anac.h)(0x592673CE)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_rtc.h)(0x59223914)
+I (..\CM0\ex_func.h)(0x60C8018F)
+I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x55DB2B78)
+I (C:\Keil_v5\ARM\ARMCC\include\stdio.h)(0x55DB2B76)
+I (C:\Keil_v5\ARM\ARMCC\include\math.h)(0x55DB2B7E)
+I (C:\Keil_v5\ARM\ARMCC\include\stdlib.h)(0x55DB2B78)
+I (..\CM0\Cpu_card.h)(0x6035B274)
+F (..\CM0\verify.c)(0x60DD183A)(-c --cpu Cortex-M0 -D__MICROLIB -g -O0 --apcs=interwork --split_sections --signed_chars -I..\CM0 -I..\cpu\FM32L0XX\Device\Include -I..\cpu\FM32L0XX\Drivers\Include --diag_suppress=1296,550-I d:\Users\ybliuzy\Desktop\提交测试\V8\sendfm33a0新标准南网645表程序v2.0e_内置\KeilM645N\RTE-I C:\Keil_v5\ARM\PACK\Keil\FM32LXX_DFP\0.0.6\Device\Include-I C:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="517" -D__A04 -D__DEBUG-o .\objects\verify.o --omf_browse .\objects\verify.crf --depend .\objects\verify.d)
+I (..\CM0\ex_func.h)(0x60C8018F)
+I (..\CM0\define4.h)(0x61406177)
+I (..\CM0\bintohex.h)(0x5956F2A2)
+I (..\cpu\FM32L0XX\Device\Include\FM32L0XX.h)(0x59293E82)
+I (..\cpu\FM32L0XX\Device\Include\core_cm0plus.h)(0x59223914)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x55DB2B80)
+I (..\cpu\FM32L0XX\Device\Include\core_cminstr.h)(0x59223914)
+I (..\cpu\FM32L0XX\Device\Include\core_cmfunc.h)(0x59223914)
+I (..\cpu\FM32L0XX\Device\Include\system_FM32L0XX.h)(0x594BB048)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_uart.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_rcc.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_gpio.h)(0x59672200)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_iwdg.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_nvmif.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_dma.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_spi.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_btim.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_scu.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_i2c.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_anac.h)(0x592673CE)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_rtc.h)(0x59223914)
+I (..\CM0\ex_var.h)(0x60DBB697)
+I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x55DB2B78)
+I (..\CM0\Cpu_card.h)(0x6035B274)
+F (..\CM0\UEnergy-at.C)(0x61406477)(-c --cpu Cortex-M0 -D__MICROLIB -g -O0 --apcs=interwork --split_sections --signed_chars -I..\CM0 -I..\cpu\FM32L0XX\Device\Include -I..\cpu\FM32L0XX\Drivers\Include --diag_suppress=1296,550-I d:\Users\ybliuzy\Desktop\提交测试\V8\sendfm33a0新标准南网645表程序v2.0e_内置\KeilM645N\RTE-I C:\Keil_v5\ARM\PACK\Keil\FM32LXX_DFP\0.0.6\Device\Include-I C:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="517" -D__A04 -D__DEBUG-o .\objects\uenergy-at.o --omf_browse .\objects\uenergy-at.crf --depend .\objects\uenergy-at.d)
+I (..\CM0\ex_func.h)(0x60C8018F)
+I (..\CM0\define4.h)(0x61406177)
+I (..\CM0\bintohex.h)(0x5956F2A2)
+I (..\cpu\FM32L0XX\Device\Include\FM32L0XX.h)(0x59293E82)
+I (..\cpu\FM32L0XX\Device\Include\core_cm0plus.h)(0x59223914)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x55DB2B80)
+I (..\cpu\FM32L0XX\Device\Include\core_cminstr.h)(0x59223914)
+I (..\cpu\FM32L0XX\Device\Include\core_cmfunc.h)(0x59223914)
+I (..\cpu\FM32L0XX\Device\Include\system_FM32L0XX.h)(0x594BB048)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_uart.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_rcc.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_gpio.h)(0x59672200)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_iwdg.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_nvmif.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_dma.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_spi.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_btim.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_scu.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_i2c.h)(0x59223914)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_anac.h)(0x592673CE)
+I (..\cpu\FM32L0XX\Drivers\Include\fm32l0xx_rtc.h)(0x59223914)
+I (..\CM0\ex_var.h)(0x60DBB697)
+I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x55DB2B78)
+I (C:\Keil_v5\ARM\ARMCC\include\stdio.h)(0x55DB2B76)
+I (C:\Keil_v5\ARM\ARMCC\include\math.h)(0x55DB2B7E)
